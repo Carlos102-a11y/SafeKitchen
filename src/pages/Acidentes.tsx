@@ -35,6 +35,8 @@ import Badge from "../components/ui/Badge";
 
 import type { PgrItem } from "../models/Pgr";
 
+import { supabase } from "../lib/supabase";
+
 type TipoOcorrencia =
   | "Acidente"
   | "Incidente"
@@ -79,10 +81,91 @@ interface AcidenteItem {
   riscoPgrId: number | null;
 }
 
-const STORAGE_ACIDENTES =
-  "acidentes";
+interface AcidenteRow {
+  id: number;
 
-const STORAGE_PGR = "pgr";
+  data: string;
+  hora: string;
+
+  funcionario: string;
+  setor: string;
+
+  tipo: TipoOcorrencia;
+  gravidade: Gravidade;
+
+  afastamento: boolean;
+  dias_afastado: number;
+
+  cat: SituacaoCAT;
+
+  causa: string;
+  acao_corretiva: string;
+
+  risco_pgr_id: number | null;
+}
+
+interface PgrRow {
+  id: number;
+
+  setor: string;
+  atividade: string;
+  perigo: string;
+
+  categoria:
+    PgrItem["categoria"];
+
+  probabilidade:
+    PgrItem["probabilidade"];
+
+  severidade:
+    PgrItem["severidade"];
+
+  nivel: number;
+
+  classificacao:
+    PgrItem["classificacao"];
+
+  medida_controle: string;
+
+  responsavel: string;
+
+  prazo: string | null;
+
+  status:
+    PgrItem["status"];
+}
+
+const CAMPOS_ACIDENTES = `
+  id,
+  data,
+  hora,
+  funcionario,
+  setor,
+  tipo,
+  gravidade,
+  afastamento,
+  dias_afastado,
+  cat,
+  causa,
+  acao_corretiva,
+  risco_pgr_id
+`;
+
+const CAMPOS_PGR = `
+  id,
+  setor,
+  atividade,
+  perigo,
+  categoria,
+  probabilidade,
+  severidade,
+  nivel,
+  classificacao,
+  medida_controle,
+  responsavel,
+  prazo,
+  status
+`;
 
 function criarRegistroInicial(): AcidenteItem {
   return {
@@ -109,101 +192,163 @@ function criarRegistroInicial(): AcidenteItem {
   };
 }
 
-function lerStorage<T>(
-  chave: string
-): T[] {
-  try {
-    const dados =
-      localStorage.getItem(chave);
+function converterAcidente(
+  linha: AcidenteRow
+): AcidenteItem {
+  return {
+    id:
+      linha.id,
 
-    if (!dados) {
-      return [];
-    }
+    data:
+      linha.data,
 
-    const convertido =
-      JSON.parse(dados);
+    hora:
+      linha.hora
+        ? linha.hora.slice(
+            0,
+            5
+          )
+        : "",
 
-    return Array.isArray(convertido)
-      ? convertido
-      : [];
-  } catch {
-    return [];
-  }
+    funcionario:
+      linha.funcionario,
+
+    setor:
+      linha.setor,
+
+    tipo:
+      linha.tipo,
+
+    gravidade:
+      linha.gravidade,
+
+    afastamento:
+      linha.afastamento,
+
+    diasAfastado:
+      Math.max(
+        0,
+        Number(
+          linha.dias_afastado ??
+            0
+        )
+      ),
+
+    cat:
+      linha.cat,
+
+    causa:
+      linha.causa ??
+      "",
+
+    acaoCorretiva:
+      linha.acao_corretiva ??
+      "",
+
+    riscoPgrId:
+      linha.risco_pgr_id ??
+      null,
+  };
 }
 
-function carregarAcidentes(): AcidenteItem[] {
-  const registros =
-    lerStorage<
-      Partial<AcidenteItem>
-    >(STORAGE_ACIDENTES);
+function converterPgr(
+  linha: PgrRow
+): PgrItem {
+  return {
+    id:
+      linha.id,
 
-  return registros.map(
-    (registro, index) => ({
-      id:
-        typeof registro.id ===
-        "number"
-          ? registro.id
-          : Date.now() + index,
+    setor:
+      linha.setor,
 
-      data:
-        registro.data ||
-        dataHoje(),
+    atividade:
+      linha.atividade,
 
-      hora:
-        registro.hora || "",
+    perigo:
+      linha.perigo,
 
-      funcionario:
-        registro.funcionario ||
-        "Não informado",
+    categoria:
+      linha.categoria,
 
-      setor:
-        registro.setor ||
-        "Não informado",
+    probabilidade:
+      linha.probabilidade,
 
-      tipo:
-        registro.tipo ||
-        "Acidente",
+    severidade:
+      linha.severidade,
 
-      gravidade:
-        registro.gravidade ||
-        "Leve",
+    nivel:
+      linha.nivel,
 
-      afastamento:
-        Boolean(
-          registro.afastamento
-        ),
+    classificacao:
+      linha.classificacao,
 
-      diasAfastado:
-        Math.max(
-          0,
-          Number(
-            registro.diasAfastado ??
-              0
+    medidaControle:
+      linha.medida_controle,
+
+    responsavel:
+      linha.responsavel,
+
+    prazo:
+      linha.prazo ??
+      "",
+
+    status:
+      linha.status,
+  };
+}
+
+function criarPayloadAcidente(
+  registro: AcidenteItem
+) {
+  return {
+    data:
+      registro.data,
+
+    hora:
+      registro.hora,
+
+    funcionario:
+      registro.funcionario.trim(),
+
+    setor:
+      registro.setor.trim(),
+
+    tipo:
+      registro.tipo,
+
+    gravidade:
+      registro.gravidade,
+
+    afastamento:
+      registro.afastamento,
+
+    dias_afastado:
+      registro.afastamento
+        ? Math.max(
+            0,
+            registro.diasAfastado
           )
-        ),
+        : 0,
 
-      cat:
-        registro.cat ||
-        "Não necessária",
+    cat:
+      registro.cat,
 
-      causa:
-        registro.causa || "",
+    causa:
+      registro.causa.trim(),
 
-      acaoCorretiva:
-        registro.acaoCorretiva ||
-        "",
+    acao_corretiva:
+      registro.acaoCorretiva.trim(),
 
-      riscoPgrId:
-        typeof registro.riscoPgrId ===
-        "number"
-          ? registro.riscoPgrId
-          : null,
-    })
-  );
+    risco_pgr_id:
+      registro.riscoPgrId,
+  };
 }
 
 function useViewportWidth() {
-  const [largura, setLargura] =
+  const [
+    largura,
+    setLargura,
+  ] =
     useState(() =>
       typeof window !== "undefined"
         ? window.innerWidth
@@ -259,20 +404,40 @@ export default function Acidentes() {
     setAcidentes,
   ] =
     useState<AcidenteItem[]>(
-      carregarAcidentes
+      []
     );
 
-  const [pgr] =
-    useState<PgrItem[]>(() =>
-      lerStorage<PgrItem>(
-        STORAGE_PGR
-      )
+  const [
+    pgr,
+    setPgr,
+  ] =
+    useState<PgrItem[]>(
+      []
     );
+
+  const [
+    carregando,
+    setCarregando,
+  ] =
+    useState(true);
+
+  const [
+    erroBanco,
+    setErroBanco,
+  ] =
+    useState("");
+
+  const [
+    salvando,
+    setSalvando,
+  ] =
+    useState(false);
 
   const [
     pesquisa,
     setPesquisa,
-  ] = useState("");
+  ] =
+    useState("");
 
   const [
     filtroTipo,
@@ -286,9 +451,9 @@ export default function Acidentes() {
     filtroGravidade,
     setFiltroGravidade,
   ] =
-    useState<Gravidade | "">(
-      ""
-    );
+    useState<
+      Gravidade | ""
+    >("");
 
   const [
     filtroVinculo,
@@ -301,7 +466,8 @@ export default function Acidentes() {
   const [
     drawerAberto,
     setDrawerAberto,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     editando,
@@ -320,15 +486,166 @@ export default function Acidentes() {
     );
 
   /*
-   * PERSISTÊNCIA
+   * CARREGAR DADOS DO SUPABASE
    */
 
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_ACIDENTES,
-      JSON.stringify(acidentes)
-    );
-  }, [acidentes]);
+    let componenteAtivo =
+      true;
+
+    async function carregarDados() {
+      setCarregando(
+        true
+      );
+
+      setErroBanco(
+        ""
+      );
+
+      const [
+        resultadoAcidentes,
+        resultadoPgr,
+      ] =
+        await Promise.all([
+          supabase
+            .from(
+              "acidentes"
+            )
+            .select(
+              CAMPOS_ACIDENTES
+            )
+            .order(
+              "data",
+              {
+                ascending:
+                  false,
+              }
+            )
+            .order(
+              "id",
+              {
+                ascending:
+                  false,
+              }
+            ),
+
+          supabase
+            .from(
+              "pgr"
+            )
+            .select(
+              CAMPOS_PGR
+            )
+            .order(
+              "id",
+              {
+                ascending:
+                  true,
+              }
+            ),
+        ]);
+
+      if (
+        !componenteAtivo
+      ) {
+        return;
+      }
+
+      if (
+        resultadoAcidentes.error
+      ) {
+        console.error(
+          "Erro ao carregar acidentes:",
+          resultadoAcidentes.error
+        );
+
+        setAcidentes(
+          []
+        );
+
+        setPgr(
+          []
+        );
+
+        setErroBanco(
+          "Não foi possível carregar as ocorrências."
+        );
+
+        setCarregando(
+          false
+        );
+
+        return;
+      }
+
+      if (
+        resultadoPgr.error
+      ) {
+        console.error(
+          "Erro ao carregar PGR em acidentes:",
+          resultadoPgr.error
+        );
+
+        setAcidentes(
+          (
+            (
+              resultadoAcidentes.data ??
+              []
+            ) as AcidenteRow[]
+          ).map(
+            converterAcidente
+          )
+        );
+
+        setPgr(
+          []
+        );
+
+        setErroBanco(
+          "As ocorrências foram carregadas, mas não foi possível carregar os riscos do PGR."
+        );
+
+        setCarregando(
+          false
+        );
+
+        return;
+      }
+
+      setAcidentes(
+        (
+          (
+            resultadoAcidentes.data ??
+            []
+          ) as AcidenteRow[]
+        ).map(
+          converterAcidente
+        )
+      );
+
+      setPgr(
+        (
+          (
+            resultadoPgr.data ??
+            []
+          ) as PgrRow[]
+        ).map(
+          converterPgr
+        )
+      );
+
+      setCarregando(
+        false
+      );
+    }
+
+    void carregarDados();
+
+    return () => {
+      componenteAtivo =
+        false;
+    };
+  }, []);
 
   /*
    * BLOQUEIO DO BODY
@@ -336,25 +653,34 @@ export default function Acidentes() {
    */
 
   useEffect(() => {
-    if (!drawerAberto) {
+    if (
+      !drawerAberto
+    ) {
       return;
     }
 
     const overflowAnterior =
-      document.body.style.overflow;
+      document.body.style
+        .overflow;
 
-    document.body.style.overflow =
+    document.body.style
+      .overflow =
       "hidden";
 
     function fecharComEsc(
       evento: KeyboardEvent
     ) {
       if (
-        evento.key === "Escape"
+        evento.key ===
+        "Escape"
       ) {
-        setDrawerAberto(false);
+        setDrawerAberto(
+          false
+        );
 
-        setEditando(null);
+        setEditando(
+          null
+        );
 
         setFormulario(
           criarRegistroInicial()
@@ -368,7 +694,8 @@ export default function Acidentes() {
     );
 
     return () => {
-      document.body.style.overflow =
+      document.body.style
+        .overflow =
         overflowAnterior;
 
       window.removeEventListener(
@@ -376,7 +703,9 @@ export default function Acidentes() {
         fecharComEsc
       );
     };
-  }, [drawerAberto]);
+  }, [
+    drawerAberto,
+  ]);
 
   /*
    * PGR ORDENADO
@@ -394,8 +723,13 @@ export default function Acidentes() {
         Crítico: 4,
       };
 
-      return [...pgr].sort(
-        (a, b) =>
+      return [
+        ...pgr,
+      ].sort(
+        (
+          a,
+          b
+        ) =>
           peso[
             b.classificacao
           ] -
@@ -403,7 +737,9 @@ export default function Acidentes() {
             a.classificacao
           ]
       );
-    }, [pgr]);
+    }, [
+      pgr,
+    ]);
 
   /*
    * RISCO SELECIONADO
@@ -420,10 +756,13 @@ export default function Acidentes() {
 
       return (
         pgr.find(
-          (risco) =>
+          (
+            risco
+          ) =>
             risco.id ===
             formulario.riscoPgrId
-        ) ?? null
+        ) ??
+        null
       );
     }, [
       formulario.riscoPgrId,
@@ -436,14 +775,18 @@ export default function Acidentes() {
 
   const totalAcidentes =
     acidentes.filter(
-      (registro) =>
+      (
+        registro
+      ) =>
         registro.tipo ===
         "Acidente"
     ).length;
 
   const totalGraves =
     acidentes.filter(
-      (registro) =>
+      (
+        registro
+      ) =>
         registro.gravidade ===
           "Grave" ||
         registro.gravidade ===
@@ -452,17 +795,23 @@ export default function Acidentes() {
 
   const totalAfastamentos =
     acidentes.filter(
-      (registro) =>
+      (
+        registro
+      ) =>
         registro.afastamento
     ).length;
 
   const vinculadosPgr =
     acidentes.filter(
-      (registro) =>
+      (
+        registro
+      ) =>
         registro.riscoPgrId !==
           null &&
         pgr.some(
-          (risco) =>
+          (
+            risco
+          ) =>
             risco.id ===
             registro.riscoPgrId
         )
@@ -470,7 +819,9 @@ export default function Acidentes() {
 
   const catPendentes =
     acidentes.filter(
-      (registro) =>
+      (
+        registro
+      ) =>
         registro.cat ===
         "Pendente"
     ).length;
@@ -487,11 +838,15 @@ export default function Acidentes() {
           .toLowerCase();
 
       return acidentes.filter(
-        (registro) => {
+        (
+          registro
+        ) => {
           const risco =
             registro.riscoPgrId
               ? pgr.find(
-                  (item) =>
+                  (
+                    item
+                  ) =>
                     item.id ===
                     registro.riscoPgrId
                 )
@@ -501,22 +856,34 @@ export default function Acidentes() {
             !termo ||
             registro.funcionario
               .toLowerCase()
-              .includes(termo) ||
+              .includes(
+                termo
+              ) ||
             registro.setor
               .toLowerCase()
-              .includes(termo) ||
+              .includes(
+                termo
+              ) ||
             registro.causa
               .toLowerCase()
-              .includes(termo) ||
+              .includes(
+                termo
+              ) ||
             registro.tipo
               .toLowerCase()
-              .includes(termo) ||
+              .includes(
+                termo
+              ) ||
             risco?.perigo
               .toLowerCase()
-              .includes(termo) ||
+              .includes(
+                termo
+              ) ||
             risco?.atividade
               .toLowerCase()
-              .includes(termo);
+              .includes(
+                termo
+              );
 
           const correspondeTipo =
             !filtroTipo ||
@@ -532,19 +899,25 @@ export default function Acidentes() {
             registro.riscoPgrId !==
               null &&
             pgr.some(
-              (riscoPgr) =>
+              (
+                riscoPgr
+              ) =>
                 riscoPgr.id ===
                 registro.riscoPgrId
             );
 
           const correspondeVinculo =
             !filtroVinculo ||
-            (filtroVinculo ===
-              "vinculado" &&
-              possuiVinculo) ||
-            (filtroVinculo ===
-              "nao-vinculado" &&
-              !possuiVinculo);
+            (
+              filtroVinculo ===
+                "vinculado" &&
+              possuiVinculo
+            ) ||
+            (
+              filtroVinculo ===
+                "nao-vinculado" &&
+              !possuiVinculo
+            );
 
           return (
             correspondePesquisa &&
@@ -564,55 +937,86 @@ export default function Acidentes() {
     ]);
 
   const filtrosAtivos =
-    pesquisa.trim() !== "" ||
-    filtroTipo !== "" ||
-    filtroGravidade !== "" ||
-    filtroVinculo !== "";
+    pesquisa.trim() !==
+      "" ||
+    filtroTipo !==
+      "" ||
+    filtroGravidade !==
+      "" ||
+    filtroVinculo !==
+      "";
 
   /*
    * CRUD
    */
 
   function abrirNovoRegistro() {
-    setEditando(null);
+    setEditando(
+      null
+    );
+
+    setErroBanco(
+      ""
+    );
 
     setFormulario(
       criarRegistroInicial()
     );
 
-    setDrawerAberto(true);
+    setDrawerAberto(
+      true
+    );
   }
 
   function editarRegistro(
     registro: AcidenteItem
   ) {
-    setEditando(registro);
+    setEditando(
+      registro
+    );
+
+    setErroBanco(
+      ""
+    );
 
     setFormulario({
       ...registro,
     });
 
-    setDrawerAberto(true);
+    setDrawerAberto(
+      true
+    );
   }
 
   function fecharDrawer() {
-    setDrawerAberto(false);
+    setDrawerAberto(
+      false
+    );
 
-    setEditando(null);
+    setEditando(
+      null
+    );
 
     setFormulario(
       criarRegistroInicial()
     );
   }
 
-  function salvarRegistro() {
+  async function salvarRegistro() {
+    if (
+      salvando
+    ) {
+      return;
+    }
+
     if (
       !formulario.data ||
+      !formulario.hora ||
       !formulario.funcionario.trim() ||
       !formulario.setor.trim()
     ) {
       window.alert(
-        "Preencha Data, Funcionário e Setor."
+        "Preencha Data, Hora, Funcionário e Setor."
       );
 
       return;
@@ -622,7 +1026,9 @@ export default function Acidentes() {
       formulario.riscoPgrId !==
         null &&
       !pgr.some(
-        (risco) =>
+        (
+          risco
+        ) =>
           risco.id ===
           formulario.riscoPgrId
       )
@@ -638,6 +1044,18 @@ export default function Acidentes() {
       {
         ...formulario,
 
+        funcionario:
+          formulario.funcionario.trim(),
+
+        setor:
+          formulario.setor.trim(),
+
+        causa:
+          formulario.causa.trim(),
+
+        acaoCorretiva:
+          formulario.acaoCorretiva.trim(),
+
         diasAfastado:
           formulario.afastamento
             ? Math.max(
@@ -647,35 +1065,135 @@ export default function Acidentes() {
             : 0,
       };
 
-    if (editando) {
-      setAcidentes(
-        (listaAtual) =>
-          listaAtual.map(
-            (registro) =>
-              registro.id ===
-              registroFinal.id
-                ? registroFinal
-                : registro
-          )
+    const payload =
+      criarPayloadAcidente(
+        registroFinal
       );
-    } else {
-      setAcidentes(
-        (listaAtual) => [
-          ...listaAtual,
 
-          {
-            ...registroFinal,
+    setSalvando(
+      true
+    );
 
-            id: Date.now(),
-          },
-        ]
+    setErroBanco(
+      ""
+    );
+
+    try {
+      if (
+        editando
+      ) {
+        const {
+          data,
+          error,
+        } =
+          await supabase
+            .from(
+              "acidentes"
+            )
+            .update(
+              payload
+            )
+            .eq(
+              "id",
+              editando.id
+            )
+            .select(
+              CAMPOS_ACIDENTES
+            )
+            .single();
+
+        if (
+          error ||
+          !data
+        ) {
+          console.error(
+            "Erro ao atualizar ocorrência:",
+            error
+          );
+
+          setErroBanco(
+            "Não foi possível atualizar a ocorrência."
+          );
+
+          return;
+        }
+
+        const atualizado =
+          converterAcidente(
+            data as AcidenteRow
+          );
+
+        setAcidentes(
+          (
+            listaAtual
+          ) =>
+            listaAtual.map(
+              (
+                registro
+              ) =>
+                registro.id ===
+                atualizado.id
+                  ? atualizado
+                  : registro
+            )
+        );
+      } else {
+        const {
+          data,
+          error,
+        } =
+          await supabase
+            .from(
+              "acidentes"
+            )
+            .insert(
+              payload
+            )
+            .select(
+              CAMPOS_ACIDENTES
+            )
+            .single();
+
+        if (
+          error ||
+          !data
+        ) {
+          console.error(
+            "Erro ao cadastrar ocorrência:",
+            error
+          );
+
+          setErroBanco(
+            "Não foi possível registrar a ocorrência."
+          );
+
+          return;
+        }
+
+        const novoRegistro =
+          converterAcidente(
+            data as AcidenteRow
+          );
+
+        setAcidentes(
+          (
+            listaAtual
+          ) => [
+            novoRegistro,
+            ...listaAtual,
+          ]
+        );
+      }
+
+      fecharDrawer();
+    } finally {
+      setSalvando(
+        false
       );
     }
-
-    fecharDrawer();
   }
 
-  function excluirRegistro(
+  async function excluirRegistro(
     id: number
   ) {
     const confirmar =
@@ -683,15 +1201,54 @@ export default function Acidentes() {
         "Deseja realmente excluir este registro?"
       );
 
-    if (!confirmar) {
+    if (
+      !confirmar
+    ) {
+      return;
+    }
+
+    setErroBanco(
+      ""
+    );
+
+    const {
+      error,
+    } =
+      await supabase
+        .from(
+          "acidentes"
+        )
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+    if (
+      error
+    ) {
+      console.error(
+        "Erro ao excluir ocorrência:",
+        error
+      );
+
+      setErroBanco(
+        "Não foi possível excluir a ocorrência."
+      );
+
       return;
     }
 
     setAcidentes(
-      (listaAtual) =>
+      (
+        listaAtual
+      ) =>
         listaAtual.filter(
-          (registro) =>
-            registro.id !== id
+          (
+            registro
+          ) =>
+            registro.id !==
+            id
         )
     );
   }
@@ -703,12 +1260,17 @@ export default function Acidentes() {
   function selecionarRiscoPgr(
     valor: string
   ) {
-    if (!valor) {
+    if (
+      !valor
+    ) {
       setFormulario(
-        (atual) => ({
+        (
+          atual
+        ) => ({
           ...atual,
 
-          riscoPgrId: null,
+          riscoPgrId:
+            null,
         })
       );
 
@@ -716,19 +1278,27 @@ export default function Acidentes() {
     }
 
     const id =
-      Number(valor);
+      Number(
+        valor
+      );
 
     const risco =
       pgr.find(
-        (item) =>
-          item.id === id
+        (
+          item
+        ) =>
+          item.id ===
+          id
       );
 
     setFormulario(
-      (atual) => ({
+      (
+        atual
+      ) => ({
         ...atual,
 
-        riscoPgrId: id,
+        riscoPgrId:
+          id,
 
         setor:
           atual.setor.trim() ||
@@ -741,40 +1311,57 @@ export default function Acidentes() {
   function buscarRiscoPgr(
     id: number | null
   ) {
-    if (id === null) {
+    if (
+      id === null
+    ) {
       return null;
     }
 
     return (
       pgr.find(
-        (risco) =>
-          risco.id === id
-      ) ?? null
+        (
+          risco
+        ) =>
+          risco.id ===
+          id
+      ) ??
+      null
     );
   }
 
   function limparFiltros() {
-    setPesquisa("");
+    setPesquisa(
+      ""
+    );
 
-    setFiltroTipo("");
+    setFiltroTipo(
+      ""
+    );
 
-    setFiltroGravidade("");
+    setFiltroGravidade(
+      ""
+    );
 
-    setFiltroVinculo("");
+    setFiltroVinculo(
+      ""
+    );
   }
 
   return (
     <main
       style={{
-        width: "100%",
+        width:
+          "100%",
 
-        minWidth: 0,
+        minWidth:
+          0,
 
-        padding: mobile
-          ? "18px 14px 28px"
-          : tablet
-            ? "24px 20px 32px"
-            : "32px",
+        padding:
+          mobile
+            ? "18px 14px 28px"
+            : tablet
+              ? "24px 20px 32px"
+              : "32px",
 
         boxSizing:
           "border-box",
@@ -788,15 +1375,19 @@ export default function Acidentes() {
       <PageHeader
         title="Acidentes e Incidentes"
         subtitle="Registro, investigação e relacionamento das ocorrências com os riscos identificados no PGR."
-        icon={Ambulance}
+        icon={
+          Ambulance
+        }
       >
         <div
           style={{
-            width: mobile
-              ? "100%"
-              : "auto",
+            width:
+              mobile
+                ? "100%"
+                : "auto",
 
-            display: "flex",
+            display:
+              "flex",
 
             flexDirection:
               mobilePequeno
@@ -808,13 +1399,16 @@ export default function Acidentes() {
                 ? "stretch"
                 : "center",
 
-            gap: 10,
+            gap:
+              10,
           }}
         >
           <button
             type="button"
             onClick={() =>
-              navigate("/pgr")
+              navigate(
+                "/pgr"
+              )
             }
             style={{
               ...botaoSecundario,
@@ -829,7 +1423,9 @@ export default function Acidentes() {
             }}
           >
             <ShieldCheck
-              size={17}
+              size={
+                17
+              }
             />
 
             Abrir PGR
@@ -842,7 +1438,8 @@ export default function Acidentes() {
           >
             <span
               style={{
-                display: "flex",
+                display:
+                  "flex",
 
                 alignItems:
                   "center",
@@ -850,10 +1447,15 @@ export default function Acidentes() {
                 justifyContent:
                   "center",
 
-                gap: 8,
+                gap:
+                  8,
               }}
             >
-              <Plus size={18} />
+              <Plus
+                size={
+                  18
+                }
+              />
 
               Nova Ocorrência
             </span>
@@ -861,15 +1463,148 @@ export default function Acidentes() {
         </div>
       </PageHeader>
 
+      {/* ERRO */}
+
+      {erroBanco && (
+        <div
+          role="alert"
+          style={{
+            width:
+              "100%",
+
+            display:
+              "flex",
+
+            alignItems:
+              "flex-start",
+
+            justifyContent:
+              "space-between",
+
+            gap:
+              14,
+
+            marginBottom:
+              20,
+
+            padding:
+              "13px 15px",
+
+            boxSizing:
+              "border-box",
+
+            border:
+              "1px solid #FECACA",
+
+            borderRadius:
+              12,
+
+            background:
+              "#FEF2F2",
+
+            color:
+              "#B91C1C",
+
+            fontSize:
+              12,
+
+            fontWeight:
+              650,
+
+            lineHeight:
+              1.5,
+          }}
+        >
+          <div
+            style={{
+              display:
+                "flex",
+
+              alignItems:
+                "flex-start",
+
+              gap:
+                9,
+            }}
+          >
+            <TriangleAlert
+              size={
+                17
+              }
+              style={{
+                flexShrink:
+                  0,
+
+                marginTop:
+                  1,
+              }}
+            />
+
+            <span>
+              {
+                erroBanco
+              }
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setErroBanco(
+                ""
+              )
+            }
+            aria-label="Fechar aviso"
+            style={{
+              display:
+                "flex",
+
+              alignItems:
+                "center",
+
+              justifyContent:
+                "center",
+
+              flexShrink:
+                0,
+
+              padding:
+                2,
+
+              border:
+                "none",
+
+              background:
+                "transparent",
+
+              color:
+                "#B91C1C",
+
+              cursor:
+                "pointer",
+            }}
+          >
+            <X
+              size={
+                16
+              }
+            />
+          </button>
+        </div>
+      )}
+
       {/* INDICADORES */}
 
       <div
         style={{
-          width: "100%",
+          width:
+            "100%",
 
-          minWidth: 0,
+          minWidth:
+            0,
 
-          display: "grid",
+          display:
+            "grid",
 
           gridTemplateColumns:
             mobile
@@ -878,9 +1613,10 @@ export default function Acidentes() {
                 ? "repeat(2, minmax(0, 1fr))"
                 : "repeat(6, minmax(0, 1fr))",
 
-          gap: mobile
-            ? 12
-            : 20,
+          gap:
+            mobile
+              ? 12
+              : 20,
 
           marginBottom:
             mobile
@@ -895,7 +1631,9 @@ export default function Acidentes() {
           }
           icon={
             <FileText
-              size={22}
+              size={
+                22
+              }
             />
           }
           color="#2563EB"
@@ -908,7 +1646,9 @@ export default function Acidentes() {
           }
           icon={
             <Ambulance
-              size={22}
+              size={
+                22
+              }
             />
           }
           color="#DC2626"
@@ -921,7 +1661,9 @@ export default function Acidentes() {
           }
           icon={
             <TriangleAlert
-              size={22}
+              size={
+                22
+              }
             />
           }
           color="#F97316"
@@ -934,7 +1676,9 @@ export default function Acidentes() {
           }
           icon={
             <Clock3
-              size={22}
+              size={
+                22
+              }
             />
           }
           color="#7C3AED"
@@ -946,7 +1690,11 @@ export default function Acidentes() {
             vinculadosPgr
           }
           icon={
-            <Link2 size={22} />
+            <Link2
+              size={
+                22
+              }
+            />
           }
           color="#16A34A"
         />
@@ -958,7 +1706,9 @@ export default function Acidentes() {
           }
           icon={
             <AlertCircle
-              size={22}
+              size={
+                22
+              }
             />
           }
           color="#F59E0B"
@@ -969,9 +1719,11 @@ export default function Acidentes() {
 
       <section
         style={{
-          width: "100%",
+          width:
+            "100%",
 
-          minWidth: 0,
+          minWidth:
+            0,
 
           boxSizing:
             "border-box",
@@ -987,9 +1739,10 @@ export default function Acidentes() {
               ? 14
               : 18,
 
-          padding: mobile
-            ? 16
-            : 24,
+          padding:
+            mobile
+              ? 16
+              : 24,
 
           boxShadow:
             "0 6px 20px rgba(15,23,42,.04)",
@@ -1000,7 +1753,8 @@ export default function Acidentes() {
       >
         <div
           style={{
-            minWidth: 0,
+            minWidth:
+              0,
 
             marginBottom:
               mobile
@@ -1010,7 +1764,8 @@ export default function Acidentes() {
         >
           <h2
             style={{
-              margin: 0,
+              margin:
+                0,
 
               color:
                 "#0F172A",
@@ -1038,7 +1793,8 @@ export default function Acidentes() {
               color:
                 "#94A3B8",
 
-              fontSize: 12,
+              fontSize:
+                12,
 
               lineHeight:
                 1.5,
@@ -1058,13 +1814,16 @@ export default function Acidentes() {
 
         <div
           style={{
-            width: "100%",
+            width:
+              "100%",
 
-            minWidth: 0,
+            minWidth:
+              0,
 
-            padding: mobile
-              ? 14
-              : 18,
+            padding:
+              mobile
+                ? 14
+                : 18,
 
             boxSizing:
               "border-box",
@@ -1088,7 +1847,8 @@ export default function Acidentes() {
         >
           <div
             style={{
-              display: "flex",
+              display:
+                "flex",
 
               flexDirection:
                 mobilePequeno
@@ -1103,38 +1863,47 @@ export default function Acidentes() {
               justifyContent:
                 "space-between",
 
-              gap: 10,
+              gap:
+                10,
 
               marginBottom:
                 14,
 
-              minWidth: 0,
+              minWidth:
+                0,
             }}
           >
             <div
               style={{
-                display: "flex",
+                display:
+                  "flex",
 
                 alignItems:
                   "center",
 
-                gap: 8,
+                gap:
+                  8,
 
-                minWidth: 0,
+                minWidth:
+                  0,
 
                 color:
                   "#475569",
 
-                fontSize: 12,
+                fontSize:
+                  12,
 
                 fontWeight:
                   700,
               }}
             >
               <SlidersHorizontal
-                size={16}
+                size={
+                  16
+                }
                 style={{
-                  flexShrink: 0,
+                  flexShrink:
+                    0,
                 }}
               />
 
@@ -1154,9 +1923,11 @@ export default function Acidentes() {
                   alignItems:
                     "center",
 
-                  gap: 5,
+                  gap:
+                    5,
 
-                  padding: 0,
+                  padding:
+                    0,
 
                   border:
                     "none",
@@ -1180,7 +1951,11 @@ export default function Acidentes() {
                     "pointer",
                 }}
               >
-                <X size={13} />
+                <X
+                  size={
+                    13
+                  }
+                />
 
                 Limpar filtros
               </button>
@@ -1189,11 +1964,14 @@ export default function Acidentes() {
 
           <div
             style={{
-              width: "100%",
+              width:
+                "100%",
 
-              minWidth: 0,
+              minWidth:
+                0,
 
-              display: "grid",
+              display:
+                "grid",
 
               gridTemplateColumns:
                 mobile
@@ -1202,25 +1980,31 @@ export default function Acidentes() {
                     ? "repeat(2, minmax(0, 1fr))"
                     : "minmax(280px, 2fr) repeat(3, minmax(160px, 1fr))",
 
-              gap: mobile
-                ? 10
-                : 12,
+              gap:
+                mobile
+                  ? 10
+                  : 12,
             }}
           >
             <div
               style={{
-                width: "100%",
+                width:
+                  "100%",
 
-                minWidth: 0,
+                minWidth:
+                  0,
 
-                height: 44,
+                height:
+                  44,
 
-                display: "flex",
+                display:
+                  "flex",
 
                 alignItems:
                   "center",
 
-                gap: 10,
+                gap:
+                  10,
 
                 padding:
                   "0 13px",
@@ -1239,10 +2023,13 @@ export default function Acidentes() {
               }}
             >
               <Search
-                size={17}
+                size={
+                  17
+                }
                 color="#94A3B8"
                 style={{
-                  flexShrink: 0,
+                  flexShrink:
+                    0,
                 }}
               />
 
@@ -1256,17 +2043,22 @@ export default function Acidentes() {
                     ? "Pesquisar ocorrências..."
                     : "Pesquisar funcionário, setor, causa ou risco..."
                 }
-                onChange={(e) =>
+                onChange={(
+                  e
+                ) =>
                   setPesquisa(
                     e.target.value
                   )
                 }
                 style={{
-                  width: "100%",
+                  width:
+                    "100%",
 
-                  minWidth: 0,
+                  minWidth:
+                    0,
 
-                  flex: 1,
+                  flex:
+                    1,
 
                   border:
                     "none",
@@ -1293,10 +2085,11 @@ export default function Acidentes() {
               value={
                 filtroTipo
               }
-              onChange={(e) =>
+              onChange={(
+                e
+              ) =>
                 setFiltroTipo(
-                  e.target
-                    .value as
+                  e.target.value as
                     | TipoOcorrencia
                     | ""
                 )
@@ -1326,10 +2119,11 @@ export default function Acidentes() {
               value={
                 filtroGravidade
               }
-              onChange={(e) =>
+              onChange={(
+                e
+              ) =>
                 setFiltroGravidade(
-                  e.target
-                    .value as
+                  e.target.value as
                     | Gravidade
                     | ""
                 )
@@ -1363,10 +2157,11 @@ export default function Acidentes() {
               value={
                 filtroVinculo
               }
-              onChange={(e) =>
+              onChange={(
+                e
+              ) =>
                 setFiltroVinculo(
-                  e.target
-                    .value as FiltroVinculo
+                  e.target.value as FiltroVinculo
                 )
               }
               style={
@@ -1389,12 +2184,14 @@ export default function Acidentes() {
 
           <div
             style={{
-              marginTop: 11,
+              marginTop:
+                11,
 
               color:
                 "#64748B",
 
-              fontSize: 11,
+              fontSize:
+                11,
 
               lineHeight:
                 1.5,
@@ -1428,8 +2225,46 @@ export default function Acidentes() {
 
         {/* TABELA */}
 
-        {acidentesFiltrados.length ===
-        0 ? (
+        {carregando ? (
+          <div
+            style={{
+              width:
+                "100%",
+
+              padding:
+                mobile
+                  ? "34px 16px"
+                  : "46px 20px",
+
+              boxSizing:
+                "border-box",
+
+              border:
+                "1px solid #E2E8F0",
+
+              borderRadius:
+                14,
+
+              background:
+                "#FFFFFF",
+
+              color:
+                "#64748B",
+
+              fontSize:
+                12,
+
+              fontWeight:
+                600,
+
+              textAlign:
+                "center",
+            }}
+          >
+            Carregando ocorrências...
+          </div>
+        ) : acidentesFiltrados.length ===
+          0 ? (
           <EstadoVazio
             mobile={
               mobile
@@ -1438,12 +2273,14 @@ export default function Acidentes() {
         ) : (
           <div
             style={{
-              width: "100%",
+              width:
+                "100%",
 
               maxWidth:
                 "100%",
 
-              minWidth: 0,
+              minWidth:
+                0,
 
               overflowX:
                 "auto",
@@ -1465,7 +2302,8 @@ export default function Acidentes() {
           >
             <table
               style={{
-                width: "100%",
+                width:
+                  "100%",
 
                 minWidth:
                   mobile
@@ -1515,7 +2353,9 @@ export default function Acidentes() {
 
               <tbody>
                 {acidentesFiltrados.map(
-                  (registro) => {
+                  (
+                    registro
+                  ) => {
                     const risco =
                       buscarRiscoPgr(
                         registro.riscoPgrId
@@ -1569,7 +2409,8 @@ export default function Acidentes() {
                                 alignItems:
                                   "center",
 
-                                gap: 6,
+                                gap:
+                                  6,
 
                                 marginTop:
                                   9,
@@ -1624,7 +2465,8 @@ export default function Acidentes() {
                                 alignItems:
                                   "flex-start",
 
-                                gap: 7,
+                                gap:
+                                  7,
 
                                 color:
                                   "#0F172A",
@@ -1672,7 +2514,8 @@ export default function Acidentes() {
                                 alignItems:
                                   "flex-start",
 
-                                gap: 7,
+                                gap:
+                                  7,
 
                                 marginTop:
                                   6,
@@ -1758,7 +2601,8 @@ export default function Acidentes() {
                                   alignItems:
                                     "flex-start",
 
-                                  gap: 7,
+                                  gap:
+                                    7,
 
                                   color:
                                     "#0F172A",
@@ -1943,7 +2787,8 @@ export default function Acidentes() {
                               justifyContent:
                                 "center",
 
-                              gap: 7,
+                              gap:
+                                7,
 
                               minWidth:
                                 122,
@@ -2045,7 +2890,9 @@ export default function Acidentes() {
       {drawerAberto && (
         <div
           className="acidentes-drawer-overlay"
-          onMouseDown={(e) => {
+          onMouseDown={(
+            e
+          ) => {
             if (
               e.target ===
               e.currentTarget
@@ -2061,7 +2908,9 @@ export default function Acidentes() {
               <div className="acidentes-drawer-header-main">
                 <div className="acidentes-drawer-icon">
                   <Ambulance
-                    size={22}
+                    size={
+                      22
+                    }
                   />
                 </div>
 
@@ -2089,7 +2938,11 @@ export default function Acidentes() {
                   botaoFechar
                 }
               >
-                <X size={19} />
+                <X
+                  size={
+                    19
+                  }
+                />
               </button>
             </header>
 
@@ -2107,7 +2960,9 @@ export default function Acidentes() {
                     value={
                       formulario.data
                     }
-                    onChange={(valor) =>
+                    onChange={(
+                      valor
+                    ) =>
                       setFormulario({
                         ...formulario,
 
@@ -2123,7 +2978,9 @@ export default function Acidentes() {
                     value={
                       formulario.hora
                     }
-                    onChange={(valor) =>
+                    onChange={(
+                      valor
+                    ) =>
                       setFormulario({
                         ...formulario,
 
@@ -2145,7 +3002,9 @@ export default function Acidentes() {
                       "Incidente",
                       "Quase acidente",
                     ]}
-                    onChange={(valor) =>
+                    onChange={(
+                      valor
+                    ) =>
                       setFormulario({
                         ...formulario,
 
@@ -2166,7 +3025,9 @@ export default function Acidentes() {
                       "Grave",
                       "Crítica",
                     ]}
-                    onChange={(valor) =>
+                    onChange={(
+                      valor
+                    ) =>
                       setFormulario({
                         ...formulario,
 
@@ -2188,7 +3049,9 @@ export default function Acidentes() {
                   value={
                     formulario.funcionario
                   }
-                  onChange={(valor) =>
+                  onChange={(
+                    valor
+                  ) =>
                     setFormulario({
                       ...formulario,
 
@@ -2204,7 +3067,9 @@ export default function Acidentes() {
                   value={
                     formulario.setor
                   }
-                  onChange={(valor) =>
+                  onChange={(
+                    valor
+                  ) =>
                     setFormulario({
                       ...formulario,
 
@@ -2225,17 +3090,17 @@ export default function Acidentes() {
                     checked={
                       formulario.afastamento
                     }
-                    onChange={(e) =>
+                    onChange={(
+                      e
+                    ) =>
                       setFormulario({
                         ...formulario,
 
                         afastamento:
-                          e.target
-                            .checked,
+                          e.target.checked,
 
                         diasAfastado:
-                          e.target
-                            .checked
+                          e.target.checked
                             ? formulario.diasAfastado
                             : 0,
                       })
@@ -2249,10 +3114,14 @@ export default function Acidentes() {
                   <Campo
                     label="Dias de afastamento"
                     type="number"
-                    value={String(
-                      formulario.diasAfastado
-                    )}
-                    onChange={(valor) =>
+                    value={
+                      String(
+                        formulario.diasAfastado
+                      )
+                    }
+                    onChange={(
+                      valor
+                    ) =>
                       setFormulario({
                         ...formulario,
 
@@ -2278,7 +3147,9 @@ export default function Acidentes() {
                     "Pendente",
                     "Emitida",
                   ]}
-                  onChange={(valor) =>
+                  onChange={(
+                    valor
+                  ) =>
                     setFormulario({
                       ...formulario,
 
@@ -2299,7 +3170,9 @@ export default function Acidentes() {
                   value={
                     formulario.causa
                   }
-                  onChange={(valor) =>
+                  onChange={(
+                    valor
+                  ) =>
                     setFormulario({
                       ...formulario,
 
@@ -2315,7 +3188,9 @@ export default function Acidentes() {
                   value={
                     formulario.acaoCorretiva
                   }
-                  onChange={(valor) =>
+                  onChange={(
+                    valor
+                  ) =>
                     setFormulario({
                       ...formulario,
 
@@ -2342,7 +3217,9 @@ export default function Acidentes() {
                       formulario.riscoPgrId ??
                       ""
                     }
-                    onChange={(e) =>
+                    onChange={(
+                      e
+                    ) =>
                       selecionarRiscoPgr(
                         e.target.value
                       )
@@ -2356,7 +3233,9 @@ export default function Acidentes() {
                     </option>
 
                     {pgrOrdenado.map(
-                      (risco) => (
+                      (
+                        risco
+                      ) => (
                         <option
                           key={
                             risco.id
@@ -2385,10 +3264,9 @@ export default function Acidentes() {
                 {pgr.length ===
                   0 && (
                   <div className="acidentes-aviso-pgr">
-                    Nenhum risco foi encontrado no
-                    PGR. Cadastre o inventário
-                    primeiro para criar o
-                    relacionamento.
+                    Nenhum risco foi encontrado no PGR.
+                    Cadastre o inventário primeiro para
+                    criar o relacionamento.
                   </div>
                 )}
 
@@ -2452,9 +3330,11 @@ export default function Acidentes() {
 
                       <InfoPgr
                         titulo="Nível"
-                        valor={String(
-                          riscoSelecionado.nivel
-                        )}
+                        valor={
+                          String(
+                            riscoSelecionado.nivel
+                          )
+                        }
                       />
 
                       <InfoPgr
@@ -2501,7 +3381,9 @@ export default function Acidentes() {
                       Abrir inventário do PGR
 
                       <ExternalLink
-                        size={14}
+                        size={
+                          14
+                        }
                       />
                     </button>
                   </div>
@@ -2526,9 +3408,11 @@ export default function Acidentes() {
                   salvarRegistro
                 }
               >
-                {editando
-                  ? "Salvar alterações"
-                  : "Registrar ocorrência"}
+                {salvando
+                  ? "Salvando..."
+                  : editando
+                    ? "Salvar alterações"
+                    : "Registrar ocorrência"}
               </Button>
             </footer>
           </aside>
@@ -2536,7 +3420,9 @@ export default function Acidentes() {
       )}
 
       <style>
-        {estilosResponsivos}
+        {
+          estilosResponsivos
+        }
       </style>
     </main>
   );
@@ -2559,15 +3445,21 @@ function Secao({
     <section className="acidentes-form-secao">
       <div className="acidentes-form-secao-header">
         <h3>
-          {titulo}
+          {
+            titulo
+          }
         </h3>
 
         <p>
-          {descricao}
+          {
+            descricao
+          }
         </p>
       </div>
 
-      {children}
+      {
+        children
+      }
     </section>
   );
 }
@@ -2581,23 +3473,33 @@ function Campo({
 }: {
   label: string;
   value: string;
-  onChange: (valor: string) => void;
+  onChange: (
+    valor: string
+  ) => void;
   placeholder?: string;
   type?: string;
 }) {
   return (
     <div className="acidentes-grupo-campo">
       <label className="acidentes-label">
-        {label}
+        {
+          label
+        }
       </label>
 
       <input
-        type={type}
-        value={value}
+        type={
+          type
+        }
+        value={
+          value
+        }
         placeholder={
           placeholder
         }
-        onChange={(e) =>
+        onChange={(
+          e
+        ) =>
           onChange(
             e.target.value
           )
@@ -2619,17 +3521,25 @@ function SelectCampo({
   label: string;
   value: string;
   options: string[];
-  onChange: (valor: string) => void;
+  onChange: (
+    valor: string
+  ) => void;
 }) {
   return (
     <div className="acidentes-grupo-campo">
       <label className="acidentes-label">
-        {label}
+        {
+          label
+        }
       </label>
 
       <select
-        value={value}
-        onChange={(e) =>
+        value={
+          value
+        }
+        onChange={(
+          e
+        ) =>
           onChange(
             e.target.value
           )
@@ -2639,7 +3549,9 @@ function SelectCampo({
         }
       >
         {options.map(
-          (option) => (
+          (
+            option
+          ) => (
             <option
               key={
                 option
@@ -2648,7 +3560,9 @@ function SelectCampo({
                 option
               }
             >
-              {option}
+              {
+                option
+              }
             </option>
           )
         )}
@@ -2666,21 +3580,31 @@ function CampoTexto({
   label: string;
   placeholder: string;
   value: string;
-  onChange: (valor: string) => void;
+  onChange: (
+    valor: string
+  ) => void;
 }) {
   return (
     <div className="acidentes-grupo-campo">
       <label className="acidentes-label">
-        {label}
+        {
+          label
+        }
       </label>
 
       <textarea
-        rows={4}
-        value={value}
+        rows={
+          4
+        }
+        value={
+          value
+        }
         placeholder={
           placeholder
         }
-        onChange={(e) =>
+        onChange={(
+          e
+        ) =>
           onChange(
             e.target.value
           )
@@ -2718,11 +3642,15 @@ function InfoPgr({
   return (
     <div className="acidentes-info-pgr">
       <div className="acidentes-info-pgr-titulo">
-        {titulo}
+        {
+          titulo
+        }
       </div>
 
       <div className="acidentes-info-pgr-valor">
-        {valor}
+        {
+          valor
+        }
       </div>
     </div>
   );
@@ -2736,16 +3664,19 @@ function EstadoVazio({
   return (
     <div
       style={{
-        width: "100%",
+        width:
+          "100%",
 
-        minWidth: 0,
+        minWidth:
+          0,
 
         minHeight:
           mobile
             ? 220
             : 260,
 
-        display: "flex",
+        display:
+          "flex",
 
         flexDirection:
           "column",
@@ -2756,9 +3687,10 @@ function EstadoVazio({
         justifyContent:
           "center",
 
-        padding: mobile
-          ? "26px 16px"
-          : 30,
+        padding:
+          mobile
+            ? "26px 16px"
+            : 30,
 
         boxSizing:
           "border-box",
@@ -2778,11 +3710,14 @@ function EstadoVazio({
     >
       <div
         style={{
-          width: 54,
+          width:
+            54,
 
-          height: 54,
+          height:
+            54,
 
-          display: "flex",
+          display:
+            "flex",
 
           alignItems:
             "center",
@@ -2804,7 +3739,9 @@ function EstadoVazio({
         }}
       >
         <ShieldCheck
-          size={26}
+          size={
+            26
+          }
         />
       </div>
 
@@ -2883,7 +3820,9 @@ function Th({
           "nowrap",
       }}
     >
-      {children}
+      {
+        children
+      }
     </th>
   );
 }
@@ -2917,7 +3856,9 @@ function Td({
           12,
       }}
     >
-      {children}
+      {
+        children
+      }
     </td>
   );
 }
@@ -2929,7 +3870,9 @@ function Td({
 function formatarData(
   data: string
 ) {
-  if (!data) {
+  if (
+    !data
+  ) {
     return "Sem data";
   }
 
@@ -2937,7 +3880,10 @@ function formatarData(
     ano,
     mes,
     dia,
-  ] = data.split("-");
+  ] =
+    data.split(
+      "-"
+    );
 
   if (
     !ano ||
@@ -2959,7 +3905,8 @@ function dataHoje() {
 
   const mes =
     String(
-      agora.getMonth() + 1
+      agora.getMonth() +
+        1
     ).padStart(
       2,
       "0"
@@ -2981,11 +3928,14 @@ function dataHoje() {
  */
 
 const estiloInput = {
-  width: "100%",
+  width:
+    "100%",
 
-  minWidth: 0,
+  minWidth:
+    0,
 
-  height: 46,
+  height:
+    46,
 
   padding:
     "0 13px",
@@ -3023,9 +3973,11 @@ const estiloSelect = {
 };
 
 const botaoAcao = {
-  width: 36,
+  width:
+    36,
 
-  height: 36,
+  height:
+    36,
 
   display:
     "flex",
@@ -3039,7 +3991,8 @@ const botaoAcao = {
   flexShrink:
     0,
 
-  padding: 0,
+  padding:
+    0,
 
   border:
     "none",
@@ -3052,9 +4005,11 @@ const botaoAcao = {
 };
 
 const botaoFechar = {
-  width: 38,
+  width:
+    38,
 
-  height: 38,
+  height:
+    38,
 
   display:
     "flex",
@@ -3068,7 +4023,8 @@ const botaoFechar = {
   flexShrink:
     0,
 
-  padding: 0,
+  padding:
+    0,
 
   border:
     "1px solid #E2E8F0",
@@ -3087,7 +4043,8 @@ const botaoFechar = {
 };
 
 const botaoSecundario = {
-  height: 42,
+  height:
+    42,
 
   display:
     "flex",
@@ -3095,7 +4052,8 @@ const botaoSecundario = {
   alignItems:
     "center",
 
-  gap: 8,
+  gap:
+    8,
 
   padding:
     "0 14px",
@@ -3126,7 +4084,8 @@ const botaoSecundario = {
 };
 
 const botaoLink = {
-  width: "100%",
+  width:
+    "100%",
 
   display:
     "flex",
@@ -3137,9 +4096,11 @@ const botaoLink = {
   justifyContent:
     "space-between",
 
-  gap: 10,
+  gap:
+    10,
 
-  padding: 0,
+  padding:
+    0,
 
   border:
     "none",
