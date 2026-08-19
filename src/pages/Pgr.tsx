@@ -24,7 +24,7 @@ import PgrDrawer from "../components/pgr/PgrDrawer";
 
 import type { PgrItem } from "../models/Pgr";
 
-const STORAGE = "pgr";
+import { supabase } from "../lib/supabase";
 
 type FiltroCategoria =
   | ""
@@ -38,8 +38,147 @@ type FiltroStatus =
   | ""
   | PgrItem["status"];
 
+interface PgrRow {
+  id: number;
+
+  setor: string;
+
+  atividade: string;
+
+  perigo: string;
+
+  categoria:
+    PgrItem["categoria"];
+
+  probabilidade:
+    PgrItem["probabilidade"];
+
+  severidade:
+    PgrItem["severidade"];
+
+  nivel: number;
+
+  classificacao:
+    PgrItem["classificacao"];
+
+  medida_controle: string;
+
+  responsavel: string;
+
+  prazo: string | null;
+
+  status:
+    PgrItem["status"];
+}
+
+const CAMPOS_PGR = `
+  id,
+  setor,
+  atividade,
+  perigo,
+  categoria,
+  probabilidade,
+  severidade,
+  nivel,
+  classificacao,
+  medida_controle,
+  responsavel,
+  prazo,
+  status
+`;
+
+function converterLinhaPgr(
+  linha: PgrRow
+): PgrItem {
+  return {
+    id: linha.id,
+
+    setor:
+      linha.setor,
+
+    atividade:
+      linha.atividade,
+
+    perigo:
+      linha.perigo,
+
+    categoria:
+      linha.categoria,
+
+    probabilidade:
+      linha.probabilidade,
+
+    severidade:
+      linha.severidade,
+
+    nivel:
+      linha.nivel,
+
+    classificacao:
+      linha.classificacao,
+
+    medidaControle:
+      linha.medida_controle,
+
+    responsavel:
+      linha.responsavel,
+
+    prazo:
+      linha.prazo ?? "",
+
+    status:
+      linha.status,
+  };
+}
+
+function criarPayloadPgr(
+  risco: PgrItem
+) {
+  return {
+    setor:
+      risco.setor,
+
+    atividade:
+      risco.atividade,
+
+    perigo:
+      risco.perigo,
+
+    categoria:
+      risco.categoria,
+
+    probabilidade:
+      risco.probabilidade,
+
+    severidade:
+      risco.severidade,
+
+    nivel:
+      risco.nivel,
+
+    classificacao:
+      risco.classificacao,
+
+    medida_controle:
+      risco.medidaControle,
+
+    responsavel:
+      risco.responsavel,
+
+    prazo:
+      risco.prazo ||
+      null,
+
+    status:
+      risco.status,
+  };
+}
+
 function useViewportWidth() {
-  const [largura, setLargura] =
+  const [
+    largura,
+    setLargura,
+  ] =
     useState(() =>
       typeof window !== "undefined"
         ? window.innerWidth
@@ -87,34 +226,61 @@ export default function Pgr() {
   const telaMedia =
     largura <= 1150;
 
-  const [riscos, setRiscos] =
-    useState<PgrItem[]>([]);
+  const [
+    riscos,
+    setRiscos,
+  ] =
+    useState<PgrItem[]>(
+      []
+    );
 
-  const [pesquisa, setPesquisa] =
+  const [
+    carregando,
+    setCarregando,
+  ] =
+    useState(true);
+
+  const [
+    erroBanco,
+    setErroBanco,
+  ] =
+    useState("");
+
+  const [
+    pesquisa,
+    setPesquisa,
+  ] =
     useState("");
 
   const [
     filtroCategoria,
     setFiltroCategoria,
   ] =
-    useState<FiltroCategoria>("");
+    useState<FiltroCategoria>(
+      ""
+    );
 
   const [
     filtroClassificacao,
     setFiltroClassificacao,
   ] =
-    useState<FiltroClassificacao>("");
+    useState<FiltroClassificacao>(
+      ""
+    );
 
   const [
     filtroStatus,
     setFiltroStatus,
   ] =
-    useState<FiltroStatus>("");
+    useState<FiltroStatus>(
+      ""
+    );
 
   const [
     drawerAberto,
     setDrawerAberto,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     editando,
@@ -125,37 +291,82 @@ export default function Pgr() {
     );
 
   /*
-   * CARREGAR PGR
+   * CARREGAR PGR DO SUPABASE
    */
   useEffect(() => {
-    const dados =
-      localStorage.getItem(STORAGE);
+    let componenteAtivo =
+      true;
 
-    if (!dados) {
-      return;
+    async function carregarPgr() {
+      setCarregando(true);
+
+      setErroBanco("");
+
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("pgr")
+          .select(
+            CAMPOS_PGR
+          )
+          .order(
+            "id",
+            {
+              ascending: true,
+            }
+          );
+
+      if (
+        !componenteAtivo
+      ) {
+        return;
+      }
+
+      if (error) {
+        console.error(
+          "Erro ao carregar PGR:",
+          error
+        );
+
+        setRiscos(
+          []
+        );
+
+        setErroBanco(
+          "Não foi possível carregar o inventário de riscos."
+        );
+
+        setCarregando(
+          false
+        );
+
+        return;
+      }
+
+      const linhas =
+        (data ??
+          []) as PgrRow[];
+
+      setRiscos(
+        linhas.map(
+          converterLinhaPgr
+        )
+      );
+
+      setCarregando(
+        false
+      );
     }
 
-    try {
-      const lista =
-        JSON.parse(
-          dados
-        ) as PgrItem[];
+    void carregarPgr();
 
-      setRiscos(lista);
-    } catch {
-      setRiscos([]);
-    }
+    return () => {
+      componenteAtivo =
+        false;
+    };
   }, []);
-
-  /*
-   * SALVAR PGR
-   */
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE,
-      JSON.stringify(riscos)
-    );
-  }, [riscos]);
 
   /*
    * FILTROS
@@ -254,7 +465,11 @@ export default function Pgr() {
   function abrirNovoRisco() {
     setEditando(null);
 
-    setDrawerAberto(true);
+    setErroBanco("");
+
+    setDrawerAberto(
+      true
+    );
   }
 
   /*
@@ -263,15 +478,21 @@ export default function Pgr() {
   function editarRisco(
     item: PgrItem
   ) {
-    setEditando(item);
+    setEditando(
+      item
+    );
 
-    setDrawerAberto(true);
+    setErroBanco("");
+
+    setDrawerAberto(
+      true
+    );
   }
 
   /*
    * EXCLUIR RISCO
    */
-  function excluirRisco(
+  async function excluirRisco(
     id: number
   ) {
     const confirmar =
@@ -283,11 +504,40 @@ export default function Pgr() {
       return;
     }
 
+    setErroBanco("");
+
+    const {
+      error,
+    } =
+      await supabase
+        .from("pgr")
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+    if (error) {
+      console.error(
+        "Erro ao excluir risco:",
+        error
+      );
+
+      setErroBanco(
+        "Não foi possível excluir o risco."
+      );
+
+      return;
+    }
+
     setRiscos(
-      (listaAtual) =>
+      (
+        listaAtual
+      ) =>
         listaAtual.filter(
           (risco) =>
-            risco.id !== id
+            risco.id !==
+            id
         )
     );
   }
@@ -295,48 +545,150 @@ export default function Pgr() {
   /*
    * SALVAR RISCO
    */
-  function salvarRisco(
+  async function salvarRisco(
     risco: PgrItem
   ) {
+    setErroBanco("");
+
+    const payload =
+      criarPayloadPgr(
+        risco
+      );
+
+    /*
+     * EDIÇÃO
+     */
     if (editando) {
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("pgr")
+          .update(
+            payload
+          )
+          .eq(
+            "id",
+            risco.id
+          )
+          .select(
+            CAMPOS_PGR
+          )
+          .single();
+
+      if (
+        error ||
+        !data
+      ) {
+        console.error(
+          "Erro ao atualizar risco:",
+          error
+        );
+
+        setErroBanco(
+          "Não foi possível atualizar o risco."
+        );
+
+        return;
+      }
+
+      const riscoAtualizado =
+        converterLinhaPgr(
+          data as PgrRow
+        );
+
       setRiscos(
-        (listaAtual) =>
+        (
+          listaAtual
+        ) =>
           listaAtual.map(
             (item) =>
               item.id ===
-              risco.id
-                ? risco
+              riscoAtualizado.id
+                ? riscoAtualizado
                 : item
           )
       );
-    } else {
-      const novoRisco: PgrItem =
-        {
-          ...risco,
 
-          id: Date.now(),
-        };
-
-      setRiscos(
-        (listaAtual) => [
-          ...listaAtual,
-          novoRisco,
-        ]
+      setDrawerAberto(
+        false
       );
+
+      setEditando(
+        null
+      );
+
+      return;
     }
 
-    setDrawerAberto(false);
+    /*
+     * NOVO REGISTRO
+     */
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from("pgr")
+        .insert(
+          payload
+        )
+        .select(
+          CAMPOS_PGR
+        )
+        .single();
 
-    setEditando(null);
+    if (
+      error ||
+      !data
+    ) {
+      console.error(
+        "Erro ao cadastrar risco:",
+        error
+      );
+
+      setErroBanco(
+        "Não foi possível cadastrar o risco."
+      );
+
+      return;
+    }
+
+    const novoRisco =
+      converterLinhaPgr(
+        data as PgrRow
+      );
+
+    setRiscos(
+      (
+        listaAtual
+      ) => [
+        ...listaAtual,
+        novoRisco,
+      ]
+    );
+
+    setDrawerAberto(
+      false
+    );
+
+    setEditando(
+      null
+    );
   }
 
   /*
    * FECHAR DRAWER
    */
   function fecharDrawer() {
-    setDrawerAberto(false);
+    setDrawerAberto(
+      false
+    );
 
-    setEditando(null);
+    setEditando(
+      null
+    );
   }
 
   /*
@@ -386,7 +738,8 @@ export default function Pgr() {
         >
           <span
             style={{
-              display: "flex",
+              display:
+                "flex",
 
               alignItems:
                 "center",
@@ -397,12 +750,126 @@ export default function Pgr() {
               gap: 8,
             }}
           >
-            <Plus size={18} />
+            <Plus
+              size={18}
+            />
 
             Novo Risco
           </span>
         </Button>
       </PageHeader>
+
+      {/* ERRO DO BANCO */}
+
+      {erroBanco && (
+        <div
+          role="alert"
+          style={{
+            width: "100%",
+
+            display: "flex",
+
+            alignItems:
+              "flex-start",
+
+            justifyContent:
+              "space-between",
+
+            gap: 14,
+
+            marginBottom: 20,
+
+            padding:
+              "13px 15px",
+
+            boxSizing:
+              "border-box",
+
+            border:
+              "1px solid #FECACA",
+
+            borderRadius:
+              12,
+
+            background:
+              "#FEF2F2",
+
+            color:
+              "#B91C1C",
+
+            fontSize: 12,
+
+            fontWeight:
+              650,
+
+            lineHeight:
+              1.5,
+          }}
+        >
+          <div
+            style={{
+              display:
+                "flex",
+
+              alignItems:
+                "flex-start",
+
+              gap: 9,
+            }}
+          >
+            <TriangleAlert
+              size={17}
+              style={{
+                flexShrink: 0,
+
+                marginTop: 1,
+              }}
+            />
+
+            <span>
+              {erroBanco}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setErroBanco("")
+            }
+            aria-label="Fechar aviso"
+            style={{
+              display:
+                "flex",
+
+              alignItems:
+                "center",
+
+              justifyContent:
+                "center",
+
+              flexShrink: 0,
+
+              padding: 2,
+
+              border:
+                "none",
+
+              background:
+                "transparent",
+
+              color:
+                "#B91C1C",
+
+              cursor:
+                "pointer",
+            }}
+          >
+            <X
+              size={16}
+            />
+          </button>
+        </div>
+      )}
 
       {/* INDICADORES */}
 
@@ -530,7 +997,8 @@ export default function Pgr() {
 
             <div
               style={{
-                display: "flex",
+                display:
+                  "flex",
 
                 flexDirection:
                   mobilePequeno
@@ -559,7 +1027,8 @@ export default function Pgr() {
             >
               <div
                 style={{
-                  display: "flex",
+                  display:
+                    "flex",
 
                   alignItems:
                     "center",
@@ -576,14 +1045,16 @@ export default function Pgr() {
                   fontWeight:
                     700,
 
-                  lineHeight: 1.4,
+                  lineHeight:
+                    1.4,
                 }}
               >
                 <SlidersHorizontal
                   size={17}
                   color="#64748B"
                   style={{
-                    flexShrink: 0,
+                    flexShrink:
+                      0,
                   }}
                 />
 
@@ -599,7 +1070,8 @@ export default function Pgr() {
                     limparFiltros
                   }
                   style={{
-                    display: "flex",
+                    display:
+                      "flex",
 
                     alignItems:
                       "center",
@@ -608,7 +1080,8 @@ export default function Pgr() {
 
                     padding: 0,
 
-                    border: "none",
+                    border:
+                      "none",
 
                     background:
                       "transparent",
@@ -616,7 +1089,8 @@ export default function Pgr() {
                     color:
                       "#2563EB",
 
-                    fontSize: 12,
+                    fontSize:
+                      12,
 
                     fontWeight:
                       700,
@@ -628,7 +1102,9 @@ export default function Pgr() {
                       "pointer",
                   }}
                 >
-                  <X size={14} />
+                  <X
+                    size={14}
+                  />
 
                   Limpar filtros
                 </button>
@@ -643,7 +1119,8 @@ export default function Pgr() {
 
                 minWidth: 0,
 
-                display: "grid",
+                display:
+                  "grid",
 
                 gridTemplateColumns:
                   mobile
@@ -661,13 +1138,17 @@ export default function Pgr() {
 
               <div
                 style={{
-                  width: "100%",
+                  width:
+                    "100%",
 
-                  minWidth: 0,
+                  minWidth:
+                    0,
 
-                  height: 44,
+                  height:
+                    44,
 
-                  display: "flex",
+                  display:
+                    "flex",
 
                   alignItems:
                     "center",
@@ -694,7 +1175,8 @@ export default function Pgr() {
                   size={17}
                   color="#94A3B8"
                   style={{
-                    flexShrink: 0,
+                    flexShrink:
+                      0,
                   }}
                 />
 
@@ -714,9 +1196,11 @@ export default function Pgr() {
                     )
                   }
                   style={{
-                    width: "100%",
+                    width:
+                      "100%",
 
-                    minWidth: 0,
+                    minWidth:
+                      0,
 
                     border:
                       "none",
@@ -730,7 +1214,8 @@ export default function Pgr() {
                     color:
                       "#0F172A",
 
-                    fontSize: 13,
+                    fontSize:
+                      13,
 
                     fontFamily:
                       "inherit",
@@ -854,17 +1339,20 @@ export default function Pgr() {
 
             <div
               style={{
-                marginTop: 12,
+                marginTop:
+                  12,
 
                 color:
                   "#64748B",
 
-                fontSize: 11,
+                fontSize:
+                  11,
 
                 fontWeight:
                   600,
 
-                lineHeight: 1.5,
+                lineHeight:
+                  1.5,
               }}
             >
               Exibindo{" "}
@@ -895,31 +1383,71 @@ export default function Pgr() {
 
           {/* TABELA */}
 
-          <div
-            style={{
-              width: "100%",
+          {carregando ? (
+            <div
+              style={{
+                width:
+                  "100%",
 
-              minWidth: 0,
+                padding:
+                  "42px 20px",
 
-              overflowX:
-                "auto",
+                boxSizing:
+                  "border-box",
 
-              WebkitOverflowScrolling:
-                "touch",
-            }}
-          >
-            <PgrTable
-              riscos={
-                riscosFiltrados
-              }
-              onEditar={
-                editarRisco
-              }
-              onExcluir={
-                excluirRisco
-              }
-            />
-          </div>
+                border:
+                  "1px solid #E2E8F0",
+
+                borderRadius:
+                  12,
+
+                background:
+                  "#FFFFFF",
+
+                color:
+                  "#64748B",
+
+                fontSize:
+                  12,
+
+                fontWeight:
+                  600,
+
+                textAlign:
+                  "center",
+              }}
+            >
+              Carregando inventário de riscos...
+            </div>
+          ) : (
+            <div
+              style={{
+                width:
+                  "100%",
+
+                minWidth:
+                  0,
+
+                overflowX:
+                  "auto",
+
+                WebkitOverflowScrolling:
+                  "touch",
+              }}
+            >
+              <PgrTable
+                riscos={
+                  riscosFiltrados
+                }
+                onEditar={
+                  editarRisco
+                }
+                onExcluir={
+                  excluirRisco
+                }
+              />
+            </div>
+          )}
         </Section>
       </div>
 
@@ -959,7 +1487,8 @@ const estiloSelect = {
   border:
     "1px solid #CBD5E1",
 
-  borderRadius: 10,
+  borderRadius:
+    10,
 
   background:
     "#FFFFFF",
@@ -970,9 +1499,11 @@ const estiloSelect = {
   fontFamily:
     "inherit",
 
-  fontSize: 12,
+  fontSize:
+    12,
 
-  fontWeight: 600,
+  fontWeight:
+    600,
 
   outline:
     "none",
