@@ -18,11 +18,14 @@ import {
   Activity,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 
 import type { LucideIcon } from "lucide-react";
 
 import { colors } from "../styles/theme";
+
+import { useAuth } from "../contexts/AuthContext";
 
 interface MenuItem {
   nome: string;
@@ -560,9 +563,267 @@ function ConteudoSidebar({
   mobile?: boolean;
   onNavigate?: () => void;
 }) {
+  const {
+    user,
+    sair,
+  } = useAuth();
+
+  const [
+    saindo,
+    setSaindo,
+  ] = useState(false);
+
+  const [
+    erroSair,
+    setErroSair,
+  ] = useState("");
+
+  const [
+    confirmarSaida,
+    setConfirmarSaida,
+  ] = useState(false);
+
+  const nomeUsuario =
+    typeof user?.user_metadata?.full_name === "string" &&
+    user.user_metadata.full_name.trim()
+      ? user.user_metadata.full_name.trim()
+      : "Usuário";
+
+  const emailUsuario =
+    user?.email ?? "";
+
+  async function handleSair() {
+    setSaindo(true);
+    setErroSair("");
+
+    const resultado =
+      await sair();
+
+    if (resultado.error) {
+      setErroSair(
+        "Não foi possível encerrar a sessão."
+      );
+
+      setSaindo(false);
+
+      return;
+    }
+
+    onNavigate?.();
+  }
+
   return (
     <>
       {/* LOGO */}
+
+      {confirmarSaida && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      zIndex: 9999,
+
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+
+      padding: 20,
+
+      background:
+        "rgba(15, 23, 42, 0.58)",
+
+      backdropFilter:
+        "blur(4px)",
+    }}
+    onClick={() =>
+      setConfirmarSaida(false)
+    }
+  >
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmar-saida-titulo"
+      onClick={(event) =>
+        event.stopPropagation()
+      }
+      style={{
+        width: "100%",
+        maxWidth: 390,
+
+        padding: 24,
+
+        border:
+          "1px solid #E2E8F0",
+
+        borderRadius: 18,
+
+        background:
+          "#FFFFFF",
+
+        boxShadow:
+          "0 24px 70px rgba(15, 23, 42, 0.28)",
+      }}
+    >
+      <div
+        style={{
+          width: 48,
+          height: 48,
+
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+
+          borderRadius: 14,
+
+          background:
+            "#FEF2F2",
+
+          color:
+            "#DC2626",
+        }}
+      >
+        <LogOut
+          size={23}
+        />
+      </div>
+
+      <h3
+        id="confirmar-saida-titulo"
+        style={{
+          margin:
+            "18px 0 0",
+
+          color:
+            "#0F172A",
+
+          fontSize: 19,
+          fontWeight: 800,
+
+          letterSpacing:
+            "-0.3px",
+        }}
+      >
+        Sair da conta?
+      </h3>
+
+      <p
+        style={{
+          margin:
+            "8px 0 0",
+
+          color:
+            "#64748B",
+
+          fontSize: 12,
+          lineHeight: 1.6,
+        }}
+      >
+        Tem certeza que deseja
+        sair do SafeKitchen?
+        Você precisará entrar
+        novamente para acessar
+        o sistema.
+      </p>
+
+      <div
+        style={{
+          display: "grid",
+
+          gridTemplateColumns:
+            "1fr 1fr",
+
+          gap: 10,
+
+          marginTop: 24,
+        }}
+      >
+        <button
+          type="button"
+          onClick={() =>
+            setConfirmarSaida(
+              false
+            )
+          }
+          disabled={saindo}
+          style={{
+            minHeight: 43,
+
+            border:
+              "1px solid #CBD5E1",
+
+            borderRadius: 10,
+
+            background:
+              "#FFFFFF",
+
+            color:
+              "#334155",
+
+            fontSize: 12,
+            fontWeight: 700,
+
+            cursor:
+              "pointer",
+          }}
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          onClick={async () => {
+            await handleSair();
+
+            setConfirmarSaida(
+              false
+            );
+          }}
+          disabled={saindo}
+          style={{
+            minHeight: 43,
+
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+
+            gap: 7,
+
+            border: "none",
+
+            borderRadius: 10,
+
+            background:
+              "#DC2626",
+
+            color:
+              "#FFFFFF",
+
+            fontSize: 12,
+            fontWeight: 750,
+
+            cursor:
+              saindo
+                ? "not-allowed"
+                : "pointer",
+
+            opacity:
+              saindo
+                ? 0.65
+                : 1,
+          }}
+        >
+          <LogOut
+            size={15}
+          />
+
+          {saindo
+            ? "Saindo..."
+            : "Sim, sair"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       <div
         style={{
@@ -1021,6 +1282,136 @@ function ConteudoSidebar({
           )
         )}
       </nav>
+
+            {/* USUÁRIO LOGADO */}
+
+            <div
+        style={{
+          padding: "14px 18px",
+          borderTop: "1px solid #1E293B",
+        }}
+      >
+        <div
+          style={{
+            padding: 12,
+            border: "1px solid #26364D",
+            borderRadius: 12,
+            background: "rgba(30, 41, 59, 0.7)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              minWidth: 0,
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                borderRadius: 10,
+                background: "rgba(37, 99, 235, 0.16)",
+                color: "#60A5FA",
+                fontSize: 14,
+                fontWeight: 800,
+                textTransform: "uppercase",
+              }}
+            >
+              {nomeUsuario.charAt(0)}
+            </div>
+
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+              }}
+            >
+              <div
+                style={{
+                  color: "#E2E8F0",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                title={nomeUsuario}
+              >
+                {nomeUsuario}
+              </div>
+
+              <div
+                style={{
+                  marginTop: 2,
+                  color: "#64748B",
+                  fontSize: 9,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                title={emailUsuario}
+              >
+                {emailUsuario}
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setConfirmarSaida(true)
+            }
+            disabled={saindo}
+            style={{
+              width: "100%",
+              minHeight: 39,
+              marginTop: 11,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              border: "1px solid #334155",
+              borderRadius: 9,
+              background: "#1E293B",
+              color: "#CBD5E1",
+              fontSize: 11,
+              fontWeight: 700,
+              cursor: saindo
+                ? "not-allowed"
+                : "pointer",
+              opacity: saindo
+                ? 0.6
+                : 1,
+            }}
+          >
+            <LogOut size={15} />
+
+            {saindo
+              ? "Saindo..."
+              : "Sair da conta"}
+          </button>
+
+          {erroSair && (
+            <div
+              style={{
+                marginTop: 8,
+                color: "#FCA5A5",
+                fontSize: 9,
+                lineHeight: 1.4,
+                textAlign: "center",
+              }}
+            >
+              {erroSair}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* RODAPÉ */}
 
