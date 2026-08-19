@@ -1,4 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import {
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import Sidebar from "../components/Sidebar";
 
@@ -13,40 +16,98 @@ import Auditorias from "../pages/Auditorias";
 
 export default function AppRoutes() {
   return (
-    <div style={{ display: "flex" }}>
+    <div
+      style={{
+        width: "100%",
+        minWidth: 0,
+        minHeight: "100vh",
+
+        display: "flex",
+        alignItems: "stretch",
+
+        background:
+          "#F8FAFC",
+
+        overflowX:
+          "hidden",
+      }}
+    >
       <Sidebar />
 
       <div
         style={{
-          flex: 1,
-          background: "#f8fafc",
-          minHeight: "100vh",
+          flex: "1 1 0",
+
+          minWidth: 0,
+
+          minHeight:
+            "100vh",
+
+          position:
+            "relative",
+
+          background:
+            "#F8FAFC",
+
+          overflowX:
+            "hidden",
         }}
       >
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route
+            path="/"
+            element={
+              <Dashboard />
+            }
+          />
 
-          <Route path="/pgr" element={<Pgr />} />
+          <Route
+            path="/pgr"
+            element={
+              <Pgr />
+            }
+          />
 
-          <Route path="/riscos" element={<Riscos />} />
+          <Route
+            path="/riscos"
+            element={
+              <Riscos />
+            }
+          />
 
           <Route
             path="/acidentes"
-            element={<Acidentes />}
+            element={
+              <Acidentes />
+            }
           />
 
-          <Route path="/epis" element={<Epis />} />
+          <Route
+            path="/epis"
+            element={
+              <Epis />
+            }
+          />
 
           <Route
             path="/checklists"
-            element={<Checklists />}
+            element={
+              <Checklists />
+            }
           />
 
-          <Route path="/dds" element={<DDS />} />
+          <Route
+            path="/dds"
+            element={
+              <DDS />
+            }
+          />
 
           <Route
             path="/auditorias"
-            element={<Auditorias />}
+            element={
+              <Auditorias />
+            }
           />
         </Routes>
       </div>

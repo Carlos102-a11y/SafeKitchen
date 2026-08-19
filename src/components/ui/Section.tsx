@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { colors, shadow, radius } from "../../styles/theme";
 
 interface SectionProps {

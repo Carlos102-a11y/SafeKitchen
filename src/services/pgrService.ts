@@ -1,4 +1,4 @@
-import { PgrItem } from "../models/Pgr";
+import type { PgrItem } from "../models/Pgr";
 
 const STORAGE = "pgr";
 

@@ -1,50 +1,44 @@
-import { ReactNode } from "react";
-import { colors } from "../../styles/theme";
+import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
+
+import styles from "./PageHeader.module.css";
 
 interface PageHeaderProps {
   title: string;
-  subtitle: string;
-  action?: ReactNode;
+  subtitle?: string;
+  icon: LucideIcon;
+  children?: ReactNode;
 }
 
 export default function PageHeader({
   title,
   subtitle,
-  action,
+  icon: Icon,
+  children,
 }: PageHeaderProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "28px",
-        flexWrap: "wrap",
-        gap: "16px",
-      }}
-    >
-      <div>
-        <h1
-          style={{
-            margin: 0,
-            fontSize: "34px",
-            color: colors.title,
-          }}
-        >
-          {title}
-        </h1>
+    <header className={styles.container}>
+      <div className={styles.content}>
+        <div className={styles.iconBox}>
+          <Icon size={30} />
+        </div>
 
-        <p
-          style={{
-            marginTop: "8px",
-            color: colors.textLight,
-          }}
-        >
-          {subtitle}
-        </p>
+        <div>
+          <h1 className={styles.title}>
+            {title}
+          </h1>
+
+          {subtitle && (
+            <p className={styles.subtitle}>
+              {subtitle}
+            </p>
+          )}
+        </div>
       </div>
 
-      {action}
-    </div>
+      <div className={styles.actions}>
+        {children}
+      </div>
+    </header>
   );
 }
