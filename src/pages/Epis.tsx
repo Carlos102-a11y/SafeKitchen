@@ -28,6 +28,8 @@ import StatCard from "../components/ui/StatCard";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 
+import { supabase } from "../lib/supabase";
+
 interface Epi {
   id: number;
   nome: string;
@@ -44,8 +46,6 @@ type FiltroSituacao =
   | "vencido"
   | "proximo-vencimento";
 
-const STORAGE = "epis";
-
 const epiInicial: Epi = {
   id: 0,
   nome: "",
@@ -53,38 +53,6 @@ const epiInicial: Epi = {
   quantidade: 1,
   validade: "",
 };
-
-function carregarEpis(): Epi[] {
-  try {
-    const dados =
-      localStorage.getItem(
-        STORAGE
-      );
-
-    if (!dados) {
-      return [
-        {
-          id: 1,
-          nome: "Luva Térmica",
-          ca: "12345",
-          quantidade: 20,
-          validade: "2027-12-31",
-        },
-      ];
-    }
-
-    const convertido =
-      JSON.parse(dados);
-
-    return Array.isArray(
-      convertido
-    )
-      ? convertido
-      : [];
-  } catch {
-    return [];
-  }
-}
 
 function useViewportWidth() {
   const [largura, setLargura] =
@@ -140,9 +108,7 @@ export default function Epis() {
     epis,
     setEpis,
   ] =
-    useState<Epi[]>(
-      carregarEpis
-    );
+    useState<Epi[]>([]);
 
   const [
     pesquisa,
@@ -179,15 +145,53 @@ export default function Epis() {
     );
 
   /*
-   * PERSISTÊNCIA
+   * CARREGAR EPIs DO SUPABASE
    */
 
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE,
-      JSON.stringify(epis)
-    );
-  }, [epis]);
+    let componenteAtivo = true;
+
+    async function carregarEpis() {
+      const { data, error } =
+        await supabase
+          .from("epis")
+          .select(
+            "id, nome, ca, quantidade, validade"
+          )
+          .order("id", {
+            ascending: true,
+          });
+
+      if (!componenteAtivo) {
+        return;
+      }
+
+      if (error) {
+        console.error(
+          "Erro ao carregar EPIs:",
+          error
+        );
+
+        setEpis([]);
+
+        window.alert(
+          "Não foi possível carregar os EPIs."
+        );
+
+        return;
+      }
+
+      setEpis(
+        (data ?? []) as Epi[]
+      );
+    }
+
+    void carregarEpis();
+
+    return () => {
+      componenteAtivo = false;
+    };
+  }, []);
 
   /*
    * DRAWER
@@ -369,7 +373,7 @@ export default function Epis() {
     });
   }
 
-  function salvarEpi() {
+  async function salvarEpi() {
     if (
       !formulario.nome.trim()
     ) {
@@ -390,22 +394,103 @@ export default function Epis() {
       return;
     }
 
+    if (
+      !formulario.validade
+    ) {
+      window.alert(
+        "Informe a data de validade."
+      );
+
+      return;
+    }
+
+    if (
+      !Number.isFinite(
+        formulario.quantidade
+      ) ||
+      formulario.quantidade < 0
+    ) {
+      window.alert(
+        "Informe uma quantidade válida."
+      );
+
+      return;
+    }
+
+    const payload = {
+      nome: formulario.nome.trim(),
+      ca: formulario.ca.trim(),
+      quantidade: Math.trunc(
+        Math.max(
+          0,
+          formulario.quantidade
+        )
+      ),
+      validade: formulario.validade,
+    };
+
     if (editando) {
+      const { data, error } =
+        await supabase
+          .from("epis")
+          .update(payload)
+          .eq("id", editando.id)
+          .select(
+            "id, nome, ca, quantidade, validade"
+          )
+          .single();
+
+      if (error || !data) {
+        console.error(
+          "Erro ao atualizar EPI:",
+          error
+        );
+
+        window.alert(
+          "Não foi possível atualizar o EPI."
+        );
+
+        return;
+      }
+
+      const epiAtualizado =
+        data as Epi;
+
       setEpis(
         (listaAtual) =>
           listaAtual.map(
             (epi) =>
               epi.id ===
-              formulario.id
-                ? formulario
+              epiAtualizado.id
+                ? epiAtualizado
                 : epi
           )
       );
     } else {
-      const novoEpi: Epi = {
-        ...formulario,
-        id: Date.now(),
-      };
+      const { data, error } =
+        await supabase
+          .from("epis")
+          .insert(payload)
+          .select(
+            "id, nome, ca, quantidade, validade"
+          )
+          .single();
+
+      if (error || !data) {
+        console.error(
+          "Erro ao cadastrar EPI:",
+          error
+        );
+
+        window.alert(
+          "Não foi possível cadastrar o EPI."
+        );
+
+        return;
+      }
+
+      const novoEpi =
+        data as Epi;
 
       setEpis(
         (listaAtual) => [
@@ -418,7 +503,7 @@ export default function Epis() {
     fecharDrawer();
   }
 
-  function excluirEpi(
+  async function excluirEpi(
     id: number
   ) {
     const confirmar =
@@ -427,6 +512,25 @@ export default function Epis() {
       );
 
     if (!confirmar) {
+      return;
+    }
+
+    const { error } =
+      await supabase
+        .from("epis")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+      console.error(
+        "Erro ao excluir EPI:",
+        error
+      );
+
+      window.alert(
+        "Não foi possível excluir o EPI."
+      );
+
       return;
     }
 
