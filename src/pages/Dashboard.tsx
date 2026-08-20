@@ -39,6 +39,7 @@ import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 
 import { gerarPDF } from "../utils/pdf";
+import { supabase } from "../lib/supabase";
 
 import type { PgrItem } from "../models/Pgr";
 
@@ -116,28 +117,6 @@ const coresRisco: Record<
   Crítico: "#DC2626",
 };
 
-function lerStorage<T>(
-  chave: string
-): T[] {
-  try {
-    const dados =
-      localStorage.getItem(chave);
-
-    if (!dados) {
-      return [];
-    }
-
-    const convertido =
-      JSON.parse(dados);
-
-    return Array.isArray(convertido)
-      ? convertido
-      : [];
-  } catch {
-    return [];
-  }
-}
-
 function useViewportWidth() {
   const [largura, setLargura] =
     useState(() =>
@@ -189,41 +168,249 @@ export default function Dashboard() {
   const telaMedia =
     largura <= 1100;
 
-  const [pgr] =
-    useState<PgrItem[]>(() =>
-      lerStorage<PgrItem>("pgr")
+  const [
+    pgr,
+    setPgr,
+  ] = useState<PgrItem[]>([]);
+
+  const [
+    epis,
+    setEpis,
+  ] = useState<EpiItem[]>([]);
+
+  const [
+    checklists,
+    setChecklists,
+  ] =
+    useState<ChecklistItem[]>([]);
+
+  const [
+    dds,
+    setDds,
+  ] = useState<DDSItem[]>([]);
+
+  const [
+    auditorias,
+    setAuditorias,
+  ] =
+    useState<AuditoriaItem[]>([]);
+
+  const [
+    acidentes,
+    setAcidentes,
+  ] =
+    useState<AcidenteItem[]>([]);
+
+  const [
+    carregando,
+    setCarregando,
+  ] = useState(true);
+
+  const [
+    erroBanco,
+    setErroBanco,
+  ] =
+    useState<string | null>(
+      null
     );
 
-  const [epis] =
-    useState<EpiItem[]>(() =>
-      lerStorage<EpiItem>("epis")
-    );
+  /*
+   * SUPABASE
+   */
 
-  const [checklists] =
-    useState<ChecklistItem[]>(() =>
-      lerStorage<ChecklistItem>(
-        "checklists"
-      )
-    );
+  useEffect(() => {
+    let componenteAtivo = true;
 
-  const [dds] =
-    useState<DDSItem[]>(() =>
-      lerStorage<DDSItem>("dds")
-    );
+    async function carregarDashboard() {
+      setCarregando(true);
+      setErroBanco(null);
 
-  const [auditorias] =
-    useState<AuditoriaItem[]>(() =>
-      lerStorage<AuditoriaItem>(
-        "auditorias"
-      )
-    );
+      const [
+        respostaPgr,
+        respostaEpis,
+        respostaChecklists,
+        respostaDds,
+        respostaAuditorias,
+        respostaAcidentes,
+      ] = await Promise.all([
+        supabase
+          .from("pgr")
+          .select(
+            "id, setor, atividade, perigo, categoria, probabilidade, severidade, nivel, classificacao, medida_controle, responsavel, prazo, status"
+          )
+          .order("id", {
+            ascending: true,
+          }),
 
-  const [acidentes] =
-    useState<AcidenteItem[]>(() =>
-      lerStorage<AcidenteItem>(
-        "acidentes"
-      )
-    );
+        supabase
+          .from("epis")
+          .select(
+            "id, nome, quantidade, validade"
+          )
+          .order("id", {
+            ascending: true,
+          }),
+
+        supabase
+          .from("checklists")
+          .select(
+            "id, data, setor, epis, piso, extintor, exaustao, iluminacao, facas, quimicos, emergencia"
+          )
+          .order("id", {
+            ascending: true,
+          }),
+
+        supabase
+          .from("dds")
+          .select(
+            "id, data, tema, participantes, duracao"
+          )
+          .order("id", {
+            ascending: true,
+          }),
+
+        supabase
+          .from("auditorias")
+          .select(
+            "id, data, setor, conformidade, nao_conformidades, prazo, status"
+          )
+          .order("id", {
+            ascending: true,
+          }),
+
+        supabase
+          .from("acidentes")
+          .select(
+            "id, data, funcionario, setor, tipo, gravidade, afastamento"
+          )
+          .order("id", {
+            ascending: true,
+          }),
+      ]);
+
+      if (!componenteAtivo) {
+        return;
+      }
+
+      const algumErro =
+        respostaPgr.error ||
+        respostaEpis.error ||
+        respostaChecklists.error ||
+        respostaDds.error ||
+        respostaAuditorias.error ||
+        respostaAcidentes.error;
+
+      if (algumErro) {
+        console.error(
+          "Erro ao carregar Dashboard:",
+          {
+            pgr: respostaPgr.error,
+            epis: respostaEpis.error,
+            checklists:
+              respostaChecklists.error,
+            dds: respostaDds.error,
+            auditorias:
+              respostaAuditorias.error,
+            acidentes:
+              respostaAcidentes.error,
+          }
+        );
+
+        setErroBanco(
+          "Alguns indicadores não puderam ser carregados."
+        );
+      }
+
+      setPgr(
+        (respostaPgr.data ?? []).map(
+          (item) => ({
+            id: item.id,
+            setor: item.setor,
+            atividade: item.atividade,
+            perigo: item.perigo,
+
+            categoria:
+              item.categoria as PgrItem["categoria"],
+
+            probabilidade:
+              item.probabilidade as PgrItem["probabilidade"],
+
+            severidade:
+              item.severidade as PgrItem["severidade"],
+
+            nivel: item.nivel,
+
+            classificacao:
+              item.classificacao as PgrItem["classificacao"],
+
+            medidaControle:
+              item.medida_controle,
+
+            responsavel:
+              item.responsavel,
+
+            prazo:
+              item.prazo ?? "",
+
+            status:
+              item.status as PgrItem["status"],
+          })
+        )
+      );
+
+      setEpis(
+        (respostaEpis.data ??
+          []) as EpiItem[]
+      );
+
+      setChecklists(
+        (respostaChecklists.data ??
+          []) as ChecklistItem[]
+      );
+
+      setDds(
+        (respostaDds.data ??
+          []) as DDSItem[]
+      );
+
+      setAuditorias(
+        (
+          respostaAuditorias.data ??
+          []
+        ).map(
+          (item) => ({
+            id: item.id,
+            data: item.data,
+            setor: item.setor,
+            conformidade:
+              item.conformidade,
+
+            naoConformidades:
+              item.nao_conformidades,
+
+            prazo:
+              item.prazo ?? "",
+
+            status:
+              item.status as AuditoriaItem["status"],
+          })
+        )
+      );
+
+      setAcidentes(
+        (respostaAcidentes.data ??
+          []) as AcidenteItem[]
+      );
+
+      setCarregando(false);
+    }
+
+    void carregarDashboard();
+
+    return () => {
+      componenteAtivo = false;
+    };
+  }, []);
 
   /*
    * PGR
@@ -553,6 +740,37 @@ export default function Dashboard() {
           </span>
         </Button>
       </PageHeader>
+
+      {(carregando || erroBanco) && (
+        <div
+          style={{
+            width: "100%",
+            minWidth: 0,
+            marginBottom: 18,
+            padding:
+              "12px 14px",
+            boxSizing:
+              "border-box",
+            border: erroBanco
+              ? "1px solid #FECACA"
+              : "1px solid #DBEAFE",
+            borderRadius: 12,
+            background: erroBanco
+              ? "#FEF2F2"
+              : "#EFF6FF",
+            color: erroBanco
+              ? "#B91C1C"
+              : "#1D4ED8",
+            fontSize: 11,
+            fontWeight: 650,
+            lineHeight: 1.5,
+          }}
+        >
+          {erroBanco
+            ? erroBanco
+            : "Carregando indicadores do Supabase..."}
+        </div>
+      )}
 
       {/* INDICADORES PRINCIPAIS */}
 
