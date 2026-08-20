@@ -29,6 +29,8 @@ import StatCard from "../components/ui/StatCard";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 
+import { supabase } from "../lib/supabase";
+
 type CampoChecklist =
   | "epis"
   | "piso"
@@ -63,8 +65,6 @@ interface Checklist {
   quimicos: boolean;
   emergencia: boolean;
 }
-
-const STORAGE = "checklists";
 
 const itensChecklist: {
   campo: CampoChecklist;
@@ -143,102 +143,6 @@ function criarChecklistInicial(): Checklist {
   };
 }
 
-function carregarChecklists(): Checklist[] {
-  try {
-    const dados =
-      localStorage.getItem(
-        STORAGE
-      );
-
-    if (!dados) {
-      return [];
-    }
-
-    const convertido =
-      JSON.parse(dados);
-
-    if (
-      !Array.isArray(
-        convertido
-      )
-    ) {
-      return [];
-    }
-
-    return convertido.map(
-      (
-        item: Partial<Checklist>,
-        index: number
-      ) => ({
-        id:
-          typeof item.id ===
-          "number"
-            ? item.id
-            : Date.now() +
-              index,
-
-        data:
-          item.data ||
-          dataHoje(),
-
-        setor:
-          item.setor ||
-          "Cozinha",
-
-        responsavel:
-          item.responsavel ||
-          "Não informado",
-
-        observacoes:
-          item.observacoes ||
-          "",
-
-        epis:
-          Boolean(
-            item.epis
-          ),
-
-        piso:
-          Boolean(
-            item.piso
-          ),
-
-        extintor:
-          Boolean(
-            item.extintor
-          ),
-
-        exaustao:
-          Boolean(
-            item.exaustao
-          ),
-
-        iluminacao:
-          Boolean(
-            item.iluminacao
-          ),
-
-        facas:
-          Boolean(
-            item.facas
-          ),
-
-        quimicos:
-          Boolean(
-            item.quimicos
-          ),
-
-        emergencia:
-          Boolean(
-            item.emergencia
-          ),
-      })
-    );
-  } catch {
-    return [];
-  }
-}
-
 function useViewportWidth() {
   const [largura, setLargura] =
     useState(() =>
@@ -294,8 +198,18 @@ export default function Checklists() {
     setChecklists,
   ] =
     useState<Checklist[]>(
-      carregarChecklists
+      []
     );
+
+  const [
+    carregando,
+    setCarregando,
+  ] = useState(true);
+
+  const [
+    salvando,
+    setSalvando,
+  ] = useState(false);
 
   const [
     pesquisa,
@@ -332,17 +246,65 @@ export default function Checklists() {
     );
 
   /*
-   * PERSISTÊNCIA
+   * CARREGAR CHECKLISTS DO SUPABASE
    */
 
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE,
-      JSON.stringify(
-        checklists
-      )
-    );
-  }, [checklists]);
+    let componenteAtivo = true;
+
+    async function carregarChecklists() {
+      setCarregando(true);
+
+      const {
+        data,
+        error,
+      } = await supabase
+        .from("checklists")
+        .select(
+          "id, data, setor, responsavel, observacoes, epis, piso, extintor, exaustao, iluminacao, facas, quimicos, emergencia"
+        )
+        .order(
+          "data",
+          { ascending: false }
+        )
+        .order(
+          "id",
+          { ascending: false }
+        );
+
+      if (!componenteAtivo) {
+        return;
+      }
+
+      if (error) {
+        console.error(
+          "Erro ao carregar checklists:",
+          error
+        );
+
+        setChecklists([]);
+        setCarregando(false);
+
+        window.alert(
+          "Não foi possível carregar os checklists."
+        );
+
+        return;
+      }
+
+      setChecklists(
+        (data ?? []) as Checklist[]
+      );
+
+      setCarregando(false);
+    }
+
+    void carregarChecklists();
+
+    return () => {
+      componenteAtivo = false;
+    };
+  }, []);
 
   /*
    * DRAWER
@@ -529,7 +491,11 @@ export default function Checklists() {
     );
   }
 
-  function salvarChecklist() {
+  async function salvarChecklist() {
+    if (salvando) {
+      return;
+    }
+
     if (!formulario.data) {
       window.alert(
         "Informe a data da inspeção."
@@ -558,37 +524,132 @@ export default function Checklists() {
       return;
     }
 
-    if (editando) {
-      setChecklists(
-        (listaAtual) =>
-          listaAtual.map(
-            (checklist) =>
-              checklist.id ===
-              formulario.id
-                ? formulario
-                : checklist
+    const payload = {
+      data:
+        formulario.data,
+
+      setor:
+        formulario.setor.trim(),
+
+      responsavel:
+        formulario.responsavel.trim(),
+
+      observacoes:
+        formulario.observacoes.trim(),
+
+      epis:
+        formulario.epis,
+
+      piso:
+        formulario.piso,
+
+      extintor:
+        formulario.extintor,
+
+      exaustao:
+        formulario.exaustao,
+
+      iluminacao:
+        formulario.iluminacao,
+
+      facas:
+        formulario.facas,
+
+      quimicos:
+        formulario.quimicos,
+
+      emergencia:
+        formulario.emergencia,
+    };
+
+    setSalvando(true);
+
+    try {
+      if (editando) {
+        const {
+          data,
+          error,
+        } = await supabase
+          .from("checklists")
+          .update(payload)
+          .eq(
+            "id",
+            editando.id
           )
-      );
-    } else {
-      const novoChecklist: Checklist =
-        {
-          ...formulario,
+          .select(
+            "id, data, setor, responsavel, observacoes, epis, piso, extintor, exaustao, iluminacao, facas, quimicos, emergencia"
+          )
+          .single();
 
-          id: Date.now(),
-        };
+        if (error || !data) {
+          console.error(
+            "Erro ao atualizar checklist:",
+            error
+          );
 
-      setChecklists(
-        (listaAtual) => [
-          ...listaAtual,
-          novoChecklist,
-        ]
-      );
+          window.alert(
+            "Não foi possível atualizar a inspeção."
+          );
+
+          return;
+        }
+
+        const checklistAtualizado =
+          data as Checklist;
+
+        setChecklists(
+          (listaAtual) =>
+            listaAtual.map(
+              (checklist) =>
+                checklist.id ===
+                checklistAtualizado.id
+                  ? checklistAtualizado
+                  : checklist
+            )
+        );
+      } else {
+        const {
+          data,
+          error,
+        } = await supabase
+          .from("checklists")
+          .insert(payload)
+          .select(
+            "id, data, setor, responsavel, observacoes, epis, piso, extintor, exaustao, iluminacao, facas, quimicos, emergencia"
+          )
+          .single();
+
+        if (error || !data) {
+          console.error(
+            "Erro ao cadastrar checklist:",
+            error
+          );
+
+          window.alert(
+            "Não foi possível registrar a inspeção."
+          );
+
+          return;
+        }
+
+        const novoChecklist =
+          data as Checklist;
+
+        setChecklists(
+          (listaAtual) => [
+            novoChecklist,
+            ...listaAtual,
+          ]
+        );
+      }
+
+      fecharDrawer();
+    } finally {
+      setSalvando(false);
     }
-
-    fecharDrawer();
   }
 
-  function excluirChecklist(
+  async function excluirChecklist(
     id: number
   ) {
     const confirmar =
@@ -597,6 +658,28 @@ export default function Checklists() {
       );
 
     if (!confirmar) {
+      return;
+    }
+
+    const { error } =
+      await supabase
+        .from("checklists")
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+    if (error) {
+      console.error(
+        "Erro ao excluir checklist:",
+        error
+      );
+
+      window.alert(
+        "Não foi possível excluir a inspeção."
+      );
+
       return;
     }
 
@@ -1177,7 +1260,43 @@ export default function Checklists() {
 
         {/* LISTAGEM */}
 
-        {checklistsFiltrados.length ===
+        {carregando ? (
+          <div
+            style={{
+              width: "100%",
+
+              padding: mobile
+                ? "34px 16px"
+                : "46px 20px",
+
+              boxSizing:
+                "border-box",
+
+              border:
+                "1px solid #E2E8F0",
+
+              borderRadius:
+                14,
+
+              background:
+                "#FFFFFF",
+
+              color:
+                "#64748B",
+
+              fontSize:
+                12,
+
+              fontWeight:
+                600,
+
+              textAlign:
+                "center",
+            }}
+          >
+            Carregando inspeções...
+          </div>
+        ) : checklistsFiltrados.length ===
         0 ? (
           <EstadoVazio
             mobile={
@@ -2012,9 +2131,11 @@ export default function Checklists() {
                   salvarChecklist
                 }
               >
-                {editando
-                  ? "Salvar alterações"
-                  : "Registrar inspeção"}
+                {salvando
+                  ? "Salvando..."
+                  : editando
+                    ? "Salvar alterações"
+                    : "Registrar inspeção"}
               </Button>
             </footer>
           </aside>
