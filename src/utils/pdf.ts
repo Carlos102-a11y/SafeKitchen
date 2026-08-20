@@ -1,5 +1,7 @@
 import jsPDF from "jspdf";
 
+import { supabase } from "../lib/supabase";
+
 import type { PgrItem } from "../models/Pgr";
 
 interface EpiItem {
@@ -144,58 +146,449 @@ const ROXO: RGB = [
   237,
 ];
 
-function lerStorage<T>(
-  chave: string
-): T[] {
-  try {
-    const dados =
-      localStorage.getItem(chave);
-
-    if (!dados) {
-      return [];
-    }
-
-    const convertido =
-      JSON.parse(dados);
-
-    return Array.isArray(convertido)
-      ? convertido
-      : [];
-  } catch {
-    return [];
-  }
+interface PgrRow {
+  id: number;
+  setor: string;
+  atividade: string;
+  perigo: string;
+  categoria: PgrItem["categoria"];
+  probabilidade: PgrItem["probabilidade"];
+  severidade: PgrItem["severidade"];
+  nivel: number;
+  classificacao: PgrItem["classificacao"];
+  medida_controle: string;
+  responsavel: string;
+  prazo: string | null;
+  status: PgrItem["status"];
 }
 
-export function gerarPDF() {
+interface AuditoriaRow {
+  id: number;
+  data: string;
+  auditor: string;
+  setor: string;
+  tipo: string;
+  conformidade: number;
+  nao_conformidades: number;
+  observacoes: string;
+  acao_corretiva: string;
+  prazo: string | null;
+  status: string;
+}
+
+interface AcidenteRow {
+  id: number;
+  data: string;
+  hora: string;
+  funcionario: string;
+  setor: string;
+
+  tipo:
+    | "Acidente"
+    | "Incidente"
+    | "Quase acidente";
+
+  gravidade:
+    | "Leve"
+    | "Moderada"
+    | "Grave"
+    | "Crítica";
+
+  afastamento: boolean;
+  dias_afastado: number;
+
+  cat: string;
+  causa: string;
+
+  acao_corretiva: string;
+
+  risco_pgr_id:
+    | number
+    | null;
+}
+
+function converterPgr(
+  item: PgrRow
+): PgrItem {
+  return {
+    id: item.id,
+
+    setor: item.setor,
+
+    atividade:
+      item.atividade,
+
+    perigo:
+      item.perigo,
+
+    categoria:
+      item.categoria,
+
+    probabilidade:
+      item.probabilidade,
+
+    severidade:
+      item.severidade,
+
+    nivel:
+      item.nivel,
+
+    classificacao:
+      item.classificacao,
+
+    medidaControle:
+      item.medida_controle,
+
+    responsavel:
+      item.responsavel,
+
+    prazo:
+      item.prazo ?? "",
+
+    status:
+      item.status,
+  };
+}
+
+function converterAuditoria(
+  item: AuditoriaRow
+): AuditoriaItem {
+  return {
+    id:
+      item.id,
+
+    data:
+      item.data,
+
+    auditor:
+      item.auditor,
+
+    setor:
+      item.setor,
+
+    tipo:
+      item.tipo,
+
+    conformidade:
+      item.conformidade,
+
+    naoConformidades:
+      item.nao_conformidades,
+
+    observacoes:
+      item.observacoes,
+
+    acaoCorretiva:
+      item.acao_corretiva,
+
+    prazo:
+      item.prazo ?? "",
+
+    status:
+      item.status,
+  };
+}
+
+function converterAcidente(
+  item: AcidenteRow
+): AcidenteItem {
+  return {
+    id:
+      item.id,
+
+    data:
+      item.data,
+
+    hora:
+      item.hora,
+
+    funcionario:
+      item.funcionario,
+
+    setor:
+      item.setor,
+
+    tipo:
+      item.tipo,
+
+    gravidade:
+      item.gravidade,
+
+    afastamento:
+      item.afastamento,
+
+    diasAfastado:
+      item.dias_afastado,
+
+    cat:
+      item.cat,
+
+    causa:
+      item.causa,
+
+    acaoCorretiva:
+      item.acao_corretiva,
+
+    riscoPgrId:
+      item.risco_pgr_id,
+  };
+}
+
+async function carregarDadosRelatorio() {
+  const [
+    respostaPgr,
+    respostaEpis,
+    respostaChecklists,
+    respostaDDS,
+    respostaAuditorias,
+    respostaAcidentes,
+  ] = await Promise.all([
+    supabase
+      .from("pgr")
+      .select(
+        `
+          id,
+          setor,
+          atividade,
+          perigo,
+          categoria,
+          probabilidade,
+          severidade,
+          nivel,
+          classificacao,
+          medida_controle,
+          responsavel,
+          prazo,
+          status
+        `
+      )
+      .order(
+        "id",
+        {
+          ascending: true,
+        }
+      ),
+
+    supabase
+      .from("epis")
+      .select(
+        `
+          id,
+          nome,
+          ca,
+          quantidade,
+          validade
+        `
+      )
+      .order(
+        "id",
+        {
+          ascending: true,
+        }
+      ),
+
+    supabase
+      .from("checklists")
+      .select(
+        `
+          id,
+          data,
+          setor,
+          responsavel,
+          observacoes,
+          epis,
+          piso,
+          extintor,
+          exaustao,
+          iluminacao,
+          facas,
+          quimicos,
+          emergencia
+        `
+      )
+      .order(
+        "id",
+        {
+          ascending: true,
+        }
+      ),
+
+    supabase
+      .from("dds")
+      .select(
+        `
+          id,
+          data,
+          tema,
+          responsavel,
+          setor,
+          participantes,
+          duracao,
+          observacoes
+        `
+      )
+      .order(
+        "id",
+        {
+          ascending: true,
+        }
+      ),
+
+    supabase
+      .from("auditorias")
+      .select(
+        `
+          id,
+          data,
+          auditor,
+          setor,
+          tipo,
+          conformidade,
+          nao_conformidades,
+          observacoes,
+          acao_corretiva,
+          prazo,
+          status
+        `
+      )
+      .order(
+        "id",
+        {
+          ascending: true,
+        }
+      ),
+
+    supabase
+      .from("acidentes")
+      .select(
+        `
+          id,
+          data,
+          hora,
+          funcionario,
+          setor,
+          tipo,
+          gravidade,
+          afastamento,
+          dias_afastado,
+          cat,
+          causa,
+          acao_corretiva,
+          risco_pgr_id
+        `
+      )
+      .order(
+        "id",
+        {
+          ascending: true,
+        }
+      ),
+  ]);
+
+  const erro =
+    respostaPgr.error ??
+    respostaEpis.error ??
+    respostaChecklists.error ??
+    respostaDDS.error ??
+    respostaAuditorias.error ??
+    respostaAcidentes.error;
+
+  if (erro) {
+    console.error(
+      "Erro ao carregar dados do relatório:",
+      erro
+    );
+
+    window.alert(
+      "Não foi possível carregar os dados para gerar o relatório."
+    );
+
+    return null;
+  }
+
+  const pgr =
+    (
+      respostaPgr.data ??
+      []
+    ).map(
+      (item) =>
+        converterPgr(
+          item as PgrRow
+        )
+    );
+
+  const epis =
+    (
+      respostaEpis.data ??
+      []
+    ) as EpiItem[];
+
+  const checklists =
+    (
+      respostaChecklists.data ??
+      []
+    ) as ChecklistItem[];
+
+  const dds =
+    (
+      respostaDDS.data ??
+      []
+    ) as DDSItem[];
+
+  const auditorias =
+    (
+      respostaAuditorias.data ??
+      []
+    ).map(
+      (item) =>
+        converterAuditoria(
+          item as AuditoriaRow
+        )
+    );
+
+  const acidentes =
+    (
+      respostaAcidentes.data ??
+      []
+    ).map(
+      (item) =>
+        converterAcidente(
+          item as AcidenteRow
+        )
+    );
+
+  return {
+    pgr,
+    epis,
+    checklists,
+    dds,
+    auditorias,
+    acidentes,
+  };
+}
+
+export async function gerarPDF() {
+  const dados =
+    await carregarDadosRelatorio();
+
+  if (!dados) {
+    return;
+  }
+
+  const {
+    pgr,
+    epis,
+    checklists,
+    dds,
+    auditorias,
+    acidentes,
+  } = dados;
+
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
     format: "a4",
   });
-
-  const pgr =
-    lerStorage<PgrItem>("pgr");
-
-  const epis =
-    lerStorage<EpiItem>("epis");
-
-  const checklists =
-    lerStorage<ChecklistItem>(
-      "checklists"
-    );
-
-  const dds =
-    lerStorage<DDSItem>("dds");
-
-  const auditorias =
-    lerStorage<AuditoriaItem>(
-      "auditorias"
-    );
-
-  const acidentes =
-    lerStorage<AcidenteItem>(
-      "acidentes"
-    );
 
   /*
    * PGR

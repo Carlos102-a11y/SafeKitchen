@@ -717,8 +717,10 @@ export default function Dashboard() {
         icon={LayoutDashboard}
       >
         <Button
-          onClick={gerarPDF}
-        >
+  onClick={() => {
+    void gerarPDF();
+  }}
+>
           <span
             style={{
               display: "flex",
