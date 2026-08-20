@@ -22,12 +22,15 @@ import {
   MessageSquareText,
   Presentation,
   Activity,
+  TriangleAlert,
 } from "lucide-react";
 
 import PageHeader from "../components/ui/PageHeader";
 import StatCard from "../components/ui/StatCard";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
+
+import { supabase } from "../lib/supabase";
 
 interface DDSItem {
   id: number;
@@ -45,8 +48,6 @@ type FiltroPeriodo =
   | "30"
   | "90";
 
-const STORAGE = "dds";
-
 function criarDDSInicial(): DDSItem {
   return {
     id: 0,
@@ -60,77 +61,6 @@ function criarDDSInicial(): DDSItem {
   };
 }
 
-function carregarDDS(): DDSItem[] {
-  try {
-    const dados =
-      localStorage.getItem(
-        STORAGE
-      );
-
-    if (!dados) {
-      return [];
-    }
-
-    const convertido =
-      JSON.parse(dados);
-
-    if (
-      !Array.isArray(
-        convertido
-      )
-    ) {
-      return [];
-    }
-
-    return convertido.map(
-      (
-        item: Partial<DDSItem>,
-        index: number
-      ) => ({
-        id:
-          typeof item.id ===
-          "number"
-            ? item.id
-            : Date.now() +
-              index,
-
-        data:
-          item.data ||
-          dataHoje(),
-
-        tema:
-          item.tema ||
-          "",
-
-        responsavel:
-          item.responsavel ||
-          "Não informado",
-
-        setor:
-          item.setor ||
-          "Cozinha",
-
-        participantes:
-          Number(
-            item.participantes ??
-              0
-          ),
-
-        duracao:
-          Number(
-            item.duracao ??
-              15
-          ),
-
-        observacoes:
-          item.observacoes ||
-          "",
-      })
-    );
-  } catch {
-    return [];
-  }
-}
 
 function useViewportWidth() {
   const [largura, setLargura] =
@@ -186,9 +116,22 @@ export default function DDS() {
     dds,
     setDds,
   ] =
-    useState<DDSItem[]>(
-      carregarDDS
-    );
+    useState<DDSItem[]>([]);
+
+  const [
+    carregando,
+    setCarregando,
+  ] = useState(true);
+
+  const [
+    salvando,
+    setSalvando,
+  ] = useState(false);
+
+  const [
+    erroBanco,
+    setErroBanco,
+  ] = useState("");
 
   const [
     pesquisa,
@@ -225,15 +168,65 @@ export default function DDS() {
     );
 
   /*
-   * PERSISTÊNCIA
+   * CARREGAR DDS DO SUPABASE
    */
 
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE,
-      JSON.stringify(dds)
-    );
-  }, [dds]);
+    let componenteAtivo = true;
+
+    async function carregarDDS() {
+      setCarregando(true);
+      setErroBanco("");
+
+      const {
+        data,
+        error,
+      } = await supabase
+        .from("dds")
+        .select(
+          "id, data, tema, responsavel, setor, participantes, duracao, observacoes"
+        )
+        .order(
+          "data",
+          { ascending: false }
+        )
+        .order(
+          "id",
+          { ascending: false }
+        );
+
+      if (!componenteAtivo) {
+        return;
+      }
+
+      if (error) {
+        console.error(
+          "Erro ao carregar DDS:",
+          error
+        );
+
+        setDds([]);
+        setErroBanco(
+          "Não foi possível carregar os registros de DDS."
+        );
+        setCarregando(false);
+
+        return;
+      }
+
+      setDds(
+        (data ?? []) as DDSItem[]
+      );
+
+      setCarregando(false);
+    }
+
+    void carregarDDS();
+
+    return () => {
+      componenteAtivo = false;
+    };
+  }, []);
 
   /*
    * DRAWER
@@ -381,6 +374,7 @@ export default function DDS() {
 
   function abrirNovoDDS() {
     setEditando(null);
+    setErroBanco("");
 
     setFormulario(
       criarDDSInicial()
@@ -393,6 +387,7 @@ export default function DDS() {
     item: DDSItem
   ) {
     setEditando(item);
+    setErroBanco("");
 
     setFormulario({
       ...item,
@@ -411,7 +406,11 @@ export default function DDS() {
     );
   }
 
-  function salvarDDS() {
+  async function salvarDDS() {
+    if (salvando) {
+      return;
+    }
+
     if (!formulario.data) {
       window.alert(
         "Informe a data do DDS."
@@ -450,35 +449,150 @@ export default function DDS() {
       return;
     }
 
-    if (editando) {
-      setDds(
-        (listaAtual) =>
-          listaAtual.map(
-            (item) =>
-              item.id ===
-              formulario.id
-                ? formulario
-                : item
-          )
+    if (
+      !Number.isFinite(
+        formulario.participantes
+      ) ||
+      formulario.participantes < 0
+    ) {
+      window.alert(
+        "Informe uma quantidade válida de participantes."
       );
-    } else {
-      const novoDDS: DDSItem = {
-        ...formulario,
-        id: Date.now(),
-      };
 
-      setDds(
-        (listaAtual) => [
-          ...listaAtual,
-          novoDDS,
-        ]
-      );
+      return;
     }
 
-    fecharDrawer();
+    if (
+      !Number.isFinite(
+        formulario.duracao
+      ) ||
+      formulario.duracao < 0
+    ) {
+      window.alert(
+        "Informe uma duração válida."
+      );
+
+      return;
+    }
+
+    const payload = {
+      data:
+        formulario.data,
+
+      tema:
+        formulario.tema.trim(),
+
+      responsavel:
+        formulario.responsavel.trim(),
+
+      setor:
+        formulario.setor.trim(),
+
+      participantes:
+        Math.max(
+          0,
+          formulario.participantes
+        ),
+
+      duracao:
+        Math.max(
+          0,
+          formulario.duracao
+        ),
+
+      observacoes:
+        formulario.observacoes.trim(),
+    };
+
+    setSalvando(true);
+    setErroBanco("");
+
+    try {
+      if (editando) {
+        const {
+          data,
+          error,
+        } = await supabase
+          .from("dds")
+          .update(payload)
+          .eq(
+            "id",
+            editando.id
+          )
+          .select(
+            "id, data, tema, responsavel, setor, participantes, duracao, observacoes"
+          )
+          .single();
+
+        if (error || !data) {
+          console.error(
+            "Erro ao atualizar DDS:",
+            error
+          );
+
+          setErroBanco(
+            "Não foi possível atualizar o DDS."
+          );
+
+          return;
+        }
+
+        const atualizado =
+          data as DDSItem;
+
+        setDds(
+          (listaAtual) =>
+            listaAtual.map(
+              (item) =>
+                item.id ===
+                atualizado.id
+                  ? atualizado
+                  : item
+            )
+        );
+      } else {
+        const {
+          data,
+          error,
+        } = await supabase
+          .from("dds")
+          .insert(payload)
+          .select(
+            "id, data, tema, responsavel, setor, participantes, duracao, observacoes"
+          )
+          .single();
+
+        if (error || !data) {
+          console.error(
+            "Erro ao cadastrar DDS:",
+            error
+          );
+
+          setErroBanco(
+            "Não foi possível registrar o DDS."
+          );
+
+          return;
+        }
+
+        const novoDDS =
+          data as DDSItem;
+
+        setDds(
+          (listaAtual) => [
+            novoDDS,
+            ...listaAtual,
+          ]
+        );
+      }
+
+      fecharDrawer();
+    } finally {
+      setSalvando(false);
+    }
   }
 
-  function excluirDDS(
+  async function excluirDDS(
     id: number
   ) {
     const confirmar =
@@ -487,6 +601,30 @@ export default function DDS() {
       );
 
     if (!confirmar) {
+      return;
+    }
+
+    setErroBanco("");
+
+    const { error } =
+      await supabase
+        .from("dds")
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+    if (error) {
+      console.error(
+        "Erro ao excluir DDS:",
+        error
+      );
+
+      setErroBanco(
+        "Não foi possível excluir o DDS."
+      );
+
       return;
     }
 
@@ -560,6 +698,108 @@ export default function DDS() {
           </span>
         </Button>
       </PageHeader>
+
+      {erroBanco && (
+        <div
+          role="alert"
+          style={{
+            width: "100%",
+
+            display: "flex",
+
+            alignItems:
+              "flex-start",
+
+            justifyContent:
+              "space-between",
+
+            gap: 14,
+
+            marginBottom: 20,
+
+            padding:
+              "13px 15px",
+
+            boxSizing:
+              "border-box",
+
+            border:
+              "1px solid #FECACA",
+
+            borderRadius: 12,
+
+            background:
+              "#FEF2F2",
+
+            color:
+              "#B91C1C",
+
+            fontSize: 12,
+
+            fontWeight: 650,
+
+            lineHeight: 1.5,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+
+              alignItems:
+                "flex-start",
+
+              gap: 9,
+            }}
+          >
+            <TriangleAlert
+              size={17}
+              style={{
+                flexShrink: 0,
+
+                marginTop: 1,
+              }}
+            />
+
+            <span>
+              {erroBanco}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setErroBanco("")
+            }
+            aria-label="Fechar aviso"
+            style={{
+              display: "flex",
+
+              alignItems:
+                "center",
+
+              justifyContent:
+                "center",
+
+              flexShrink: 0,
+
+              padding: 2,
+
+              border: "none",
+
+              background:
+                "transparent",
+
+              color:
+                "#B91C1C",
+
+              cursor:
+                "pointer",
+            }}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
 
       {/* INDICADORES */}
 
@@ -1052,7 +1292,40 @@ export default function DDS() {
 
         {/* TABELA */}
 
-        {ddsFiltrados.length ===
+        {carregando ? (
+          <div
+            style={{
+              width: "100%",
+
+              padding: mobile
+                ? "34px 16px"
+                : "46px 20px",
+
+              boxSizing:
+                "border-box",
+
+              border:
+                "1px solid #E2E8F0",
+
+              borderRadius: 14,
+
+              background:
+                "#FFFFFF",
+
+              color:
+                "#64748B",
+
+              fontSize: 12,
+
+              fontWeight: 600,
+
+              textAlign:
+                "center",
+            }}
+          >
+            Carregando DDS...
+          </div>
+        ) : ddsFiltrados.length ===
         0 ? (
           <EstadoVazio
             mobile={
@@ -1876,9 +2149,11 @@ export default function DDS() {
                   salvarDDS
                 }
               >
-                {editando
-                  ? "Salvar alterações"
-                  : "Registrar DDS"}
+                {salvando
+                  ? "Salvando..."
+                  : editando
+                    ? "Salvar alterações"
+                    : "Registrar DDS"}
               </Button>
             </footer>
           </aside>
