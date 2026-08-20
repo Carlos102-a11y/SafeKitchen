@@ -26,6 +26,8 @@ import StatCard from "../components/ui/StatCard";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 
+import { supabase } from "../lib/supabase";
+
 import type { PgrItem } from "../models/Pgr";
 
 type FiltroCategoria =
@@ -40,24 +42,45 @@ type FiltroStatus =
   | ""
   | PgrItem["status"];
 
-function carregarPgr(): PgrItem[] {
-  try {
-    const dados =
-      localStorage.getItem("pgr");
+interface PgrRow {
+  id: number;
+  setor: string;
+  atividade: string;
+  perigo: string;
+  categoria: PgrItem["categoria"];
+  probabilidade: PgrItem["probabilidade"];
+  severidade: PgrItem["severidade"];
+  nivel: number;
+  classificacao: PgrItem["classificacao"];
+  medida_controle: string;
+  responsavel: string;
+  prazo: string | null;
+  status: PgrItem["status"];
+}
 
-    if (!dados) {
-      return [];
-    }
+const CAMPOS_PGR =
+  "id, setor, atividade, perigo, categoria, probabilidade, severidade, nivel, classificacao, medida_controle, responsavel, prazo, status";
 
-    const convertido =
-      JSON.parse(dados);
-
-    return Array.isArray(convertido)
-      ? convertido
-      : [];
-  } catch {
-    return [];
-  }
+function converterPgr(
+  item: PgrRow
+): PgrItem {
+  return {
+    id: item.id,
+    setor: item.setor,
+    atividade: item.atividade,
+    perigo: item.perigo,
+    categoria: item.categoria,
+    probabilidade: item.probabilidade,
+    severidade: item.severidade,
+    nivel: item.nivel,
+    classificacao: item.classificacao,
+    medidaControle:
+      item.medida_controle,
+    responsavel:
+      item.responsavel,
+    prazo: item.prazo ?? "",
+    status: item.status,
+  };
 }
 
 function useViewportWidth() {
@@ -112,10 +135,22 @@ export default function Riscos() {
   const telaMedia =
     largura <= 1200;
 
-  const [riscos] =
-    useState<PgrItem[]>(
-      carregarPgr
-    );
+  const [
+    riscos,
+    setRiscos,
+  ] = useState<PgrItem[]>([]);
+
+  const [
+    carregando,
+    setCarregando,
+  ] = useState(true);
+
+  const [
+    erroBanco,
+    setErroBanco,
+  ] = useState<string | null>(
+    null
+  );
 
   const [
     pesquisa,
@@ -132,13 +167,75 @@ export default function Riscos() {
     filtroClassificacao,
     setFiltroClassificacao,
   ] =
-    useState<FiltroClassificacao>("");
+    useState<FiltroClassificacao>(
+      ""
+    );
 
   const [
     filtroStatus,
     setFiltroStatus,
   ] =
     useState<FiltroStatus>("");
+
+  /*
+   * SUPABASE
+   */
+
+  useEffect(() => {
+    let componenteAtivo = true;
+
+    async function carregarRiscos() {
+      setCarregando(true);
+      setErroBanco(null);
+
+      const {
+        data,
+        error,
+      } = await supabase
+        .from("pgr")
+        .select(CAMPOS_PGR)
+        .order("id", {
+          ascending: true,
+        });
+
+      if (!componenteAtivo) {
+        return;
+      }
+
+      if (error) {
+        console.error(
+          "Erro ao carregar riscos:",
+          error
+        );
+
+        setRiscos([]);
+
+        setErroBanco(
+          "Não foi possível carregar os riscos do PGR."
+        );
+
+        setCarregando(false);
+        return;
+      }
+
+      const registros =
+        (data ?? []).map(
+          (item) =>
+            converterPgr(
+              item as PgrRow
+            )
+        );
+
+      setRiscos(registros);
+      setCarregando(false);
+    }
+
+    void carregarRiscos();
+
+    return () => {
+      componenteAtivo = false;
+    };
+  }, []);
 
   /*
    * INDICADORES
@@ -241,11 +338,8 @@ export default function Riscos() {
 
   function limparFiltros() {
     setPesquisa("");
-
     setFiltroCategoria("");
-
     setFiltroClassificacao("");
-
     setFiltroStatus("");
   }
 
@@ -253,18 +347,14 @@ export default function Riscos() {
     <main
       style={{
         width: "100%",
-
         minWidth: 0,
-
         padding: mobile
           ? "18px 14px 28px"
           : tablet
             ? "24px 20px 32px"
             : "32px",
-
         boxSizing:
           "border-box",
-
         overflowX:
           "hidden",
       }}
@@ -284,13 +374,10 @@ export default function Riscos() {
           <span
             style={{
               display: "flex",
-
               alignItems:
                 "center",
-
               justifyContent:
                 "center",
-
               gap: 8,
             }}
           >
@@ -308,22 +395,17 @@ export default function Riscos() {
       <div
         style={{
           width: "100%",
-
           minWidth: 0,
-
           display: "grid",
-
           gridTemplateColumns:
             mobile
               ? "minmax(0, 1fr)"
               : telaMedia
                 ? "repeat(2, minmax(0, 1fr))"
                 : "repeat(5, minmax(0, 1fr))",
-
           gap: mobile
             ? 12
             : 20,
-
           marginBottom:
             mobile
               ? 18
@@ -332,22 +414,16 @@ export default function Riscos() {
       >
         <StatCard
           title="Riscos Monitorados"
-          value={
-            riscos.length
-          }
+          value={riscos.length}
           icon={
-            <Target
-              size={22}
-            />
+            <Target size={22} />
           }
           color="#2563EB"
         />
 
         <StatCard
           title="Críticos"
-          value={
-            riscosCriticos
-          }
+          value={riscosCriticos}
           icon={
             <TriangleAlert
               size={22}
@@ -358,9 +434,7 @@ export default function Riscos() {
 
         <StatCard
           title="Altos"
-          value={
-            riscosAltos
-          }
+          value={riscosAltos}
           icon={
             <TriangleAlert
               size={22}
@@ -371,22 +445,16 @@ export default function Riscos() {
 
         <StatCard
           title="Prazos Vencidos"
-          value={
-            prazosVencidos
-          }
+          value={prazosVencidos}
           icon={
-            <Clock3
-              size={22}
-            />
+            <Clock3 size={22} />
           }
           color="#F59E0B"
         />
 
         <StatCard
           title="Controles Concluídos"
-          value={
-            riscosConcluidos
-          }
+          value={riscosConcluidos}
           icon={
             <CircleCheckBig
               size={22}
@@ -401,30 +469,22 @@ export default function Riscos() {
       <section
         style={{
           width: "100%",
-
           minWidth: 0,
-
           boxSizing:
             "border-box",
-
           background:
             "#FFFFFF",
-
           border:
             "1px solid #E2E8F0",
-
           borderRadius:
             mobile
               ? 14
               : 18,
-
           padding: mobile
             ? 16
             : 24,
-
           boxShadow:
             "0 6px 20px rgba(15, 23, 42, .04)",
-
           overflow:
             "hidden",
         }}
@@ -434,29 +494,23 @@ export default function Riscos() {
         <div
           style={{
             display: "flex",
-
             flexDirection:
               mobile
                 ? "column"
                 : "row",
-
             alignItems:
               mobile
                 ? "stretch"
                 : "flex-start",
-
             justifyContent:
               "space-between",
-
             gap: mobile
               ? 12
               : 20,
-
             marginBottom:
               mobile
                 ? 18
                 : 22,
-
             minWidth: 0,
           }}
         >
@@ -468,18 +522,14 @@ export default function Riscos() {
             <h2
               style={{
                 margin: 0,
-
                 color:
                   "#0F172A",
-
                 fontSize:
                   mobile
                     ? 16
                     : 18,
-
                 fontWeight:
                   800,
-
                 lineHeight:
                   1.3,
               }}
@@ -491,16 +541,10 @@ export default function Riscos() {
               style={{
                 margin:
                   "5px 0 0",
-
                 color:
                   "#94A3B8",
-
-                fontSize:
-                  12,
-
-                lineHeight:
-                  1.5,
-
+                fontSize: 12,
+                lineHeight: 1.5,
                 overflowWrap:
                   "anywhere",
               }}
@@ -517,23 +561,15 @@ export default function Riscos() {
                 mobile
                   ? "flex-start"
                   : "auto",
-
               padding:
                 "8px 11px",
-
               borderRadius: 9,
-
               background:
                 "#EFF6FF",
-
               color:
                 "#2563EB",
-
               fontSize: 11,
-
-              fontWeight:
-                700,
-
+              fontWeight: 700,
               whiteSpace:
                 "nowrap",
             }}
@@ -547,27 +583,20 @@ export default function Riscos() {
         <div
           style={{
             width: "100%",
-
             minWidth: 0,
-
             marginBottom:
               mobile
                 ? 16
                 : 22,
-
             padding: mobile
               ? 14
               : 18,
-
             boxSizing:
               "border-box",
-
             background:
               "#F8FAFC",
-
             border:
               "1px solid #E2E8F0",
-
             borderRadius:
               mobile
                 ? 12
@@ -577,46 +606,32 @@ export default function Riscos() {
           <div
             style={{
               display: "flex",
-
               flexDirection:
                 mobilePequeno
                   ? "column"
                   : "row",
-
               alignItems:
                 mobilePequeno
                   ? "flex-start"
                   : "center",
-
               justifyContent:
                 "space-between",
-
               gap: 10,
-
-              marginBottom:
-                14,
-
+              marginBottom: 14,
               minWidth: 0,
             }}
           >
             <div
               style={{
                 display: "flex",
-
                 alignItems:
                   "center",
-
                 gap: 8,
-
                 minWidth: 0,
-
                 color:
                   "#475569",
-
                 fontSize: 12,
-
-                fontWeight:
-                  700,
+                fontWeight: 700,
               }}
             >
               <SlidersHorizontal
@@ -638,31 +653,20 @@ export default function Riscos() {
                 style={{
                   display:
                     "flex",
-
                   alignItems:
                     "center",
-
                   gap: 5,
-
                   padding: 0,
-
                   border:
                     "none",
-
                   background:
                     "transparent",
-
                   color:
                     "#2563EB",
-
                   fontSize: 11,
-
-                  fontWeight:
-                    700,
-
+                  fontWeight: 700,
                   whiteSpace:
                     "nowrap",
-
                   cursor:
                     "pointer",
                 }}
@@ -677,18 +681,14 @@ export default function Riscos() {
           <div
             style={{
               width: "100%",
-
               minWidth: 0,
-
               display: "grid",
-
               gridTemplateColumns:
                 mobile
                   ? "minmax(0, 1fr)"
                   : tablet
                     ? "repeat(2, minmax(0, 1fr))"
                     : "minmax(280px, 2fr) repeat(3, minmax(160px, 1fr))",
-
               gap: mobile
                 ? 10
                 : 12,
@@ -699,32 +699,21 @@ export default function Riscos() {
             <div
               style={{
                 width: "100%",
-
                 minWidth: 0,
-
                 height: 44,
-
                 display: "flex",
-
                 alignItems:
                   "center",
-
                 gap: 10,
-
                 padding:
                   "0 13px",
-
                 boxSizing:
                   "border-box",
-
                 background:
                   "#FFFFFF",
-
                 border:
                   "1px solid #CBD5E1",
-
-                borderRadius:
-                  10,
+                borderRadius: 10,
               }}
             >
               <Search
@@ -737,9 +726,7 @@ export default function Riscos() {
 
               <input
                 type="text"
-                value={
-                  pesquisa
-                }
+                value={pesquisa}
                 placeholder={
                   mobile
                     ? "Pesquisar riscos..."
@@ -752,24 +739,17 @@ export default function Riscos() {
                 }
                 style={{
                   width: "100%",
-
                   minWidth: 0,
-
                   border:
                     "none",
-
                   outline:
                     "none",
-
                   background:
                     "transparent",
-
                   color:
                     "#0F172A",
-
                   fontFamily:
                     "inherit",
-
                   fontSize: 12,
                 }}
               />
@@ -787,9 +767,7 @@ export default function Riscos() {
                     .value as FiltroCategoria
                 )
               }
-              style={
-                estiloSelect
-              }
+              style={estiloSelect}
             >
               <option value="">
                 Todas as categorias
@@ -828,9 +806,7 @@ export default function Riscos() {
                     .value as FiltroClassificacao
                 )
               }
-              style={
-                estiloSelect
-              }
+              style={estiloSelect}
             >
               <option value="">
                 Todas as classificações
@@ -856,18 +832,14 @@ export default function Riscos() {
             {/* STATUS */}
 
             <select
-              value={
-                filtroStatus
-              }
+              value={filtroStatus}
               onChange={(e) =>
                 setFiltroStatus(
                   e.target
                     .value as FiltroStatus
                 )
               }
-              style={
-                estiloSelect
-              }
+              style={estiloSelect}
             >
               <option value="">
                 Todos os status
@@ -890,12 +862,9 @@ export default function Riscos() {
           <div
             style={{
               marginTop: 11,
-
               color:
                 "#64748B",
-
               fontSize: 11,
-
               lineHeight: 1.5,
             }}
           >
@@ -917,9 +886,7 @@ export default function Riscos() {
                   "#0F172A",
               }}
             >
-              {
-                riscos.length
-              }
+              {riscos.length}
             </strong>{" "}
             risco(s)
           </div>
@@ -927,44 +894,121 @@ export default function Riscos() {
 
         {/* LISTAGEM */}
 
-        {riscosFiltrados.length ===
+        {carregando ? (
+          <div
+            style={{
+              width: "100%",
+              minHeight:
+                mobile
+                  ? 220
+                  : 260,
+              display: "flex",
+              alignItems:
+                "center",
+              justifyContent:
+                "center",
+              padding: 30,
+              boxSizing:
+                "border-box",
+              border:
+                "1px dashed #CBD5E1",
+              borderRadius: 14,
+              color:
+                "#64748B",
+              fontSize: 12,
+              fontWeight: 600,
+              textAlign:
+                "center",
+            }}
+          >
+            Carregando riscos do PGR...
+          </div>
+        ) : erroBanco ? (
+          <div
+            style={{
+              width: "100%",
+              minHeight:
+                mobile
+                  ? 220
+                  : 260,
+              display: "flex",
+              flexDirection:
+                "column",
+              alignItems:
+                "center",
+              justifyContent:
+                "center",
+              padding: mobile
+                ? "26px 16px"
+                : 30,
+              boxSizing:
+                "border-box",
+              border:
+                "1px dashed #FCA5A5",
+              borderRadius: 14,
+              background:
+                "#FEF2F2",
+              textAlign:
+                "center",
+            }}
+          >
+            <TriangleAlert
+              size={27}
+              color="#DC2626"
+            />
+
+            <strong
+              style={{
+                marginTop: 10,
+                color:
+                  "#991B1B",
+                fontSize: 14,
+              }}
+            >
+              Erro ao carregar os riscos
+            </strong>
+
+            <span
+              style={{
+                maxWidth: 400,
+                marginTop: 6,
+                color:
+                  "#B91C1C",
+                fontSize: 12,
+                lineHeight: 1.5,
+              }}
+            >
+              {erroBanco}
+            </span>
+          </div>
+        ) : riscosFiltrados.length ===
         0 ? (
           <EstadoVazio
             possuiRiscos={
-              riscos.length >
-              0
+              riscos.length > 0
             }
             onAbrirPgr={() =>
               navigate("/pgr")
             }
-            mobile={
-              mobile
-            }
+            mobile={mobile}
           />
         ) : (
           <div
             style={{
               width: "100%",
-
               maxWidth:
                 "100%",
-
               minWidth: 0,
-
               overflowX:
                 "auto",
-
               overflowY:
                 "hidden",
-
               border:
                 "1px solid #E2E8F0",
-
               borderRadius:
                 mobile
                   ? 12
                   : 14,
-
               WebkitOverflowScrolling:
                 "touch",
             }}
@@ -972,12 +1016,10 @@ export default function Riscos() {
             <table
               style={{
                 width: "100%",
-
                 minWidth:
                   mobile
                     ? 980
                     : 1100,
-
                 borderCollapse:
                   "collapse",
               }}
@@ -989,58 +1031,33 @@ export default function Riscos() {
                       "#F8FAFC",
                   }}
                 >
-                  <th
-                    style={
-                      thStyle
-                    }
-                  >
+                  <th style={thStyle}>
                     Risco
                   </th>
 
-                  <th
-                    style={
-                      thStyle
-                    }
-                  >
+                  <th style={thStyle}>
                     Classificação
                   </th>
 
-                  <th
-                    style={
-                      thStyle
-                    }
-                  >
+                  <th style={thStyle}>
                     Medida de Controle
                   </th>
 
-                  <th
-                    style={
-                      thStyle
-                    }
-                  >
+                  <th style={thStyle}>
                     Responsável
                   </th>
 
-                  <th
-                    style={
-                      thStyle
-                    }
-                  >
+                  <th style={thStyle}>
                     Prazo
                   </th>
 
-                  <th
-                    style={
-                      thStyle
-                    }
-                  >
+                  <th style={thStyle}>
                     Status
                   </th>
 
                   <th
                     style={{
                       ...thStyle,
-
                       textAlign:
                         "center",
                     }}
@@ -1054,9 +1071,7 @@ export default function Riscos() {
                 {riscosFiltrados.map(
                   (risco) => (
                     <tr
-                      key={
-                        risco.id
-                      }
+                      key={risco.id}
                       style={{
                         borderTop:
                           "1px solid #E2E8F0",
@@ -1064,26 +1079,18 @@ export default function Riscos() {
                     >
                       {/* RISCO */}
 
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
+                      <td style={tdStyle}>
                         <div
                           style={{
                             display:
                               "flex",
-
                             alignItems:
                               "flex-start",
-
                             gap: 11,
-
                             width:
                               mobile
                                 ? 190
                                 : 215,
-
                             minWidth:
                               mobile
                                 ? 190
@@ -1093,111 +1100,78 @@ export default function Riscos() {
                           <div
                             style={{
                               width: 37,
-
                               height: 37,
-
                               flexShrink:
                                 0,
-
                               display:
                                 "flex",
-
                               alignItems:
                                 "center",
-
                               justifyContent:
                                 "center",
-
                               borderRadius:
                                 10,
-
                               background:
                                 "#F1F5F9",
-
                               color:
                                 "#64748B",
                             }}
                           >
                             <Building2
-                              size={
-                                17
-                              }
+                              size={17}
                             />
                           </div>
 
                           <div
                             style={{
-                              minWidth:
-                                0,
+                              minWidth: 0,
                             }}
                           >
                             <div
                               style={{
                                 color:
                                   "#0F172A",
-
-                                fontSize:
-                                  13,
-
+                                fontSize: 13,
                                 fontWeight:
                                   750,
-
                                 lineHeight:
                                   1.4,
-
                                 overflowWrap:
                                   "anywhere",
                               }}
                             >
-                              {
-                                risco.perigo
-                              }
+                              {risco.perigo}
                             </div>
 
                             <div
                               style={{
-                                marginTop:
-                                  4,
-
+                                marginTop: 4,
                                 color:
                                   "#64748B",
-
-                                fontSize:
-                                  11,
-
+                                fontSize: 11,
                                 overflowWrap:
                                   "anywhere",
                               }}
                             >
-                              {
-                                risco.setor
-                              }
+                              {risco.setor}
                             </div>
 
                             <div
                               style={{
-                                marginTop:
-                                  3,
-
+                                marginTop: 3,
                                 color:
                                   "#94A3B8",
-
-                                fontSize:
-                                  10,
-
+                                fontSize: 10,
                                 overflowWrap:
                                   "anywhere",
                               }}
                             >
-                              {
-                                risco.atividade
-                              }
+                              {risco.atividade}
                             </div>
 
                             <div
                               style={{
-                                marginTop:
-                                  7,
+                                marginTop: 7,
                               }}
                             >
                               <Badge color="blue">
@@ -1212,15 +1186,10 @@ export default function Riscos() {
 
                       {/* CLASSIFICAÇÃO */}
 
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
+                      <td style={tdStyle}>
                         <div
                           style={{
-                            minWidth:
-                              120,
+                            minWidth: 120,
                           }}
                         >
                           <Badge
@@ -1244,58 +1213,38 @@ export default function Riscos() {
 
                           <div
                             style={{
-                              marginTop:
-                                7,
-
+                              marginTop: 7,
                               color:
                                 "#64748B",
-
-                              fontSize:
-                                11,
-
+                              fontSize: 11,
                               fontWeight:
                                 650,
-
                               whiteSpace:
                                 "nowrap",
                             }}
                           >
-                            Nível{" "}
-                            {
-                              risco.nivel
-                            }
+                            Nível {risco.nivel}
                           </div>
                         </div>
                       </td>
 
                       {/* CONTROLE */}
 
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
+                      <td style={tdStyle}>
                         <div
                           style={{
                             width:
                               mobile
                                 ? 185
                                 : 230,
-
                             maxWidth:
                               mobile
                                 ? 185
                                 : 230,
-
                             color:
                               "#475569",
-
-                            fontSize:
-                              12,
-
-                            lineHeight:
-                              1.5,
-
+                            fontSize: 12,
+                            lineHeight: 1.5,
                             overflowWrap:
                               "anywhere",
                           }}
@@ -1307,38 +1256,23 @@ export default function Riscos() {
 
                       {/* RESPONSÁVEL */}
 
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
+                      <td style={tdStyle}>
                         <div
                           style={{
                             display:
                               "flex",
-
                             alignItems:
                               "center",
-
                             gap: 7,
-
-                            width:
-                              135,
-
-                            minWidth:
-                              135,
-
+                            width: 135,
+                            minWidth: 135,
                             color:
                               "#475569",
-
-                            fontSize:
-                              12,
+                            fontSize: 12,
                           }}
                         >
                           <UserRound
-                            size={
-                              15
-                            }
+                            size={15}
                             color="#94A3B8"
                             style={{
                               flexShrink:
@@ -1348,9 +1282,7 @@ export default function Riscos() {
 
                           <span
                             style={{
-                              minWidth:
-                                0,
-
+                              minWidth: 0,
                               overflowWrap:
                                 "anywhere",
                             }}
@@ -1363,49 +1295,34 @@ export default function Riscos() {
 
                       {/* PRAZO */}
 
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
+                      <td style={tdStyle}>
                         <div
                           style={{
                             display:
                               "flex",
-
                             alignItems:
                               "center",
-
                             gap: 7,
-
-                            minWidth:
-                              120,
-
+                            minWidth: 120,
                             color:
                               prazoVencido(
                                 risco
                               )
                                 ? "#DC2626"
                                 : "#475569",
-
-                            fontSize:
-                              12,
-
+                            fontSize: 12,
                             fontWeight:
                               prazoVencido(
                                 risco
                               )
                                 ? 700
                                 : 500,
-
                             whiteSpace:
                               "nowrap",
                           }}
                         >
                           <CalendarDays
-                            size={
-                              15
-                            }
+                            size={15}
                             style={{
                               flexShrink:
                                 0,
@@ -1422,21 +1339,14 @@ export default function Riscos() {
                         ) && (
                           <div
                             style={{
-                              marginTop:
-                                5,
-
+                              marginTop: 5,
                               color:
                                 "#DC2626",
-
-                              fontSize:
-                                9,
-
+                              fontSize: 9,
                               fontWeight:
                                 800,
-
                               textTransform:
                                 "uppercase",
-
                               whiteSpace:
                                 "nowrap",
                             }}
@@ -1448,11 +1358,7 @@ export default function Riscos() {
 
                       {/* STATUS */}
 
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
+                      <td style={tdStyle}>
                         <Badge
                           color={
                             risco.status ===
@@ -1464,9 +1370,7 @@ export default function Riscos() {
                                 : "gray"
                           }
                         >
-                          {
-                            risco.status
-                          }
+                          {risco.status}
                         </Badge>
                       </td>
 
@@ -1475,7 +1379,6 @@ export default function Riscos() {
                       <td
                         style={{
                           ...tdStyle,
-
                           textAlign:
                             "center",
                         }}
@@ -1491,43 +1394,29 @@ export default function Riscos() {
                           }
                           style={{
                             width: 36,
-
                             height: 36,
-
                             display:
                               "inline-flex",
-
                             alignItems:
                               "center",
-
                             justifyContent:
                               "center",
-
-                            flexShrink:
-                              0,
-
+                            flexShrink: 0,
                             padding: 0,
-
                             border:
                               "none",
-
                             borderRadius:
                               9,
-
                             background:
                               "#EFF6FF",
-
                             color:
                               "#2563EB",
-
                             cursor:
                               "pointer",
                           }}
                         >
                           <ArrowRight
-                            size={
-                              17
-                            }
+                            size={17}
                           />
                         </button>
                       </td>
@@ -1556,37 +1445,26 @@ function EstadoVazio({
     <div
       style={{
         width: "100%",
-
         minWidth: 0,
-
         minHeight:
           mobile
             ? 220
             : 260,
-
         display: "flex",
-
         flexDirection:
           "column",
-
         alignItems:
           "center",
-
         justifyContent:
           "center",
-
         padding: mobile
           ? "26px 16px"
           : 30,
-
         boxSizing:
           "border-box",
-
         border:
           "1px dashed #CBD5E1",
-
         borderRadius: 14,
-
         textAlign:
           "center",
       }}
@@ -1594,24 +1472,16 @@ function EstadoVazio({
       <div
         style={{
           width: 52,
-
           height: 52,
-
           display: "flex",
-
           alignItems:
             "center",
-
           justifyContent:
             "center",
-
           marginBottom: 13,
-
           borderRadius: 14,
-
           background:
             "#EFF6FF",
-
           color:
             "#2563EB",
         }}
@@ -1625,9 +1495,7 @@ function EstadoVazio({
         style={{
           color:
             "#0F172A",
-
           fontSize: 14,
-
           lineHeight: 1.4,
         }}
       >
@@ -1639,15 +1507,11 @@ function EstadoVazio({
       <p
         style={{
           maxWidth: 380,
-
           margin:
             "6px 0 16px",
-
           color:
             "#94A3B8",
-
           fontSize: 12,
-
           lineHeight: 1.5,
         }}
       >
@@ -1658,9 +1522,7 @@ function EstadoVazio({
 
       {!possuiRiscos && (
         <Button
-          onClick={
-            onAbrirPgr
-          }
+          onClick={onAbrirPgr}
         >
           Acessar PGR
         </Button>
@@ -1717,72 +1579,49 @@ function formatarData(
 
 const estiloSelect = {
   width: "100%",
-
   minWidth: 0,
-
   height: 44,
-
   padding:
     "0 12px",
-
   boxSizing:
     "border-box" as const,
-
   border:
     "1px solid #CBD5E1",
-
   borderRadius: 10,
-
   background:
     "#FFFFFF",
-
   color:
     "#475569",
-
   fontFamily:
     "inherit",
-
   fontSize: 11,
-
   fontWeight: 600,
-
   outline: "none",
-
   cursor: "pointer",
 };
 
 const thStyle = {
   padding:
     "15px 18px",
-
   textAlign:
     "left" as const,
-
   color:
     "#64748B",
-
   fontSize: 10,
-
   fontWeight: 800,
-
   textTransform:
     "uppercase" as const,
-
   letterSpacing:
     ".5px",
-
   whiteSpace:
     "nowrap" as const,
 };
 
 const tdStyle = {
   padding: 18,
-
   verticalAlign:
     "middle" as const,
-
   color:
     "#475569",
-
   fontSize: 12,
 };
