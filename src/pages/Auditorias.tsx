@@ -29,6 +29,8 @@ import StatCard from "../components/ui/StatCard";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 
+import { supabase } from "../lib/supabase";
+
 type TipoAuditoria =
   | "Interna"
   | "Inspeção de rotina"
@@ -63,7 +65,43 @@ interface Auditoria {
   status: StatusAuditoria;
 }
 
-const STORAGE = "auditorias";
+interface AuditoriaRow {
+  id: number;
+
+  data: string;
+
+  auditor: string;
+
+  setor: string;
+
+  tipo: TipoAuditoria;
+
+  conformidade: number;
+
+  nao_conformidades: number;
+
+  observacoes: string;
+
+  acao_corretiva: string;
+
+  prazo: string | null;
+
+  status: StatusAuditoria;
+}
+
+const CAMPOS_AUDITORIAS = `
+  id,
+  data,
+  auditor,
+  setor,
+  tipo,
+  conformidade,
+  nao_conformidades,
+  observacoes,
+  acao_corretiva,
+  prazo,
+  status
+`;
 
 function criarAuditoriaInicial(): Auditoria {
   return {
@@ -91,93 +129,98 @@ function criarAuditoriaInicial(): Auditoria {
   };
 }
 
-function carregarAuditorias(): Auditoria[] {
-  try {
-    const dados =
-      localStorage.getItem(
-        STORAGE
-      );
+function converterAuditoria(
+  linha: AuditoriaRow
+): Auditoria {
+  return {
+    id:
+      linha.id,
 
-    if (!dados) {
-      return [];
-    }
+    data:
+      linha.data,
 
-    const convertido =
-      JSON.parse(dados);
+    auditor:
+      linha.auditor,
 
-    if (
-      !Array.isArray(
-        convertido
-      )
-    ) {
-      return [];
-    }
+    setor:
+      linha.setor,
 
-    return convertido.map(
-      (
-        item: Partial<Auditoria>,
-        index: number
-      ) => ({
-        id:
-          typeof item.id ===
-          "number"
-            ? item.id
-            : Date.now() +
-              index,
+    tipo:
+      linha.tipo,
 
-        data:
-          item.data ||
-          dataHoje(),
+    conformidade:
+      limitarPercentual(
+        Number(
+          linha.conformidade
+        )
+      ),
 
-        auditor:
-          item.auditor ||
-          "Não informado",
+    naoConformidades:
+      Math.max(
+        0,
+        Number(
+          linha.nao_conformidades ??
+            0
+        )
+      ),
 
-        setor:
-          item.setor ||
-          "Cozinha Industrial",
+    observacoes:
+      linha.observacoes ??
+      "",
 
-        tipo:
-          item.tipo ||
-          "Inspeção de rotina",
+    acaoCorretiva:
+      linha.acao_corretiva ??
+      "",
 
-        conformidade:
-          limitarPercentual(
-            Number(
-              item.conformidade ??
-                100
-            )
-          ),
+    prazo:
+      linha.prazo ??
+      "",
 
-        naoConformidades:
-          Math.max(
-            0,
-            Number(
-              item.naoConformidades ??
-                0
-            )
-          ),
+    status:
+      linha.status,
+  };
+}
 
-        observacoes:
-          item.observacoes ||
-          "",
+function criarPayloadAuditoria(
+  auditoria: Auditoria
+) {
+  return {
+    data:
+      auditoria.data,
 
-        acaoCorretiva:
-          item.acaoCorretiva ||
-          "",
+    auditor:
+      auditoria.auditor.trim(),
 
-        prazo:
-          item.prazo ||
-          "",
+    setor:
+      auditoria.setor.trim(),
 
-        status:
-          item.status ||
-          "Concluída",
-      })
-    );
-  } catch {
-    return [];
-  }
+    tipo:
+      auditoria.tipo,
+
+    conformidade:
+      limitarPercentual(
+        auditoria.conformidade
+      ),
+
+    nao_conformidades:
+      Math.max(
+        0,
+        auditoria.naoConformidades
+      ),
+
+    observacoes:
+      auditoria.observacoes.trim(),
+
+    acao_corretiva:
+      auditoria.acaoCorretiva.trim(),
+
+    prazo:
+      auditoria.prazo ||
+      null,
+
+    status:
+      auditoria.status,
+  };
 }
 
 function useViewportWidth() {
@@ -235,8 +278,23 @@ export default function Auditorias() {
     setAuditorias,
   ] =
     useState<Auditoria[]>(
-      carregarAuditorias
+      []
     );
+
+  const [
+    carregando,
+    setCarregando,
+  ] = useState(true);
+
+  const [
+    salvando,
+    setSalvando,
+  ] = useState(false);
+
+  const [
+    erroBanco,
+    setErroBanco,
+  ] = useState("");
 
   const [
     pesquisa,
@@ -281,17 +339,100 @@ export default function Auditorias() {
     );
 
   /*
-   * LOCALSTORAGE
+   * CARREGAR AUDITORIAS DO SUPABASE
    */
 
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE,
-      JSON.stringify(
-        auditorias
-      )
-    );
-  }, [auditorias]);
+    let componenteAtivo =
+      true;
+
+    async function carregarAuditorias() {
+      setCarregando(
+        true
+      );
+
+      setErroBanco(
+        ""
+      );
+
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from(
+            "auditorias"
+          )
+          .select(
+            CAMPOS_AUDITORIAS
+          )
+          .order(
+            "data",
+            {
+              ascending:
+                false,
+            }
+          )
+          .order(
+            "id",
+            {
+              ascending:
+                false,
+            }
+          );
+
+      if (
+        !componenteAtivo
+      ) {
+        return;
+      }
+
+      if (
+        error
+      ) {
+        console.error(
+          "Erro ao carregar auditorias:",
+          error
+        );
+
+        setAuditorias(
+          []
+        );
+
+        setErroBanco(
+          "Não foi possível carregar as auditorias."
+        );
+
+        setCarregando(
+          false
+        );
+
+        return;
+      }
+
+      setAuditorias(
+        (
+          (
+            data ??
+            []
+          ) as AuditoriaRow[]
+        ).map(
+          converterAuditoria
+        )
+      );
+
+      setCarregando(
+        false
+      );
+    }
+
+    void carregarAuditorias();
+
+    return () => {
+      componenteAtivo =
+        false;
+    };
+  }, []);
 
   /*
    * DRAWER
@@ -464,6 +605,8 @@ export default function Auditorias() {
   function abrirNovaAuditoria() {
     setEditando(null);
 
+    setErroBanco("");
+
     setFormulario(
       criarAuditoriaInicial()
     );
@@ -477,6 +620,8 @@ export default function Auditorias() {
     setEditando(
       auditoria
     );
+
+    setErroBanco("");
 
     setFormulario({
       ...auditoria,
@@ -495,7 +640,13 @@ export default function Auditorias() {
     );
   }
 
-  function salvarAuditoria() {
+  async function salvarAuditoria() {
+    if (
+      salvando
+    ) {
+      return;
+    }
+
     if (!formulario.data) {
       window.alert(
         "Informe a data da auditoria."
@@ -524,37 +675,127 @@ export default function Auditorias() {
       return;
     }
 
-    if (editando) {
-      setAuditorias(
-        (listaAtual) =>
-          listaAtual.map(
-            (auditoria) =>
-              auditoria.id ===
-              formulario.id
-                ? formulario
-                : auditoria
-          )
+    const payload =
+      criarPayloadAuditoria(
+        formulario
       );
-    } else {
-      const novaAuditoria: Auditoria =
-        {
-          ...formulario,
 
-          id: Date.now(),
-        };
+    setSalvando(true);
 
-      setAuditorias(
-        (listaAtual) => [
-          ...listaAtual,
-          novaAuditoria,
-        ]
-      );
+    setErroBanco("");
+
+    try {
+      if (editando) {
+        const {
+          data,
+          error,
+        } =
+          await supabase
+            .from(
+              "auditorias"
+            )
+            .update(
+              payload
+            )
+            .eq(
+              "id",
+              editando.id
+            )
+            .select(
+              CAMPOS_AUDITORIAS
+            )
+            .single();
+
+        if (
+          error ||
+          !data
+        ) {
+          console.error(
+            "Erro ao atualizar auditoria:",
+            error
+          );
+
+          setErroBanco(
+            "Não foi possível atualizar a auditoria."
+          );
+
+          return;
+        }
+
+        const atualizada =
+          converterAuditoria(
+            data as AuditoriaRow
+          );
+
+        setAuditorias(
+          (
+            listaAtual
+          ) =>
+            listaAtual.map(
+              (
+                auditoria
+              ) =>
+                auditoria.id ===
+                atualizada.id
+                  ? atualizada
+                  : auditoria
+            )
+        );
+      } else {
+        const {
+          data,
+          error,
+        } =
+          await supabase
+            .from(
+              "auditorias"
+            )
+            .insert(
+              payload
+            )
+            .select(
+              CAMPOS_AUDITORIAS
+            )
+            .single();
+
+        if (
+          error ||
+          !data
+        ) {
+          console.error(
+            "Erro ao cadastrar auditoria:",
+            error
+          );
+
+          setErroBanco(
+            "Não foi possível registrar a auditoria."
+          );
+
+          return;
+        }
+
+        const novaAuditoria =
+          converterAuditoria(
+            data as AuditoriaRow
+          );
+
+        setAuditorias(
+          (
+            listaAtual
+          ) => [
+            novaAuditoria,
+            ...listaAtual,
+          ]
+        );
+      }
+
+      fecharDrawer();
+    } finally {
+      setSalvando(false);
     }
-
-    fecharDrawer();
   }
 
-  function excluirAuditoria(
+  async function excluirAuditoria(
     id: number
   ) {
     const confirmar =
@@ -566,10 +807,44 @@ export default function Auditorias() {
       return;
     }
 
+    setErroBanco("");
+
+    const {
+      error,
+    } =
+      await supabase
+        .from(
+          "auditorias"
+        )
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+    if (
+      error
+    ) {
+      console.error(
+        "Erro ao excluir auditoria:",
+        error
+      );
+
+      setErroBanco(
+        "Não foi possível excluir a auditoria."
+      );
+
+      return;
+    }
+
     setAuditorias(
-      (listaAtual) =>
+      (
+        listaAtual
+      ) =>
         listaAtual.filter(
-          (auditoria) =>
+          (
+            auditoria
+          ) =>
             auditoria.id !==
             id
         )
@@ -640,6 +915,134 @@ export default function Auditorias() {
           </span>
         </Button>
       </PageHeader>
+
+      {erroBanco && (
+        <div
+          role="alert"
+          style={{
+            width:
+              "100%",
+
+            display:
+              "flex",
+
+            alignItems:
+              "flex-start",
+
+            justifyContent:
+              "space-between",
+
+            gap:
+              14,
+
+            marginBottom:
+              20,
+
+            padding:
+              "13px 15px",
+
+            boxSizing:
+              "border-box",
+
+            border:
+              "1px solid #FECACA",
+
+            borderRadius:
+              12,
+
+            background:
+              "#FEF2F2",
+
+            color:
+              "#B91C1C",
+
+            fontSize:
+              12,
+
+            fontWeight:
+              650,
+
+            lineHeight:
+              1.5,
+          }}
+        >
+          <div
+            style={{
+              display:
+                "flex",
+
+              alignItems:
+                "flex-start",
+
+              gap:
+                9,
+            }}
+          >
+            <TriangleAlert
+              size={
+                17
+              }
+              style={{
+                flexShrink:
+                  0,
+
+                marginTop:
+                  1,
+              }}
+            />
+
+            <span>
+              {
+                erroBanco
+              }
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setErroBanco(
+                ""
+              )
+            }
+            aria-label="Fechar aviso"
+            style={{
+              display:
+                "flex",
+
+              alignItems:
+                "center",
+
+              justifyContent:
+                "center",
+
+              flexShrink:
+                0,
+
+              padding:
+                2,
+
+              border:
+                "none",
+
+              background:
+                "transparent",
+
+              color:
+                "#B91C1C",
+
+              cursor:
+                "pointer",
+            }}
+          >
+            <X
+              size={
+                16
+              }
+            />
+          </button>
+        </div>
+      )}
 
       {/* INDICADORES */}
 
@@ -1184,7 +1587,45 @@ export default function Auditorias() {
 
         {/* TABELA */}
 
-        {auditoriasFiltradas.length ===
+        {carregando ? (
+          <div
+            style={{
+              width:
+                "100%",
+
+              padding:
+                mobile
+                  ? "34px 16px"
+                  : "46px 20px",
+
+              boxSizing:
+                "border-box",
+
+              border:
+                "1px solid #E2E8F0",
+
+              borderRadius:
+                14,
+
+              background:
+                "#FFFFFF",
+
+              color:
+                "#64748B",
+
+              fontSize:
+                12,
+
+              fontWeight:
+                600,
+
+              textAlign:
+                "center",
+            }}
+          >
+            Carregando auditorias...
+          </div>
+        ) : auditoriasFiltradas.length ===
         0 ? (
           <EstadoVazio
             mobile={
@@ -2194,9 +2635,11 @@ export default function Auditorias() {
                   salvarAuditoria
                 }
               >
-                {editando
-                  ? "Salvar alterações"
-                  : "Registrar auditoria"}
+                {salvando
+                  ? "Salvando..."
+                  : editando
+                    ? "Salvar alterações"
+                    : "Registrar auditoria"}
               </Button>
             </footer>
           </aside>
