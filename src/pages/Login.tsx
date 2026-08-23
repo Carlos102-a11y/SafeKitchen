@@ -1,1362 +1,1095 @@
 import {
-    useState,
-  } from "react";
-  
-  import {
-    Link,
-    Navigate,
-    useNavigate,
-  } from "react-router-dom";
-  
-  import {
-    ArrowRight,
-    Eye,
-    EyeOff,
-    KeyRound,
-    Mail,
-    ShieldCheck,
-  } from "lucide-react";
-  
-  import {
-    useAuth,
-  } from "../contexts/AuthContext";
-  
-  export default function Login() {
-    const navigate =
-      useNavigate();
-  
-    const {
-      entrar,
-      user,
-      loading,
-    } = useAuth();
-  
-    const [
-      email,
-      setEmail,
-    ] = useState("");
-  
-    const [
-      senha,
-      setSenha,
-    ] = useState("");
-  
-    const [
-      mostrarSenha,
-      setMostrarSenha,
-    ] = useState(false);
-  
-    const [
-      enviando,
-      setEnviando,
-    ] = useState(false);
-  
-    const [
-      erro,
-      setErro,
-    ] = useState("");
-  
+  useState,
+} from "react";
+
+import type {
+  FormEvent,
+  ReactNode,
+} from "react";
+
+import {
+  Link,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  ArrowRight,
+  ClipboardCheck,
+  Eye,
+  EyeOff,
+  HardHat,
+  KeyRound,
+  LoaderCircle,
+  Mail,
+  ShieldCheck,
+  Ambulance,
+} from "lucide-react";
+
+import {
+  useAuth,
+} from "../contexts/AuthContext";
+
+interface DestaqueProps {
+  icon: ReactNode;
+  titulo: string;
+  descricao: string;
+}
+
+export default function Login() {
+  const navigate =
+    useNavigate();
+
+  const {
+    entrar,
+    user,
+    loading,
+  } = useAuth();
+
+  const [
+    email,
+    setEmail,
+  ] = useState("");
+
+  const [
+    senha,
+    setSenha,
+  ] = useState("");
+
+  const [
+    mostrarSenha,
+    setMostrarSenha,
+  ] = useState(false);
+
+  const [
+    enviando,
+    setEnviando,
+  ] = useState(false);
+
+  const [
+    erro,
+    setErro,
+  ] = useState("");
+
+  if (
+    !loading &&
+    user
+  ) {
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
+  }
+
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    setErro("");
+
+    const emailLimpo =
+      email.trim();
+
     if (
-      !loading &&
-      user
+      !emailLimpo ||
+      !senha
     ) {
-      return (
-        <Navigate
-          to="/"
-          replace
-        />
+      setErro(
+        "Informe o e-mail e a senha."
       );
+
+      return;
     }
-  
-    async function handleSubmit(
-      event: React.FormEvent<HTMLFormElement>
-    ) {
-      event.preventDefault();
-  
-      setErro("");
-  
-      const emailLimpo =
-        email.trim();
-  
+
+    setEnviando(true);
+
+    try {
+      const resultado =
+        await entrar(
+          emailLimpo,
+          senha
+        );
+
       if (
-        !emailLimpo ||
-        !senha
+        resultado.error
       ) {
         setErro(
-          "Informe o e-mail e a senha."
+          traduzirErroLogin(
+            resultado.error
+          )
         );
-  
+
         return;
       }
-  
-      setEnviando(true);
-  
-      try {
-        const resultado =
-          await entrar(
-            emailLimpo,
-            senha
-          );
-  
-        if (
-          resultado.error
-        ) {
-          setErro(
-            traduzirErroLogin(
-              resultado.error
-            )
-          );
-  
-          return;
+
+      navigate(
+        "/",
+        {
+          replace: true,
         }
-  
-        navigate(
-          "/",
-          {
-            replace: true,
-          }
-        );
-      } finally {
-        setEnviando(false);
-      }
+      );
+    } finally {
+      setEnviando(false);
     }
-  
-    return (
-      <main className="login-page">
-        <section className="login-brand-panel">
-          <div className="login-brand-content">
-            <div className="login-brand">
-              <div className="login-brand-icon">
+  }
+
+  return (
+    <main className="auth-login-page">
+      <section className="auth-login-brand-panel">
+        <div
+          className="auth-login-grid-pattern"
+          aria-hidden="true"
+        />
+
+        <div className="auth-login-brand-content">
+          <div className="auth-login-brand">
+            <div className="auth-login-brand-icon">
+              <ShieldCheck
+                size={20}
+              />
+            </div>
+
+            <div>
+              <div className="auth-login-brand-name">
+                SafeKitchen
+              </div>
+
+              <div className="auth-login-brand-subtitle">
+                Gestão de Segurança e Saúde no Trabalho
+              </div>
+            </div>
+          </div>
+
+          <div className="auth-login-brand-message">
+            <span className="auth-login-eyebrow">
+              Gestão de SST
+            </span>
+
+            <h1>
+              Segurança e prevenção em cozinhas industriais.
+            </h1>
+
+            <p>
+              Centralize riscos, inspeções, EPIs,
+              ocorrências e ações preventivas em um
+              único ambiente de gestão.
+            </p>
+          </div>
+
+          <div className="auth-login-highlights">
+            <Destaque
+              icon={
                 <ShieldCheck
-                  size={29}
+                  size={19}
+                />
+              }
+              titulo="PGR e Gestão de Riscos"
+              descricao="Inventário, avaliação e acompanhamento das medidas de controle."
+            />
+
+            <Destaque
+              icon={
+                <ClipboardCheck
+                  size={19}
+                />
+              }
+              titulo="Checklists e Auditorias"
+              descricao="Inspeções e acompanhamento das condições de segurança."
+            />
+
+            <Destaque
+              icon={
+                <HardHat
+                  size={19}
+                />
+              }
+              titulo="Controle de EPIs"
+              descricao="Acompanhamento de CA, estoque e validade dos equipamentos."
+            />
+
+            <Destaque
+              icon={
+                <Ambulance
+                  size={19}
+                />
+              }
+              titulo="Ocorrências e DDS"
+              descricao="Registro de acidentes, incidentes e ações de conscientização."
+            />
+          </div>
+        </div>
+
+        <div className="auth-login-brand-footer">
+          <span>NR-01</span>
+          <span aria-hidden="true">/</span>
+          <span>PGR</span>
+          <span aria-hidden="true">/</span>
+          <span>SST</span>
+          <span aria-hidden="true">/</span>
+          <span>Prevenção</span>
+        </div>
+      </section>
+
+      <section className="auth-login-form-panel">
+        <header className="auth-login-mobile-brand">
+          <div className="auth-login-mobile-brand-icon">
+            <ShieldCheck
+              size={18}
+            />
+          </div>
+
+          <div>
+            <strong>
+              SafeKitchen
+            </strong>
+
+            <span>
+              Plataforma de gestão de SST
+            </span>
+          </div>
+        </header>
+
+        <div className="auth-login-form-container">
+          <div className="auth-login-card-header">
+            <span className="auth-login-form-eyebrow">
+              Acesso à plataforma
+            </span>
+
+            <h2>
+              Entrar na sua conta
+            </h2>
+
+            <p>
+              Informe suas credenciais para acessar
+              os módulos de gestão do SafeKitchen.
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="auth-login-form"
+          >
+            <div className="auth-login-field">
+              <label
+                htmlFor="login-email"
+              >
+                E-mail
+              </label>
+
+              <div className="auth-login-input-wrapper">
+                <Mail
+                  size={17}
+                  className="auth-login-input-icon"
+                />
+
+                <input
+                  id="login-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="nome@empresa.com.br"
+                  value={email}
+                  onChange={(event) =>
+                    setEmail(
+                      event.target.value
+                    )
+                  }
+                  disabled={enviando}
+                  required
                 />
               </div>
-  
-              <div>
-                <div className="login-brand-name">
-                  SafeKitchen
-                </div>
-  
-                <div className="login-brand-subtitle">
-                  Gestão de Segurança e Saúde no Trabalho
-                </div>
-              </div>
             </div>
-  
-            <div className="login-brand-message">
-              <span className="login-eyebrow">
-                Segurança integrada
-              </span>
-  
-              <h1>
-                Gestão preventiva para
-                cozinhas industriais.
-              </h1>
-  
-              <p>
-                Centralize riscos, PGR, EPIs,
-                inspeções, acidentes, DDS e
-                auditorias em um único ambiente.
-              </p>
-            </div>
-  
-            <div className="login-features">
-              <Feature
-                text="Controle integrado das informações de SST"
-              />
-  
-              <Feature
-                text="Monitoramento de riscos e ações preventivas"
-              />
-  
-              <Feature
-                text="Indicadores e relatórios para acompanhamento"
-              />
-            </div>
-          </div>
-  
-          <div className="login-brand-footer">
-            SafeKitchen • Segurança na cozinha industrial
-          </div>
-        </section>
-  
-        <section className="login-form-panel">
-          <div className="login-mobile-brand">
-            <div className="login-brand-icon login-brand-icon-small">
-              <ShieldCheck
-                size={23}
-              />
-            </div>
-  
-            <div>
-              <strong>
-                SafeKitchen
-              </strong>
-  
-              <span>
-                Segurança e Saúde no Trabalho
-              </span>
-            </div>
-          </div>
-  
-          <div className="login-card">
-            <div className="login-card-header">
-              <span className="login-form-eyebrow">
-                Acesso ao sistema
-              </span>
-  
-              <h2>
-                Bem-vindo de volta
-              </h2>
-  
-              <p>
-                Entre com sua conta para acessar
-                o SafeKitchen.
-              </p>
-            </div>
-  
-            <form
-              onSubmit={
-                handleSubmit
-              }
-              className="login-form"
-            >
-              <div className="login-field">
-                <label
-                  htmlFor="login-email"
-                >
-                  E-mail
-                </label>
-  
-                <div className="login-input-wrapper">
-                  <Mail
-                    size={18}
-                    className="login-input-icon"
-                  />
-  
-                  <input
-                    id="login-email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="seuemail@exemplo.com"
-                    value={
-                      email
-                    }
-                    onChange={(event) =>
-                      setEmail(
-                        event.target.value
-                      )
-                    }
-                    disabled={
-                      enviando
-                    }
-                  />
-                </div>
-              </div>
-  
-              <div className="login-field">
-                <label
-                  htmlFor="login-senha"
-                >
-                  Senha
-                </label>
-  
-                <div className="login-input-wrapper">
-                  <KeyRound
-                    size={18}
-                    className="login-input-icon"
-                  />
-  
-                  <input
-                    id="login-senha"
-                    type={
-                      mostrarSenha
-                        ? "text"
-                        : "password"
-                    }
-                    autoComplete="current-password"
-                    placeholder="Digite sua senha"
-                    value={
-                      senha
-                    }
-                    onChange={(event) =>
-                      setSenha(
-                        event.target.value
-                      )
-                    }
-                    disabled={
-                      enviando
-                    }
-                  />
-  
-                  <button
-                    type="button"
-                    className="login-password-button"
-                    onClick={() =>
-                      setMostrarSenha(
-                        (valorAtual) =>
-                          !valorAtual
-                      )
-                    }
-                    aria-label={
-                      mostrarSenha
-                        ? "Ocultar senha"
-                        : "Mostrar senha"
-                    }
-                    title={
-                      mostrarSenha
-                        ? "Ocultar senha"
-                        : "Mostrar senha"
-                    }
-                  >
-                    {mostrarSenha ? (
-                      <EyeOff
-                        size={18}
-                      />
-                    ) : (
-                      <Eye
-                        size={18}
-                      />
-                    )}
-                  </button>
-                </div>
-              </div>
-  
-              {erro && (
-                <div
-                  className="login-error"
-                  role="alert"
-                >
-                  {erro}
-                </div>
-              )}
-  
-              <button
-                type="submit"
-                className="login-submit"
-                disabled={
-                  enviando
-                }
+
+            <div className="auth-login-field">
+              <label
+                htmlFor="login-senha"
               >
-                <span>
-                  {enviando
-                    ? "Entrando..."
-                    : "Entrar"}
-                </span>
-  
-                {!enviando && (
-                  <ArrowRight
-                    size={18}
-                  />
-                )}
-              </button>
-            </form>
-  
-            <div className="login-divider">
-              <span />
-  
-              <p>
-                Primeira vez no SafeKitchen?
-              </p>
-  
-              <span />
+                Senha
+              </label>
+
+              <div className="auth-login-input-wrapper">
+                <KeyRound
+                  size={17}
+                  className="auth-login-input-icon"
+                />
+
+                <input
+                  id="login-senha"
+                  name="password"
+                  type={
+                    mostrarSenha
+                      ? "text"
+                      : "password"
+                  }
+                  autoComplete="current-password"
+                  placeholder="Digite sua senha"
+                  value={senha}
+                  onChange={(event) =>
+                    setSenha(
+                      event.target.value
+                    )
+                  }
+                  disabled={enviando}
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="auth-login-password-button"
+                  onClick={() =>
+                    setMostrarSenha(
+                      (valorAtual) =>
+                        !valorAtual
+                    )
+                  }
+                  aria-label={
+                    mostrarSenha
+                      ? "Ocultar senha"
+                      : "Mostrar senha"
+                  }
+                  title={
+                    mostrarSenha
+                      ? "Ocultar senha"
+                      : "Mostrar senha"
+                  }
+                >
+                  {mostrarSenha ? (
+                    <EyeOff
+                      size={17}
+                    />
+                  ) : (
+                    <Eye
+                      size={17}
+                    />
+                  )}
+                </button>
+              </div>
             </div>
-  
+
+            {erro && (
+              <div
+                className="auth-login-error"
+                role="alert"
+                aria-live="polite"
+              >
+                {erro}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="auth-login-submit"
+              disabled={enviando}
+            >
+              {enviando ? (
+                <LoaderCircle
+                  size={17}
+                  className="auth-login-spinner"
+                />
+              ) : (
+                <ArrowRight
+                  size={17}
+                />
+              )}
+
+              <span>
+                {enviando
+                  ? "Entrando..."
+                  : "Entrar"}
+              </span>
+            </button>
+          </form>
+
+          <div className="auth-login-access-link">
+            <span>
+              Ainda não possui acesso?
+            </span>
+
             <Link
               to="/cadastro"
-              className="login-register"
             >
               Criar uma conta
             </Link>
-  
-            <p className="login-security">
-              Seus dados de acesso são protegidos
-              pelo sistema de autenticação.
-            </p>
           </div>
-        </section>
-  
-        <style>
-          {loginStyles}
-        </style>
-      </main>
-    );
-  }
-  
-  function Feature({
-    text,
-  }: {
-    text: string;
-  }) {
-    return (
-      <div className="login-feature">
-        <div className="login-feature-check">
-          <ShieldCheck
-            size={15}
-          />
+
+          <div className="auth-login-security">
+            <ShieldCheck
+              size={14}
+            />
+
+            <span>
+              O acesso é protegido pelo sistema de autenticação do SafeKitchen.
+            </span>
+          </div>
         </div>
-  
-        <span>
-          {text}
-        </span>
+
+        <footer className="auth-login-form-footer">
+          © {new Date().getFullYear()} SafeKitchen · Plataforma de Segurança do Trabalho
+        </footer>
+      </section>
+
+      <style>
+        {loginStyles}
+      </style>
+    </main>
+  );
+}
+
+function Destaque({
+  icon,
+  titulo,
+  descricao,
+}: DestaqueProps) {
+  return (
+    <div className="auth-login-highlight">
+      <div className="auth-login-highlight-icon">
+        {icon}
       </div>
-    );
-  }
-  
-  function traduzirErroLogin(
-    mensagem: string
+
+      <div>
+        <strong>
+          {titulo}
+        </strong>
+
+        <p>
+          {descricao}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function traduzirErroLogin(
+  mensagem: string
+) {
+  const erro =
+    mensagem.toLowerCase();
+
+  if (
+    erro.includes(
+      "invalid login credentials"
+    )
   ) {
-    const erro =
-      mensagem.toLowerCase();
-  
-    if (
-      erro.includes(
-        "invalid login credentials"
-      )
-    ) {
-      return "E-mail ou senha incorretos.";
-    }
-  
-    if (
-      erro.includes(
-        "email not confirmed"
-      )
-    ) {
-      return "Confirme seu e-mail antes de entrar.";
-    }
-  
-    if (
-      erro.includes(
-        "too many requests"
-      )
-    ) {
-      return "Muitas tentativas. Aguarde um pouco e tente novamente.";
-    }
-  
-    return "Não foi possível realizar o login. Tente novamente.";
+    return "E-mail ou senha incorretos.";
   }
-  
-  const loginStyles = `
-    .login-page {
-      width: 100%;
-      min-width: 0;
-      min-height: 100vh;
-      min-height: 100dvh;
-  
-      display: grid;
+
+  if (
+    erro.includes(
+      "email not confirmed"
+    )
+  ) {
+    return "Confirme seu e-mail antes de entrar.";
+  }
+
+  if (
+    erro.includes(
+      "too many requests"
+    ) ||
+    erro.includes(
+      "rate limit"
+    )
+  ) {
+    return "Muitas tentativas. Aguarde um pouco e tente novamente.";
+  }
+
+  return "Não foi possível realizar o login. Tente novamente.";
+}
+
+const loginStyles = `
+  .auth-login-page {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    display: grid;
+    grid-template-columns:
+      minmax(440px, .95fr)
+      minmax(500px, 1.05fr);
+
+    background: #f8fafc;
+  }
+
+  .auth-login-brand-panel {
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 48px 54px 38px;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    background: #0f172a;
+    color: #ffffff;
+  }
+
+  .auth-login-grid-pattern {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .07;
+
+    background-image:
+      linear-gradient(
+        to right,
+        rgba(255,255,255,.85) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(255,255,255,.85) 1px,
+        transparent 1px
+      );
+
+    background-size: 56px 56px;
+  }
+
+  .auth-login-brand-panel::after {
+    content: "";
+
+    position: absolute;
+    width: 470px;
+    height: 470px;
+    right: -255px;
+    bottom: -225px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(37, 99, 235, .16);
+
+    filter: blur(2px);
+  }
+
+  .auth-login-brand-content,
+  .auth-login-brand-footer {
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-login-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .auth-login-brand-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 10px;
+
+    background: rgba(255,255,255,.08);
+    color: #dbeafe;
+  }
+
+  .auth-login-brand-name {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -.25px;
+  }
+
+  .auth-login-brand-subtitle {
+    margin-top: 2px;
+
+    color: #94a3b8;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .auth-login-brand-message {
+    max-width: 510px;
+    margin-top: clamp(62px, 10vh, 118px);
+  }
+
+  .auth-login-eyebrow,
+  .auth-login-form-eyebrow {
+    font-family:
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace;
+
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .16em;
+  }
+
+  .auth-login-eyebrow {
+    color: #94a3b8;
+  }
+
+  .auth-login-brand-message h1 {
+    max-width: 500px;
+    margin: 18px 0 0;
+
+    color: #ffffff;
+    font-size: clamp(34px, 3.8vw, 50px);
+    font-weight: 750;
+    line-height: 1.07;
+    letter-spacing: -1.5px;
+  }
+
+  .auth-login-brand-message > p {
+    max-width: 480px;
+    margin: 18px 0 0;
+
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .auth-login-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    margin-top: 36px;
+  }
+
+  .auth-login-highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    max-width: 500px;
+  }
+
+  .auth-login-highlight-icon {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    margin-top: 1px;
+
+    color: #94a3b8;
+  }
+
+  .auth-login-highlight strong {
+    display: block;
+
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .auth-login-highlight p {
+    margin: 4px 0 0;
+
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .auth-login-brand-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+
+    margin-top: 40px;
+    padding-top: 22px;
+
+    border-top: 1px solid rgba(255,255,255,.11);
+
+    color: #64748b;
+
+    font-family:
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace;
+
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+
+  .auth-login-form-panel {
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+  }
+
+  .auth-login-mobile-brand {
+    display: none;
+  }
+
+  .auth-login-form-container {
+    width: 100%;
+    max-width: 420px;
+
+    margin: auto;
+    padding: 48px 32px;
+    box-sizing: border-box;
+  }
+
+  .auth-login-card-header {
+    margin-bottom: 30px;
+  }
+
+  .auth-login-form-eyebrow {
+    color: #64748b;
+  }
+
+  .auth-login-card-header h2 {
+    margin: 9px 0 0;
+
+    color: #0f172a;
+    font-size: 27px;
+    font-weight: 750;
+    line-height: 1.2;
+    letter-spacing: -.6px;
+  }
+
+  .auth-login-card-header p {
+    margin: 9px 0 0;
+
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .auth-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .auth-login-field {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .auth-login-field label {
+    color: #334155;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .auth-login-input-wrapper {
+    width: 100%;
+    min-width: 0;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 0 11px;
+    box-sizing: border-box;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    transition:
+      border-color .15s ease,
+      box-shadow .15s ease;
+  }
+
+  .auth-login-input-wrapper:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.08);
+  }
+
+  .auth-login-input-icon {
+    flex-shrink: 0;
+    color: #94a3b8;
+  }
+
+  .auth-login-input-wrapper input {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+    color: #0f172a;
+
+    font-family: inherit;
+    font-size: 12px;
+  }
+
+  .auth-login-input-wrapper input::placeholder {
+    color: #94a3b8;
+  }
+
+  .auth-login-input-wrapper input:disabled {
+    cursor: not-allowed;
+  }
+
+  .auth-login-password-button {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+    color: #64748b;
+
+    cursor: pointer;
+  }
+
+  .auth-login-password-button:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .auth-login-error {
+    padding: 10px 11px;
+
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+
+    background: #fef2f2;
+    color: #b91c1c;
+
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .auth-login-submit {
+    width: 100%;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin-top: 2px;
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #0f172a;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+      background .15s ease,
+      transform .15s ease;
+  }
+
+  .auth-login-submit:hover:not(:disabled) {
+    background: #1e293b;
+  }
+
+  .auth-login-submit:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .auth-login-submit:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+  }
+
+  .auth-login-spinner {
+    animation: auth-login-spin .8s linear infinite;
+  }
+
+  @keyframes auth-login-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .auth-login-access-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    margin-top: 26px;
+
+    color: #64748b;
+    font-size: 11px;
+  }
+
+  .auth-login-access-link a {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .auth-login-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    margin-top: 26px;
+    padding-top: 18px;
+
+    border-top: 1px solid #e2e8f0;
+
+    color: #94a3b8;
+    font-size: 9.5px;
+    line-height: 1.45;
+    text-align: center;
+  }
+
+  .auth-login-form-footer {
+    padding: 0 32px 28px;
+
+    color: #94a3b8;
+    font-size: 9.5px;
+    text-align: center;
+  }
+
+  @media (max-width: 980px) {
+    .auth-login-page {
       grid-template-columns:
-        minmax(420px, 0.95fr)
-        minmax(500px, 1.05fr);
-  
-      background:
-        #f8fafc;
+        minmax(350px, .8fr)
+        minmax(430px, 1.2fr);
     }
-  
-    .login-brand-panel {
-      min-width: 0;
-  
-      position: relative;
-  
-      display: flex;
-      flex-direction: column;
-  
-      justify-content:
-        space-between;
-  
-      padding:
-        48px 54px 38px;
-  
-      overflow: hidden;
-  
-      background:
-        linear-gradient(
-          145deg,
-          #0f172a 0%,
-          #111f38 48%,
-          #172554 100%
-        );
-  
-      color:
-        #ffffff;
+
+    .auth-login-brand-panel {
+      padding: 38px 34px 30px;
     }
-  
-    .login-brand-panel::before {
-      content: "";
-  
-      position: absolute;
-  
-      width: 420px;
-      height: 420px;
-  
-      top: -170px;
-      right: -180px;
-  
-      border-radius:
-        50%;
-  
-      background:
-        rgba(
-          37,
-          99,
-          235,
-          .18
-        );
+
+    .auth-login-brand-message h1 {
+      font-size: 37px;
     }
-  
-    .login-brand-panel::after {
-      content: "";
-  
-      position: absolute;
-  
-      width: 320px;
-      height: 320px;
-  
-      bottom: -190px;
-      left: -120px;
-  
-      border-radius:
-        50%;
-  
-      background:
-        rgba(
-          14,
-          165,
-          233,
-          .1
-        );
+  }
+
+  @media (max-width: 800px) {
+    .auth-login-page {
+      display: block;
     }
-  
-    .login-brand-content,
-    .login-brand-footer {
-      position: relative;
-  
-      z-index: 1;
-    }
-  
-    .login-brand {
-      display: flex;
-  
-      align-items:
-        center;
-  
-      gap: 13px;
-    }
-  
-    .login-brand-icon {
-      width: 50px;
-      height: 50px;
-  
-      display: flex;
-  
-      align-items:
-        center;
-  
-      justify-content:
-        center;
-  
-      flex-shrink: 0;
-  
-      border:
-        1px solid
-        rgba(
-          255,
-          255,
-          255,
-          .14
-        );
-  
-      border-radius:
-        15px;
-  
-      background:
-        rgba(
-          37,
-          99,
-          235,
-          .22
-        );
-  
-      color:
-        #60a5fa;
-    }
-  
-    .login-brand-name {
-      color:
-        #ffffff;
-  
-      font-size:
-        20px;
-  
-      font-weight:
-        850;
-  
-      letter-spacing:
-        -.35px;
-    }
-  
-    .login-brand-subtitle {
-      margin-top:
-        3px;
-  
-      color:
-        #94a3b8;
-  
-      font-size:
-        11px;
-  
-      line-height:
-        1.4;
-    }
-  
-    .login-brand-message {
-      max-width:
-        520px;
-  
-      margin-top:
-        clamp(
-          80px,
-          16vh,
-          170px
-        );
-    }
-  
-    .login-eyebrow {
-      display:
-        inline-flex;
-  
-      padding:
-        7px 11px;
-  
-      border:
-        1px solid
-        rgba(
-          96,
-          165,
-          250,
-          .2
-        );
-  
-      border-radius:
-        999px;
-  
-      background:
-        rgba(
-          37,
-          99,
-          235,
-          .11
-        );
-  
-      color:
-        #93c5fd;
-  
-      font-size:
-        10px;
-  
-      font-weight:
-        800;
-  
-      text-transform:
-        uppercase;
-  
-      letter-spacing:
-        .8px;
-    }
-  
-    .login-brand-message h1 {
-      margin:
-        22px 0 0;
-  
-      max-width:
-        510px;
-  
-      color:
-        #ffffff;
-  
-      font-size:
-        clamp(
-          36px,
-          4vw,
-          52px
-        );
-  
-      font-weight:
-        850;
-  
-      line-height:
-        1.04;
-  
-      letter-spacing:
-        -1.8px;
-    }
-  
-    .login-brand-message p {
-      margin:
-        20px 0 0;
-  
-      max-width:
-        485px;
-  
-      color:
-        #94a3b8;
-  
-      font-size:
-        14px;
-  
-      line-height:
-        1.75;
-    }
-  
-    .login-features {
-      display: flex;
-  
-      flex-direction:
-        column;
-  
-      gap: 14px;
-  
-      margin-top:
-        38px;
-    }
-  
-    .login-feature {
-      display: flex;
-  
-      align-items:
-        center;
-  
-      gap: 11px;
-  
-      color:
-        #cbd5e1;
-  
-      font-size:
-        12px;
-  
-      line-height:
-        1.45;
-    }
-  
-    .login-feature-check {
-      width: 27px;
-      height: 27px;
-  
-      display: flex;
-  
-      align-items:
-        center;
-  
-      justify-content:
-        center;
-  
-      flex-shrink: 0;
-  
-      border-radius:
-        8px;
-  
-      background:
-        rgba(
-          37,
-          99,
-          235,
-          .15
-        );
-  
-      color:
-        #60a5fa;
-    }
-  
-    .login-brand-footer {
-      margin-top:
-        50px;
-  
-      color:
-        #64748b;
-  
-      font-size:
-        10px;
-    }
-  
-    .login-form-panel {
-      min-width: 0;
-  
-      display: flex;
-  
-      align-items:
-        center;
-  
-      justify-content:
-        center;
-  
-      padding:
-        48px;
-  
-      box-sizing:
-        border-box;
-  
-      background:
-        #f8fafc;
-    }
-  
-    .login-card {
-      width: 100%;
-      max-width:
-        440px;
-    }
-  
-    .login-card-header {
-      margin-bottom:
-        30px;
-    }
-  
-    .login-form-eyebrow {
-      color:
-        #2563eb;
-  
-      font-size:
-        10px;
-  
-      font-weight:
-        850;
-  
-      text-transform:
-        uppercase;
-  
-      letter-spacing:
-        .8px;
-    }
-  
-    .login-card-header h2 {
-      margin:
-        9px 0 0;
-  
-      color:
-        #0f172a;
-  
-      font-size:
-        30px;
-  
-      font-weight:
-        850;
-  
-      letter-spacing:
-        -.7px;
-  
-      line-height:
-        1.2;
-    }
-  
-    .login-card-header p {
-      margin:
-        9px 0 0;
-  
-      color:
-        #64748b;
-  
-      font-size:
-        13px;
-  
-      line-height:
-        1.55;
-    }
-  
-    .login-form {
-      display: flex;
-  
-      flex-direction:
-        column;
-  
-      gap: 18px;
-    }
-  
-    .login-field {
-      min-width: 0;
-  
-      display: flex;
-  
-      flex-direction:
-        column;
-  
-      gap: 8px;
-    }
-  
-    .login-field label {
-      color:
-        #334155;
-  
-      font-size:
-        12px;
-  
-      font-weight:
-        750;
-    }
-  
-    .login-input-wrapper {
-      width: 100%;
-      min-width: 0;
-  
-      height: 48px;
-  
-      display: flex;
-  
-      align-items:
-        center;
-  
-      gap: 10px;
-  
-      padding:
-        0 13px;
-  
-      box-sizing:
-        border-box;
-  
-      border:
-        1px solid #cbd5e1;
-  
-      border-radius:
-        11px;
-  
-      background:
-        #ffffff;
-  
-      transition:
-        border-color .15s ease,
-        box-shadow .15s ease;
-    }
-  
-    .login-input-wrapper:focus-within {
-      border-color:
-        #2563eb;
-  
-      box-shadow:
-        0 0 0 3px
-        rgba(
-          37,
-          99,
-          235,
-          .08
-        );
-    }
-  
-    .login-input-icon {
-      flex-shrink: 0;
-  
-      color:
-        #94a3b8;
-    }
-  
-    .login-input-wrapper input {
-      width: 100%;
-      min-width: 0;
-  
-      flex: 1;
-  
-      border: none;
-  
-      outline: none;
-  
-      background:
-        transparent;
-  
-      color:
-        #0f172a;
-  
-      font-family:
-        inherit;
-  
-      font-size:
-        13px;
-    }
-  
-    .login-input-wrapper input::placeholder {
-      color:
-        #94a3b8;
-    }
-  
-    .login-input-wrapper input:disabled {
-      cursor:
-        not-allowed;
-    }
-  
-    .login-password-button {
-      width: 32px;
-      height: 32px;
-  
-      display: flex;
-  
-      align-items:
-        center;
-  
-      justify-content:
-        center;
-  
-      flex-shrink: 0;
-  
-      padding: 0;
-  
-      border: none;
-  
-      border-radius:
-        8px;
-  
-      background:
-        transparent;
-  
-      color:
-        #64748b;
-  
-      cursor:
-        pointer;
-    }
-  
-    .login-password-button:hover {
-      background:
-        #f1f5f9;
-  
-      color:
-        #0f172a;
-    }
-  
-    .login-error {
-      padding:
-        11px 13px;
-  
-      border:
-        1px solid #fecaca;
-  
-      border-radius:
-        10px;
-  
-      background:
-        #fef2f2;
-  
-      color:
-        #b91c1c;
-  
-      font-size:
-        11px;
-  
-      font-weight:
-        650;
-  
-      line-height:
-        1.45;
-    }
-  
-    .login-submit {
-      width: 100%;
-      height: 48px;
-  
-      display: flex;
-  
-      align-items:
-        center;
-  
-      justify-content:
-        center;
-  
-      gap: 9px;
-  
-      margin-top:
-        2px;
-  
-      border: none;
-  
-      border-radius:
-        11px;
-  
-      background:
-        #2563eb;
-  
-      color:
-        #ffffff;
-  
-      font-family:
-        inherit;
-  
-      font-size:
-        13px;
-  
-      font-weight:
-        800;
-  
-      cursor:
-        pointer;
-  
-      transition:
-        background .15s ease,
-        transform .15s ease,
-        box-shadow .15s ease;
-    }
-  
-    .login-submit:hover:not(:disabled) {
-      background:
-        #1d4ed8;
-  
-      box-shadow:
-        0 8px 24px
-        rgba(
-          37,
-          99,
-          235,
-          .18
-        );
-    }
-  
-    .login-submit:active:not(:disabled) {
-      transform:
-        translateY(1px);
-    }
-  
-    .login-submit:disabled {
-      opacity:
-        .65;
-  
-      cursor:
-        not-allowed;
-    }
-  
-    .login-divider {
-      display: grid;
-  
-      grid-template-columns:
-        1fr auto 1fr;
-  
-      align-items:
-        center;
-  
-      gap: 12px;
-  
-      margin:
-        27px 0 18px;
-    }
-  
-    .login-divider span {
-      height: 1px;
-  
-      background:
-        #e2e8f0;
-    }
-  
-    .login-divider p {
-      margin: 0;
-  
-      color:
-        #94a3b8;
-  
-      font-size:
-        10px;
-  
-      white-space:
-        nowrap;
-    }
-  
-    .login-register {
-      width: 100%;
-      height: 46px;
-  
-      display: flex;
-  
-      align-items:
-        center;
-  
-      justify-content:
-        center;
-  
-      box-sizing:
-        border-box;
-  
-      border:
-        1px solid #cbd5e1;
-  
-      border-radius:
-        11px;
-  
-      background:
-        #ffffff;
-  
-      color:
-        #334155;
-  
-      font-size:
-        12px;
-  
-      font-weight:
-        750;
-  
-      text-decoration:
-        none;
-  
-      transition:
-        border-color .15s ease,
-        background .15s ease;
-    }
-  
-    .login-register:hover {
-      border-color:
-        #94a3b8;
-  
-      background:
-        #f8fafc;
-    }
-  
-    .login-security {
-      margin:
-        20px 0 0;
-  
-      color:
-        #94a3b8;
-  
-      font-size:
-        10px;
-  
-      line-height:
-        1.5;
-  
-      text-align:
-        center;
-    }
-  
-    .login-mobile-brand {
+
+    .auth-login-brand-panel {
       display: none;
     }
-  
-    .login-brand-icon-small {
-      width: 42px;
-      height: 42px;
+
+    .auth-login-form-panel {
+      min-height: 100vh;
+      min-height: 100dvh;
     }
-  
-    @media (max-width: 1000px) {
-      .login-page {
-        grid-template-columns:
-          minmax(340px, .8fr)
-          minmax(430px, 1.2fr);
-      }
-  
-      .login-brand-panel {
-        padding:
-          38px 34px 30px;
-      }
-  
-      .login-brand-message h1 {
-        font-size:
-          38px;
-      }
-  
-      .login-form-panel {
-        padding:
-          40px;
-      }
+
+    .auth-login-mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 18px 22px;
+
+      border-bottom: 1px solid #e2e8f0;
     }
-  
-    @media (max-width: 800px) {
-      .login-page {
-        display: block;
-      }
-  
-      .login-brand-panel {
-        display: none;
-      }
-  
-      .login-form-panel {
-        min-height:
-          100vh;
-  
-        min-height:
-          100dvh;
-  
-        display: flex;
-  
-        flex-direction:
-          column;
-  
-        align-items:
-          center;
-  
-        justify-content:
-          center;
-  
-        padding:
-          30px 20px;
-      }
-  
-      .login-mobile-brand {
-        width: 100%;
-        max-width:
-          440px;
-  
-        display: flex;
-  
-        align-items:
-          center;
-  
-        gap: 11px;
-  
-        margin-bottom:
-          36px;
-      }
-  
-      .login-mobile-brand strong {
-        display: block;
-  
-        color:
-          #0f172a;
-  
-        font-size:
-          16px;
-  
-        font-weight:
-          850;
-      }
-  
-      .login-mobile-brand span {
-        display: block;
-  
-        margin-top:
-          2px;
-  
-        color:
-          #94a3b8;
-  
-        font-size:
-          10px;
-      }
+
+    .auth-login-mobile-brand-icon {
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      border-radius: 8px;
+
+      background: #0f172a;
+      color: #ffffff;
     }
-  
-    @media (max-width: 480px) {
-      .login-form-panel {
-        justify-content:
-          flex-start;
-  
-        padding:
-          24px 16px 30px;
-      }
-  
-      .login-mobile-brand {
-        margin-bottom:
-          40px;
-      }
-  
-      .login-card-header {
-        margin-bottom:
-          25px;
-      }
-  
-      .login-card-header h2 {
-        font-size:
-          27px;
-      }
-  
-      .login-divider {
-        gap: 9px;
-      }
-  
-      .login-divider p {
-        white-space:
-          normal;
-  
-        text-align:
-          center;
-      }
+
+    .auth-login-mobile-brand strong {
+      display: block;
+
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 800;
     }
-  `;
+
+    .auth-login-mobile-brand span {
+      display: block;
+      margin-top: 1px;
+
+      color: #94a3b8;
+      font-size: 9px;
+    }
+
+    .auth-login-form-container {
+      padding: 48px 22px 36px;
+    }
+
+    .auth-login-form-footer {
+      padding: 0 22px 22px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .auth-login-form-container {
+      max-width: none;
+      padding: 38px 16px 30px;
+    }
+
+    .auth-login-card-header h2 {
+      font-size: 25px;
+    }
+
+    .auth-login-form-footer {
+      padding: 0 16px 20px;
+    }
+  }
+`;
