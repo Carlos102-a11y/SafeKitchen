@@ -1,0 +1,219 @@
+.container {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 32px;
+
+  box-sizing: border-box;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  min-width: 0;
+}
+
+.iconBox {
+  width: 60px;
+  height: 60px;
+
+  flex-shrink: 0;
+
+  border-radius: 16px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 8px 24px
+    rgba(37, 99, 235, 0.25);
+}
+
+.title {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  line-height: 1.15;
+
+  overflow-wrap: break-word;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+
+  max-width: 720px;
+
+  color: #64748b;
+
+  font-size: 15px;
+
+  line-height: 1.5;
+
+  overflow-wrap: break-word;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  flex-shrink: 0;
+}
+
+/*
+ * TABLET
+ */
+
+@media (max-width: 900px) {
+  .container {
+    align-items: flex-start;
+
+    gap: 18px;
+
+    margin-bottom: 24px;
+  }
+
+  .iconBox {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 14px;
+  }
+
+  .title {
+    font-size: 25px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+}
+
+/*
+ * CELULAR
+ */
+
+@media (max-width: 650px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 18px;
+
+    margin-bottom: 22px;
+  }
+
+  .content {
+    width: 100%;
+
+    align-items: flex-start;
+
+    gap: 13px;
+  }
+
+  .iconBox {
+    width: 46px;
+    height: 46px;
+
+    border-radius: 12px;
+  }
+
+  .iconBox svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .title {
+    font-size: 22px;
+
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    margin-top: 5px;
+
+    font-size: 12px;
+
+    line-height: 1.45;
+  }
+
+  .actions {
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 9px;
+  }
+
+  .actions > * {
+    flex: 1 1 auto;
+  }
+}
+
+/*
+ * CELULARES PEQUENOS
+ */
+
+@media (max-width: 420px) {
+  .container {
+    gap: 15px;
+
+    margin-bottom: 20px;
+  }
+
+  .content {
+    gap: 11px;
+  }
+
+  .iconBox {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 11px;
+  }
+
+  .iconBox svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .actions {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .actions > * {
+    width: 100%;
+  }
+}

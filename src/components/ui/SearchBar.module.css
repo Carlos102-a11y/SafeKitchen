@@ -1,0 +1,66 @@
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+  }
+  
+  .input {
+    width: 100%;
+    height: 46px;
+  
+    padding: 0 42px;
+  
+    border: 1px solid #dbe3ee;
+    border-radius: 12px;
+  
+    background: white;
+  
+    font-size: 15px;
+  
+    outline: none;
+  
+    transition: .2s;
+    box-sizing: border-box;
+  }
+  
+  .input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+  }
+  
+  .searchIcon {
+    position: absolute;
+  
+    left: 14px;
+  
+    top: 50%;
+  
+    transform: translateY(-50%);
+  
+    color: #94a3b8;
+  }
+  
+  .clearButton {
+    position: absolute;
+  
+    right: 12px;
+  
+    top: 50%;
+  
+    transform: translateY(-50%);
+  
+    background: none;
+  
+    border: none;
+  
+    cursor: pointer;
+  
+    color: #94a3b8;
+  
+    display: flex;
+    align-items: center;
+  }
+  
+  .clearButton:hover {
+    color: #ef4444;
+  }

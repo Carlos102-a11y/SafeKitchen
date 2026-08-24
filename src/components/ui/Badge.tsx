@@ -1,26 +1,77 @@
-import { colors } from "../../styles/theme";
+import type { ReactNode } from "react";
 
 interface BadgeProps {
-  text: string;
-  color: string;
+  children?: ReactNode;
+  text?: string;
+  color?: string;
 }
 
+const variantes: Record<
+  string,
+  {
+    background: string;
+    color: string;
+  }
+> = {
+  red: {
+    background: "#FEE2E2",
+    color: "#B91C1C",
+  },
+
+  orange: {
+    background: "#FFEDD5",
+    color: "#C2410C",
+  },
+
+  yellow: {
+    background: "#FEF3C7",
+    color: "#92400E",
+  },
+
+  green: {
+    background: "#DCFCE7",
+    color: "#166534",
+  },
+
+  blue: {
+    background: "#DBEAFE",
+    color: "#1D4ED8",
+  },
+
+  gray: {
+    background: "#F1F5F9",
+    color: "#475569",
+  },
+};
+
 export default function Badge({
+  children,
   text,
-  color,
+  color = "gray",
 }: BadgeProps) {
+  const variante =
+    variantes[color] ?? {
+      background: color,
+      color: "#FFFFFF",
+    };
+
   return (
     <span
       style={{
-        background: color,
-        color: "#fff",
-        padding: "6px 12px",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "6px 11px",
         borderRadius: "999px",
-        fontSize: "13px",
-        fontWeight: 600,
+        background: variante.background,
+        color: variante.color,
+        fontSize: "12px",
+        fontWeight: 700,
+        lineHeight: 1,
+        whiteSpace: "nowrap",
       }}
     >
-      {text}
+      {children ?? text}
     </span>
   );
 }
