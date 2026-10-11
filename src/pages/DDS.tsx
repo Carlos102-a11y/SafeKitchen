@@ -774,7 +774,7 @@ export default function DDS() {
             color:
               "#B91C1C",
 
-            fontSize: 12,
+            fontSize: "calc(12px * var(--sk-text-scale, 1))",
 
             fontWeight: 650,
 
@@ -1213,8 +1213,8 @@ export default function DDS() {
 
               fontSize:
                 mobile
-                  ? 16
-                  : 18,
+                  ? "calc(16px * var(--sk-text-scale, 1))"
+                  : "calc(18px * var(--sk-text-scale, 1))",
 
               fontWeight:
                 800,
@@ -1235,7 +1235,7 @@ export default function DDS() {
                 "#94A3B8",
 
               fontSize:
-                12,
+                "calc(12px * var(--sk-text-scale, 1))",
 
               lineHeight:
                 1.5,
@@ -1322,7 +1322,7 @@ export default function DDS() {
                   "#475569",
 
                 fontSize:
-                  12,
+                  "calc(12px * var(--sk-text-scale, 1))",
 
                 fontWeight:
                   700,
@@ -1366,7 +1366,7 @@ export default function DDS() {
                     "#2563EB",
 
                   fontSize:
-                    11,
+                    "calc(11px * var(--sk-text-scale, 1))",
 
                   fontWeight:
                     700,
@@ -1483,7 +1483,7 @@ export default function DDS() {
                     "inherit",
 
                   fontSize:
-                    12,
+                    "calc(12px * var(--sk-text-scale, 1))",
                 }}
               />
             </div>
@@ -1527,7 +1527,7 @@ export default function DDS() {
                 "#64748B",
 
               fontSize:
-                11,
+                "calc(11px * var(--sk-text-scale, 1))",
 
               lineHeight:
                 1.5,
@@ -1584,7 +1584,7 @@ export default function DDS() {
               color:
                 "#64748B",
 
-              fontSize: 12,
+              fontSize: "calc(12px * var(--sk-text-scale, 1))",
 
               fontWeight: 600,
 
@@ -1781,7 +1781,7 @@ export default function DDS() {
                                   "#0F172A",
 
                                 fontSize:
-                                  13,
+                                  "calc(13px * var(--sk-text-scale, 1))",
 
                                 fontWeight:
                                   750,
@@ -1815,7 +1815,7 @@ export default function DDS() {
                                   "#64748B",
 
                                 fontSize:
-                                  10,
+                                  "calc(10px * var(--sk-text-scale, 1))",
 
                                 whiteSpace:
                                   "nowrap",
@@ -1862,7 +1862,7 @@ export default function DDS() {
                               "#475569",
 
                             fontSize:
-                              12,
+                              "calc(12px * var(--sk-text-scale, 1))",
                           }}
                         >
                           <UserRound
@@ -1918,7 +1918,7 @@ export default function DDS() {
                               "#475569",
 
                             fontSize:
-                              12,
+                              "calc(12px * var(--sk-text-scale, 1))",
                           }}
                         >
                           <Building2
@@ -1982,7 +1982,7 @@ export default function DDS() {
                               "#475569",
 
                             fontSize:
-                              12,
+                              "calc(12px * var(--sk-text-scale, 1))",
 
                             whiteSpace:
                               "nowrap",
@@ -2028,7 +2028,7 @@ export default function DDS() {
                               "#64748B",
 
                             fontSize:
-                              11,
+                              "calc(11px * var(--sk-text-scale, 1))",
 
                             lineHeight:
                               1.5,
@@ -2429,7 +2429,7 @@ export default function DDS() {
                       "inherit",
 
                     fontSize:
-                      12,
+                      "calc(12px * var(--sk-text-scale, 1))",
 
                     lineHeight:
                       1.5,
@@ -2797,7 +2797,7 @@ function EstadoVazio({
             "#0F172A",
 
           fontSize:
-            14,
+            "calc(14px * var(--sk-text-scale, 1))",
 
           lineHeight:
             1.4,
@@ -2818,7 +2818,7 @@ function EstadoVazio({
             "#94A3B8",
 
           fontSize:
-            12,
+            "calc(12px * var(--sk-text-scale, 1))",
 
           lineHeight:
             1.5,
@@ -2854,7 +2854,7 @@ function Th({
           "#64748B",
 
         fontSize:
-          10,
+          "calc(10px * var(--sk-text-scale, 1))",
 
         fontWeight:
           800,
@@ -2900,7 +2900,7 @@ function Td({
           "#475569",
 
         fontSize:
-          12,
+          "calc(12px * var(--sk-text-scale, 1))",
       }}
     >
       {children}
@@ -3020,7 +3020,7 @@ const estiloInput = {
     "inherit",
 
   fontSize:
-    13,
+    "calc(13px * var(--sk-text-scale, 1))",
 
   outline:
     "none",
@@ -3055,7 +3055,7 @@ const estiloSelect = {
     "inherit",
 
   fontSize:
-    11,
+    "calc(11px * var(--sk-text-scale, 1))",
 
   fontWeight:
     600,
@@ -3199,7 +3199,7 @@ const estilosResponsivos = `
   .dds-kicker {
     color: #93c5fd;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 850;
 
     letter-spacing: .8px;
@@ -3210,7 +3210,7 @@ const estilosResponsivos = `
 
     color: #ffffff;
 
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-text-scale, 1));
     font-weight: 820;
 
     line-height: 1.3;
@@ -3223,7 +3223,7 @@ const estilosResponsivos = `
 
     color: #cbd5e1;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.55;
   }
 
@@ -3271,7 +3271,7 @@ const estilosResponsivos = `
 
     color: #ffffff;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .dds-fluxo span {
@@ -3281,7 +3281,7 @@ const estilosResponsivos = `
 
     color: #e2e8f0;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
@@ -3335,7 +3335,7 @@ const estilosResponsivos = `
 
     color: #0f172a;
 
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -3389,7 +3389,7 @@ const estilosResponsivos = `
 
     color: #64748b;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 750;
 
     line-height: 1.3;
@@ -3402,7 +3402,7 @@ const estilosResponsivos = `
 
     color: #0f172a;
 
-    font-size: 16px;
+    font-size: calc(16px * var(--sk-text-scale, 1));
     font-weight: 850;
 
     line-height: 1.2;
@@ -3415,7 +3415,7 @@ const estilosResponsivos = `
 
     color: #94a3b8;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
 
     line-height: 1.3;
   }
@@ -3437,14 +3437,14 @@ const estilosResponsivos = `
 
     color: #64748b;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 650;
   }
 
   .dds-atividade-barra-topo strong {
     color: #2563eb;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .dds-atividade-track {
@@ -3475,7 +3475,7 @@ const estilosResponsivos = `
 
     color: #94a3b8;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -3529,7 +3529,7 @@ const estilosResponsivos = `
 
     color: #0f172a;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 750;
 
     line-height: 1.35;
@@ -3544,7 +3544,7 @@ const estilosResponsivos = `
 
     color: #94a3b8;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.35;
 
     overflow-wrap: anywhere;
@@ -3560,7 +3560,7 @@ const estilosResponsivos = `
 
     color: #475569;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
@@ -3577,7 +3577,7 @@ const estilosResponsivos = `
 
     color: #64748b;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .dds-temas-resumo strong {
@@ -3592,7 +3592,7 @@ const estilosResponsivos = `
 
     color: #94a3b8;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     text-align: center;
   }
 
@@ -3663,7 +3663,7 @@ const estilosResponsivos = `
 
     color: #0f172a;
 
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 780;
 
     line-height: 1.4;
@@ -3678,7 +3678,7 @@ const estilosResponsivos = `
 
     color: #94a3b8;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .dds-mobile-grid {
@@ -3711,7 +3711,7 @@ const estilosResponsivos = `
 
     color: #94a3b8;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 750;
 
     text-transform: uppercase;
@@ -3729,7 +3729,7 @@ const estilosResponsivos = `
 
     color: #334155;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 700;
 
     line-height: 1.35;
@@ -3754,7 +3754,7 @@ const estilosResponsivos = `
 
     color: #64748b;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
 
     overflow-wrap: anywhere;
@@ -3791,7 +3791,7 @@ const estilosResponsivos = `
     color: #2563eb;
 
     font-family: inherit;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 750;
 
     cursor: pointer;
@@ -3840,7 +3840,7 @@ const estilosResponsivos = `
   .dds-form-intro strong {
     color: #1e3a8a;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -3849,7 +3849,7 @@ const estilosResponsivos = `
 
     color: #475569;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -3955,8 +3955,7 @@ const estilosResponsivos = `
     color:
       #0f172a;
 
-    font-size:
-      20px;
+    font-size: calc(20px * var(--sk-text-scale, 1));
 
     font-weight:
       800;
@@ -3972,8 +3971,7 @@ const estilosResponsivos = `
     color:
       #64748b;
 
-    font-size:
-      12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
 
     line-height:
       1.5;
@@ -4045,8 +4043,7 @@ const estilosResponsivos = `
     color:
       #0f172a;
 
-    font-size:
-      14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
 
     font-weight:
       800;
@@ -4059,8 +4056,7 @@ const estilosResponsivos = `
     color:
       #94a3b8;
 
-    font-size:
-      11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
 
     line-height:
       1.5;
@@ -4089,8 +4085,7 @@ const estilosResponsivos = `
     color:
       #334155;
 
-    font-size:
-      13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
 
     font-weight:
       650;
@@ -4130,8 +4125,7 @@ const estilosResponsivos = `
     color:
       #64748b;
 
-    font-size:
-      10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
 
     font-weight:
       800;
@@ -4150,8 +4144,7 @@ const estilosResponsivos = `
     color:
       #0f172a;
 
-    font-size:
-      13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
 
     font-weight:
       700;
@@ -4236,11 +4229,11 @@ const estilosResponsivos = `
     }
 
     .dds-contexto-texto h2 {
-      font-size: 15px;
+      font-size: calc(15px * var(--sk-text-scale, 1));
     }
 
     .dds-contexto-texto p {
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
     }
 
     .dds-fluxo {
@@ -4310,13 +4303,11 @@ const estilosResponsivos = `
     }
 
     .dds-drawer-title h2 {
-      font-size:
-        18px;
+      font-size: calc(18px * var(--sk-text-scale, 1));
     }
 
     .dds-drawer-title p {
-      font-size:
-        11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
     }
 
     .dds-drawer-content {

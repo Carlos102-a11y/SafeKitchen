@@ -78,7 +78,7 @@ import {
   
                   color: "#0F172A",
   
-                  fontSize: 14,
+                  fontSize: "calc(14px * var(--sk-text-scale, 1))",
                 }}
               >
                 SafeKitchen
@@ -90,7 +90,7 @@ import {
   
                   marginTop: 4,
   
-                  fontSize: 12,
+                  fontSize: "calc(12px * var(--sk-text-scale, 1))",
                 }}
               >
                 Verificando sua sessão...

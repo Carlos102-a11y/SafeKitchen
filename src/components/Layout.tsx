@@ -36,7 +36,7 @@ export default function Layout({
             style={{
               margin: 0,
               color: colors.title,
-              fontSize: "34px",
+              fontSize: "calc(34px * var(--sk-text-scale, 1))",
               fontWeight: 700,
             }}
           >

@@ -982,7 +982,7 @@ const cadastroStyles = `
 
   .auth-cadastro-brand-name {
     color: #ffffff;
-    font-size: 17px;
+    font-size: calc(17px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: -.25px;
   }
@@ -991,7 +991,7 @@ const cadastroStyles = `
     margin-top: 2px;
 
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -1012,7 +1012,7 @@ const cadastroStyles = `
       "Courier New",
       monospace;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .16em;
@@ -1027,7 +1027,7 @@ const cadastroStyles = `
     margin: 18px 0 0;
 
     color: #ffffff;
-    font-size: clamp(32px, 3.6vw, 47px);
+    font-size: calc(clamp(32px, 3.6vw, 47px) * var(--sk-text-scale, 1));
     font-weight: 750;
     line-height: 1.07;
     letter-spacing: -1.45px;
@@ -1038,7 +1038,7 @@ const cadastroStyles = `
     margin: 18px 0 0;
 
     color: #94a3b8;
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
     line-height: 1.7;
   }
 
@@ -1076,7 +1076,7 @@ const cadastroStyles = `
     display: block;
 
     color: #e2e8f0;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
@@ -1084,7 +1084,7 @@ const cadastroStyles = `
     margin: 4px 0 0;
 
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1111,7 +1111,7 @@ const cadastroStyles = `
       "Courier New",
       monospace;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .12em;
@@ -1154,7 +1154,7 @@ const cadastroStyles = `
     margin: 9px 0 0;
 
     color: #0f172a;
-    font-size: 27px;
+    font-size: calc(27px * var(--sk-text-scale, 1));
     font-weight: 750;
     line-height: 1.2;
     letter-spacing: -.6px;
@@ -1164,7 +1164,7 @@ const cadastroStyles = `
     margin: 9px 0 0;
 
     color: #64748b;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.55;
   }
 
@@ -1184,7 +1184,7 @@ const cadastroStyles = `
 
   .auth-cadastro-field label {
     color: #334155;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
@@ -1232,7 +1232,7 @@ const cadastroStyles = `
     color: #0f172a;
 
     font-family: inherit;
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--sk-text-scale, 1));
   }
 
   .auth-cadastro-input-wrapper input::placeholder {
@@ -1291,7 +1291,7 @@ const cadastroStyles = `
     gap: 5px;
 
     color: #94a3b8;
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--sk-text-scale, 1));
   }
 
   .auth-cadastro-password-rule > span {
@@ -1328,7 +1328,7 @@ const cadastroStyles = `
     background: #fef2f2;
     color: #b91c1c;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 600;
     line-height: 1.45;
   }
@@ -1353,7 +1353,7 @@ const cadastroStyles = `
     color: #ffffff;
 
     font-family: inherit;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 750;
     text-decoration: none;
 
@@ -1399,7 +1399,7 @@ const cadastroStyles = `
     margin-top: 22px;
 
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .auth-cadastro-access-link a {
@@ -1416,7 +1416,7 @@ const cadastroStyles = `
     border-top: 1px solid #e2e8f0;
 
     color: #94a3b8;
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--sk-text-scale, 1));
     line-height: 1.45;
     text-align: center;
   }
@@ -1458,7 +1458,7 @@ const cadastroStyles = `
     margin: 12px 0 24px;
 
     color: #64748b;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.65;
   }
 
@@ -1466,7 +1466,7 @@ const cadastroStyles = `
     padding: 0 32px 24px;
 
     color: #94a3b8;
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--sk-text-scale, 1));
     text-align: center;
   }
 
@@ -1486,7 +1486,7 @@ const cadastroStyles = `
     }
 
     .auth-cadastro-brand-message h1 {
-      font-size: 36px;
+      font-size: calc(36px * var(--sk-text-scale, 1));
     }
   }
 
@@ -1533,7 +1533,7 @@ const cadastroStyles = `
       display: block;
 
       color: #0f172a;
-      font-size: 14px;
+      font-size: calc(14px * var(--sk-text-scale, 1));
       font-weight: 800;
     }
 
@@ -1542,7 +1542,7 @@ const cadastroStyles = `
       margin-top: 1px;
 
       color: #94a3b8;
-      font-size: 9px;
+      font-size: calc(9px * var(--sk-text-scale, 1));
     }
 
     .auth-cadastro-form-container {
@@ -1562,7 +1562,7 @@ const cadastroStyles = `
 
     .auth-cadastro-card-header h2,
     .auth-cadastro-success h2 {
-      font-size: 24px;
+      font-size: calc(24px * var(--sk-text-scale, 1));
     }
 
     .auth-cadastro-two-columns {

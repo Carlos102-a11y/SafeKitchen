@@ -85,7 +85,7 @@ export default function Button({
 
         fontFamily: "inherit",
 
-        fontSize: 13,
+        fontSize: "calc(13px * var(--sk-text-scale, 1))",
         fontWeight: 700,
         lineHeight: 1.2,
 

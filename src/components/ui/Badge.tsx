@@ -76,7 +76,7 @@ export default function Badge({
 
         color: variante.color,
 
-        fontSize: 11,
+        fontSize: "calc(11px * var(--sk-text-scale, 1))",
         fontWeight: 750,
         lineHeight: 1.3,
 

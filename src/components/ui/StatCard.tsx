@@ -88,7 +88,7 @@ export default function StatCard({
 
             color: colors.textLight,
 
-            fontSize: 13,
+            fontSize: "calc(13px * var(--sk-text-scale, 1))",
             fontWeight: 650,
             lineHeight: 1.4,
 

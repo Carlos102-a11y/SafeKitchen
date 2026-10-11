@@ -479,7 +479,7 @@ import {
   
     .perfil-eyebrow {
       color: ${colors.primary};
-      font-size: 10px;
+      font-size: calc(10px * var(--sk-text-scale, 1));
       font-weight: 850;
       letter-spacing: .9px;
     }
@@ -487,7 +487,7 @@ import {
     .perfil-header h1 {
       margin: 8px 0 0;
       color: ${colors.title};
-      font-size: 31px;
+      font-size: calc(31px * var(--sk-text-scale, 1));
       font-weight: 850;
       letter-spacing: -.8px;
       line-height: 1.15;
@@ -497,7 +497,7 @@ import {
       max-width: 650px;
       margin: 9px 0 0;
       color: ${colors.textLight};
-      font-size: 13px;
+      font-size: calc(13px * var(--sk-text-scale, 1));
       line-height: 1.6;
     }
   
@@ -511,7 +511,7 @@ import {
       border-radius: 11px;
       background: #FFFFFF;
       color: ${colors.primary};
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
       font-weight: 750;
     }
   
@@ -548,7 +548,7 @@ import {
           #3B82F6
         );
       color: #FFFFFF;
-      font-size: 23px;
+      font-size: calc(23px * var(--sk-text-scale, 1));
       font-weight: 850;
       box-shadow:
         0 10px 25px rgba(37, 99, 235, .22);
@@ -561,7 +561,7 @@ import {
   
     .perfil-hero-label {
       color: #64748B;
-      font-size: 9px;
+      font-size: calc(9px * var(--sk-text-scale, 1));
       font-weight: 850;
       letter-spacing: .8px;
     }
@@ -569,7 +569,7 @@ import {
     .perfil-hero-info h2 {
       margin: 5px 0 0;
       color: ${colors.title};
-      font-size: 20px;
+      font-size: calc(20px * var(--sk-text-scale, 1));
       font-weight: 850;
       letter-spacing: -.35px;
     }
@@ -577,7 +577,7 @@ import {
     .perfil-hero-info p {
       margin: 5px 0 0;
       color: ${colors.textLight};
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
       line-height: 1.5;
     }
   
@@ -588,7 +588,7 @@ import {
       flex-shrink: 0;
       padding: 8px 11px;
       border-radius: 999px;
-      font-size: 10px;
+      font-size: calc(10px * var(--sk-text-scale, 1));
       font-weight: 800;
     }
   
@@ -648,14 +648,14 @@ import {
     .perfil-card-title h3 {
       margin: 0;
       color: ${colors.title};
-      font-size: 14px;
+      font-size: calc(14px * var(--sk-text-scale, 1));
       font-weight: 820;
     }
   
     .perfil-card-title p {
       margin: 4px 0 0;
       color: ${colors.textLight};
-      font-size: 10px;
+      font-size: calc(10px * var(--sk-text-scale, 1));
       line-height: 1.5;
     }
   
@@ -682,7 +682,7 @@ import {
   
     .perfil-field label {
       color: ${colors.text};
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
       font-weight: 750;
     }
   
@@ -719,7 +719,7 @@ import {
       background: transparent;
       color: ${colors.title};
       font-family: inherit;
-      font-size: 12px;
+      font-size: calc(12px * var(--sk-text-scale, 1));
     }
   
     .perfil-input input::placeholder {
@@ -736,7 +736,7 @@ import {
       gap: 8px;
       padding: 11px 13px;
       border-radius: 10px;
-      font-size: 10px;
+      font-size: calc(10px * var(--sk-text-scale, 1));
       font-weight: 700;
       line-height: 1.5;
     }
@@ -764,7 +764,7 @@ import {
     .perfil-actions p {
       margin: 0;
       color: ${colors.textLight};
-      font-size: 9px;
+      font-size: calc(9px * var(--sk-text-scale, 1));
       line-height: 1.5;
     }
   
@@ -781,7 +781,7 @@ import {
       background: ${colors.primary};
       color: #FFFFFF;
       font-family: inherit;
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
       font-weight: 800;
       cursor: pointer;
       transition:
@@ -850,7 +850,7 @@ import {
     .perfil-info-item span {
       display: block;
       color: #94A3B8;
-      font-size: 9px;
+      font-size: calc(9px * var(--sk-text-scale, 1));
       font-weight: 700;
     }
   
@@ -858,7 +858,7 @@ import {
       display: block;
       margin-top: 3px;
       color: ${colors.text};
-      font-size: 10px;
+      font-size: calc(10px * var(--sk-text-scale, 1));
       font-weight: 750;
       line-height: 1.45;
       word-break: break-word;
@@ -893,14 +893,14 @@ import {
     .perfil-security-card h3 {
       margin: 1px 0 0;
       color: ${colors.title};
-      font-size: 12px;
+      font-size: calc(12px * var(--sk-text-scale, 1));
       font-weight: 800;
     }
   
     .perfil-security-card p {
       margin: 6px 0 0;
       color: #64748B;
-      font-size: 9px;
+      font-size: calc(9px * var(--sk-text-scale, 1));
       line-height: 1.6;
     }
   
@@ -927,7 +927,7 @@ import {
       }
   
       .perfil-header h1 {
-        font-size: 27px;
+        font-size: calc(27px * var(--sk-text-scale, 1));
       }
   
       .perfil-hero {
@@ -970,7 +970,7 @@ import {
         width: 52px;
         height: 52px;
         border-radius: 15px;
-        font-size: 20px;
+        font-size: calc(20px * var(--sk-text-scale, 1));
       }
   
       .perfil-hero-info {
@@ -979,7 +979,7 @@ import {
       }
   
       .perfil-hero-info h2 {
-        font-size: 17px;
+        font-size: calc(17px * var(--sk-text-scale, 1));
       }
   
       .perfil-status {

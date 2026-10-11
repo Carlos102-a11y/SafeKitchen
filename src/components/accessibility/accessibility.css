@@ -710,3 +710,10 @@
   
     box-shadow: 0 0 0 2px #ffffff !important;
   }
+  /* ---------- ESCALA DO TEXTO ----------
+   Elementos sem font-size próprio herdam do body.
+   Os com font-size em px usam a variável diretamente. */
+
+html body {
+    font-size: calc(16px * var(--sk-text-scale, 1));
+  }

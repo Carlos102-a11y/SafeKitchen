@@ -672,7 +672,7 @@ export default function PgrDrawer({
 
             color: #0f172a;
 
-            font-size: 20px;
+            font-size: calc(20px * var(--sk-text-scale, 1));
             font-weight: 800;
 
             line-height: 1.25;
@@ -683,7 +683,7 @@ export default function PgrDrawer({
 
             color: #64748b;
 
-            font-size: 12px;
+            font-size: calc(12px * var(--sk-text-scale, 1));
             line-height: 1.5;
 
             overflow-wrap: anywhere;
@@ -800,14 +800,14 @@ export default function PgrDrawer({
           .pgr-form-context-copy strong {
             color: #1e3a8a;
 
-            font-size: 12px;
+            font-size: calc(12px * var(--sk-text-scale, 1));
             font-weight: 800;
           }
 
           .pgr-form-context-copy span {
             color: #64748b;
 
-            font-size: 10px;
+            font-size: calc(10px * var(--sk-text-scale, 1));
             line-height: 1.45;
 
             overflow-wrap: anywhere;
@@ -825,7 +825,7 @@ export default function PgrDrawer({
 
             color: #2563eb;
 
-            font-size: 11px;
+            font-size: calc(11px * var(--sk-text-scale, 1));
             font-weight: 850;
 
             white-space: nowrap;
@@ -869,7 +869,7 @@ export default function PgrDrawer({
 
             color: #0f172a;
 
-            font-size: 14px;
+            font-size: calc(14px * var(--sk-text-scale, 1));
             font-weight: 800;
             line-height: 1.4;
           }
@@ -879,7 +879,7 @@ export default function PgrDrawer({
 
             color: #94a3b8;
 
-            font-size: 11px;
+            font-size: calc(11px * var(--sk-text-scale, 1));
             line-height: 1.5;
 
             overflow-wrap: anywhere;
@@ -944,7 +944,7 @@ export default function PgrDrawer({
           .pgr-risk-factor span {
             color: #94a3b8;
 
-            font-size: 8px;
+            font-size: calc(8px * var(--sk-text-scale, 1));
             font-weight: 750;
 
             text-transform: uppercase;
@@ -955,7 +955,7 @@ export default function PgrDrawer({
           .pgr-risk-factor strong {
             color: #0f172a;
 
-            font-size: 20px;
+            font-size: calc(20px * var(--sk-text-scale, 1));
             font-weight: 850;
           }
 
@@ -974,7 +974,7 @@ export default function PgrDrawer({
 
             color: #94a3b8;
 
-            font-size: 15px;
+            font-size: calc(15px * var(--sk-text-scale, 1));
             font-weight: 800;
           }
 
@@ -991,7 +991,7 @@ export default function PgrDrawer({
           .pgr-risk-result-eyebrow {
             color: #94a3b8;
 
-            font-size: 8px;
+            font-size: calc(8px * var(--sk-text-scale, 1));
             font-weight: 800;
 
             text-transform: uppercase;
@@ -1059,7 +1059,7 @@ export default function PgrDrawer({
           .pgr-risk-scale strong {
             color: #334155;
 
-            font-size: 9px;
+            font-size: calc(9px * var(--sk-text-scale, 1));
             font-weight: 800;
 
             white-space: nowrap;
@@ -1070,7 +1070,7 @@ export default function PgrDrawer({
 
             color: #94a3b8;
 
-            font-size: 8px;
+            font-size: calc(8px * var(--sk-text-scale, 1));
             font-weight: 650;
 
             overflow: hidden;
@@ -1089,14 +1089,14 @@ export default function PgrDrawer({
 
             color: #94a3b8;
 
-            font-size: 9px;
+            font-size: calc(9px * var(--sk-text-scale, 1));
             line-height: 1.4;
           }
 
           .pgr-level-helper strong {
             color: #64748b;
 
-            font-size: 9px;
+            font-size: calc(9px * var(--sk-text-scale, 1));
             font-weight: 750;
           }
 
@@ -1164,11 +1164,11 @@ export default function PgrDrawer({
             }
 
             .pgr-drawer-title-area h2 {
-              font-size: 18px;
+              font-size: calc(18px * var(--sk-text-scale, 1));
             }
 
             .pgr-drawer-title-area p {
-              font-size: 11px;
+              font-size: calc(11px * var(--sk-text-scale, 1));
             }
 
             .pgr-drawer-close {
@@ -1290,11 +1290,11 @@ export default function PgrDrawer({
             }
 
             .pgr-risk-factor span {
-              font-size: 7px;
+              font-size: calc(7px * var(--sk-text-scale, 1));
             }
 
             .pgr-risk-factor strong {
-              font-size: 18px;
+              font-size: calc(18px * var(--sk-text-scale, 1));
             }
 
             .pgr-drawer-footer {
@@ -1382,7 +1382,7 @@ function CampoSelect({
         style={{
           color: "#334155",
 
-          fontSize: 13,
+          fontSize: "calc(13px * var(--sk-text-scale, 1))",
 
           fontWeight: 650,
         }}
@@ -1461,7 +1461,7 @@ function CampoSelect({
             fontFamily:
               "inherit",
 
-            fontSize: 13,
+            fontSize: "calc(13px * var(--sk-text-scale, 1))",
 
             outline:
               "none",
@@ -1546,7 +1546,7 @@ function CampoNivel({
 
           color: "#334155",
 
-          fontSize: 13,
+          fontSize: "calc(13px * var(--sk-text-scale, 1))",
 
           fontWeight: 650,
         }}
@@ -1661,7 +1661,7 @@ function CampoTexto({
         style={{
           color: "#334155",
 
-          fontSize: 13,
+          fontSize: "calc(13px * var(--sk-text-scale, 1))",
 
           fontWeight: 650,
         }}
@@ -1708,7 +1708,7 @@ function CampoTexto({
           fontFamily:
             "inherit",
 
-          fontSize: 13,
+          fontSize: "calc(13px * var(--sk-text-scale, 1))",
 
           lineHeight: 1.5,
 

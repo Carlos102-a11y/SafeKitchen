@@ -42,7 +42,7 @@ export default function Input({
         <label
           style={{
             fontWeight: 600,
-            fontSize: 14,
+            fontSize: "calc(14px * var(--sk-text-scale, 1))",
             color: "#334155",
           }}
         >
@@ -93,7 +93,7 @@ export default function Input({
 
             background: "transparent",
 
-            fontSize: 15,
+            fontSize: "calc(15px * var(--sk-text-scale, 1))",
 
             color: "#0F172A",
           }}

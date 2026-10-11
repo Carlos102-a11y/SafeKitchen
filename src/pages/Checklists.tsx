@@ -1949,7 +1949,7 @@ const estilos = `
     border-radius: 12px;
     background: #fef2f2;
     color: #b91c1c;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 650;
     line-height: 1.5;
   }
@@ -2014,7 +2014,7 @@ const estilos = `
     border-radius: 8px;
     background: rgba(37, 99, 235, .12);
     color: #bfdbfe;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: .65px;
   }
@@ -2023,7 +2023,7 @@ const estilos = `
     max-width: 720px;
     margin: 15px 0 0;
     color: #ffffff;
-    font-size: clamp(22px, 2.2vw, 31px);
+    font-size: calc(clamp(22px, 2.2vw, 31px) * var(--sk-text-scale, 1));
     line-height: 1.13;
     font-weight: 830;
     letter-spacing: -.45px;
@@ -2033,7 +2033,7 @@ const estilos = `
     max-width: 680px;
     margin: 11px 0 0;
     color: #94a3b8;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.65;
   }
 
@@ -2044,7 +2044,7 @@ const estilos = `
     gap: 8px;
     margin-top: 18px;
     color: #cbd5e1;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
@@ -2081,7 +2081,7 @@ const estilos = `
   .checklists-hero-side-top span {
     display: block;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .6px;
@@ -2091,7 +2091,7 @@ const estilos = `
     display: block;
     margin-top: 3px;
     color: #ffffff;
-    font-size: 25px;
+    font-size: calc(25px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
@@ -2120,7 +2120,7 @@ const estilos = `
     align-items: flex-start;
     gap: 6px;
     color: #cbd5e1;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.35;
   }
 
@@ -2168,7 +2168,7 @@ const estilos = `
   .checklists-metric-top span {
     display: block;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 750;
     line-height: 1.35;
   }
@@ -2177,7 +2177,7 @@ const estilos = `
     display: block;
     margin-top: 5px;
     color: #0f172a;
-    font-size: 25px;
+    font-size: calc(25px * var(--sk-text-scale, 1));
     font-weight: 850;
     line-height: 1;
   }
@@ -2196,7 +2196,7 @@ const estilos = `
     display: block;
     margin-top: 12px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -2229,7 +2229,7 @@ const estilos = `
   .checklists-panel-kicker {
     display: block;
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 850;
     text-transform: uppercase;
     letter-spacing: .75px;
@@ -2239,7 +2239,7 @@ const estilos = `
   .checklists-history-header h2 {
     margin: 4px 0 0;
     color: #0f172a;
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-text-scale, 1));
     font-weight: 820;
     line-height: 1.3;
   }
@@ -2269,7 +2269,7 @@ const estilos = `
 
   .checklists-performance-row > strong {
     color: #0f172a;
-    font-size: 38px;
+    font-size: calc(38px * var(--sk-text-scale, 1));
     font-weight: 860;
     line-height: 1;
     letter-spacing: -1px;
@@ -2282,14 +2282,14 @@ const estilos = `
 
   .checklists-performance-copy span {
     color: #334155;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
   .checklists-performance-copy small {
     margin-top: 4px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -2328,12 +2328,12 @@ const estilos = `
 
   .checklists-performance-legend strong {
     color: #0f172a;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .checklists-performance-legend small {
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .dot,
@@ -2386,19 +2386,19 @@ const estilos = `
 
   .checklists-priority-copy strong {
     color: #334155;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
   .checklists-priority-copy span {
     margin-top: 2px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .checklists-priority-value {
     flex-shrink: 0;
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
@@ -2425,7 +2425,7 @@ const estilos = `
     max-width: 620px;
     margin: 5px 0 0;
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -2446,7 +2446,7 @@ const estilos = `
     border-radius: 8px;
     background: #f8fafc;
     color: #64748b;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 700;
     white-space: nowrap;
   }
@@ -2475,7 +2475,7 @@ const estilos = `
     align-items: center;
     gap: 7px;
     color: #475569;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -2488,7 +2488,7 @@ const estilos = `
     background: transparent;
     color: #2563eb;
     font-family: inherit;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 750;
     cursor: pointer;
   }
@@ -2525,7 +2525,7 @@ const estilos = `
     background: transparent;
     color: #0f172a;
     font-family: inherit;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .checklists-filter-grid select {
@@ -2539,7 +2539,7 @@ const estilos = `
     background: #ffffff;
     color: #475569;
     font-family: inherit;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 650;
     outline: none;
     cursor: pointer;
@@ -2548,7 +2548,7 @@ const estilos = `
   .checklists-filter-result {
     margin-top: 9px;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .checklists-filter-result strong {
@@ -2581,13 +2581,13 @@ const estilos = `
 
   .checklists-loading strong {
     color: #334155;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .checklists-loading span {
     margin-top: 4px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   @keyframes checklists-spin {
@@ -2615,7 +2615,7 @@ const estilos = `
     border-bottom: 1px solid #e2e8f0;
     background: #f8fafc;
     color: #64748b;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 850;
     text-transform: uppercase;
     letter-spacing: .55px;
@@ -2626,7 +2626,7 @@ const estilos = `
     padding: 14px;
     vertical-align: middle;
     color: #475569;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .checklists-row {
@@ -2682,7 +2682,7 @@ const estilos = `
     display: block;
     max-width: 160px;
     color: #0f172a;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 780;
     line-height: 1.35;
     overflow-wrap: anywhere;
@@ -2694,7 +2694,7 @@ const estilos = `
     gap: 5px;
     margin-top: 4px;
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     white-space: nowrap;
   }
 
@@ -2729,11 +2729,11 @@ const estilos = `
 
   .checklists-progress-cell span {
     color: #64748b;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
   }
 
   .checklists-progress-cell strong {
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -2756,7 +2756,7 @@ const estilos = `
     align-items: center;
     gap: 5px;
     color: #15803d;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
@@ -2772,14 +2772,14 @@ const estilos = `
 
   .checklists-nc-cell strong {
     color: #b45309;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .checklists-nc-cell span {
     margin-top: 3px;
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     line-height: 1.4;
     overflow-wrap: anywhere;
   }
@@ -2860,14 +2860,14 @@ const estilos = `
     align-items: center;
     gap: 5px;
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
   .checklists-mobile-card h3 {
     margin: 5px 0 0;
     color: #0f172a;
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
     font-weight: 800;
     line-height: 1.35;
   }
@@ -2888,7 +2888,7 @@ const estilos = `
     border-radius: 8px;
     background: #f8fafc;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .checklists-mobile-meta svg {
@@ -2902,11 +2902,11 @@ const estilos = `
     justify-content: space-between;
     margin: 14px 0 6px;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .checklists-mobile-progress-head strong {
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .checklists-mobile-nc,
@@ -2919,7 +2919,7 @@ const estilos = `
   .checklists-mobile-nc > span,
   .checklists-mobile-observation > span {
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .45px;
@@ -2937,7 +2937,7 @@ const estilos = `
     border-radius: 7px;
     background: #fff7ed;
     color: #9a3412;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 650;
   }
 
@@ -2947,13 +2947,13 @@ const estilos = `
     gap: 5px;
     margin-top: 6px;
     color: #15803d;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .checklists-mobile-observation p {
     margin: 5px 0 0;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.5;
     overflow-wrap: anywhere;
   }
@@ -2974,7 +2974,7 @@ const estilos = `
     border: none;
     border-radius: 8px;
     font-family: inherit;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 750;
     cursor: pointer;
   }
@@ -3016,7 +3016,7 @@ const estilos = `
 
   .checklists-empty > strong {
     color: #0f172a;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -3024,7 +3024,7 @@ const estilos = `
     max-width: 390px;
     margin: 6px 0 15px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.55;
   }
 
@@ -3088,7 +3088,7 @@ const estilos = `
     display: block;
     margin-bottom: 3px;
     color: #2563eb;
-    font-size: 7px;
+    font-size: calc(7px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .7px;
   }
@@ -3096,7 +3096,7 @@ const estilos = `
   .checklist-drawer-title h2 {
     margin: 0;
     color: #0f172a;
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-text-scale, 1));
     font-weight: 830;
     line-height: 1.25;
   }
@@ -3104,7 +3104,7 @@ const estilos = `
   .checklist-drawer-title p {
     margin: 4px 0 0;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -3142,13 +3142,13 @@ const estilos = `
 
   .checklist-drawer-summary span {
     color: #64748b;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
   .checklist-drawer-summary strong {
     color: #0f172a;
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
@@ -3194,21 +3194,21 @@ const estilos = `
     border-radius: 8px;
     background: #eff6ff;
     color: #2563eb;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .checklist-form-secao-header h3 {
     margin: 0;
     color: #0f172a;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .checklist-form-secao-header p {
     margin: 3px 0 0;
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -3231,7 +3231,7 @@ const estilos = `
 
   .checklist-grupo-campo label {
     color: #334155;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 720;
   }
 
@@ -3249,7 +3249,7 @@ const estilos = `
     background: #ffffff;
     color: #0f172a;
     font-family: inherit;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
   }
@@ -3281,7 +3281,7 @@ const estilos = `
     border-radius: 9px;
     background: #fffbeb;
     color: #92400e;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -3339,7 +3339,7 @@ const estilos = `
     border-radius: 7px;
     background: #f1f5f9;
     color: #64748b;
-    font-size: 7px;
+    font-size: calc(7px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
@@ -3354,7 +3354,7 @@ const estilos = `
 
   .checklist-item-copy strong {
     color: #0f172a;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 750;
     line-height: 1.35;
   }
@@ -3362,7 +3362,7 @@ const estilos = `
   .checklist-item-copy span {
     margin-top: 2px;
     color: #94a3b8;
-    font-size: 7px;
+    font-size: calc(7px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -3399,7 +3399,7 @@ const estilos = `
 
   .checklist-result-top span {
     color: #64748b;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .45px;
@@ -3408,7 +3408,7 @@ const estilos = `
   .checklist-result-top strong {
     margin-top: 3px;
     color: #0f172a;
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-text-scale, 1));
     font-weight: 860;
     line-height: 1;
   }
@@ -3449,14 +3449,14 @@ const estilos = `
 
   .checklist-result-details span {
     color: #94a3b8;
-    font-size: 7px;
+    font-size: calc(7px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
   .checklist-result-details strong {
     margin-top: 2px;
     color: #0f172a;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 820;
   }
 
@@ -3489,12 +3489,12 @@ const estilos = `
 
   .checklist-rule-scale strong {
     color: #334155;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
   }
 
   .checklist-rule-scale small {
     color: #94a3b8;
-    font-size: 7px;
+    font-size: calc(7px * var(--sk-text-scale, 1));
   }
 
   .checklist-result-alert {
@@ -3520,13 +3520,13 @@ const estilos = `
   }
 
   .checklist-result-alert strong {
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .checklist-result-alert span {
     margin-top: 2px;
-    font-size: 7px;
+    font-size: calc(7px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -3579,7 +3579,7 @@ const estilos = `
     }
 
     .checklists-hero h2 {
-      font-size: 22px;
+      font-size: calc(22px * var(--sk-text-scale, 1));
     }
 
     .checklists-mini-grid {
@@ -3597,7 +3597,7 @@ const estilos = `
     }
 
     .checklists-metric-top strong {
-      font-size: 22px;
+      font-size: calc(22px * var(--sk-text-scale, 1));
     }
 
     .checklists-insights {
@@ -3628,7 +3628,7 @@ const estilos = `
     }
 
     .checklists-history-status > span {
-      font-size: 7px;
+      font-size: calc(7px * var(--sk-text-scale, 1));
     }
 
     .checklist-drawer {

@@ -1614,7 +1614,7 @@ const estilos = `
     border-radius: 12px;
     background: #fef2f2;
     color: #b91c1c;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 650;
     line-height: 1.5;
   }
@@ -1683,7 +1683,7 @@ const estilos = `
   .epi-eyebrow {
     display: block;
     color: #2563eb;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .7px;
     text-transform: uppercase;
@@ -1693,7 +1693,7 @@ const estilos = `
   .epi-panel-heading h2 {
     margin: 6px 0 0;
     color: var(--epi-title);
-    font-size: 19px;
+    font-size: calc(19px * var(--sk-text-scale, 1));
     font-weight: 850;
     line-height: 1.3;
   }
@@ -1703,7 +1703,7 @@ const estilos = `
     margin: 7px 0 0;
     max-width: 660px;
     color: var(--epi-muted);
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.6;
   }
 
@@ -1726,7 +1726,7 @@ const estilos = `
     display: block;
     min-height: 29px;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 700;
     line-height: 1.4;
   }
@@ -1735,7 +1735,7 @@ const estilos = `
     display: block;
     margin-top: 4px;
     color: #0f172a;
-    font-size: 22px;
+    font-size: calc(22px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
@@ -1743,7 +1743,7 @@ const estilos = `
     display: block;
     margin-top: 3px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.35;
   }
 
@@ -1793,7 +1793,7 @@ const estilos = `
   .epi-secondary-copy > span {
     display: block;
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
@@ -1801,7 +1801,7 @@ const estilos = `
     display: block;
     margin-top: 2px;
     color: #0f172a;
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
@@ -1809,7 +1809,7 @@ const estilos = `
     display: block;
     margin-top: 2px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .epi-priorities,
@@ -1850,7 +1850,7 @@ const estilos = `
     border-radius: 9px;
     background: #eff6ff;
     color: #2563eb;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 750;
     white-space: nowrap;
   }
@@ -1909,21 +1909,21 @@ const estilos = `
 
   .epi-priority-top strong {
     color: #0f172a;
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .epi-priority-card h3 {
     margin: 12px 0 0;
     color: #0f172a;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .epi-priority-card p {
     margin: 5px 0 0;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1951,7 +1951,7 @@ const estilos = `
     align-items: center;
     gap: 8px;
     color: #475569;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
@@ -1963,7 +1963,7 @@ const estilos = `
     border: none;
     background: transparent;
     color: #2563eb;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 750;
     cursor: pointer;
   }
@@ -2002,7 +2002,7 @@ const estilos = `
     background: transparent;
     color: #0f172a;
     font: inherit;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .epi-select {
@@ -2016,7 +2016,7 @@ const estilos = `
     background: #ffffff;
     color: #475569;
     font: inherit;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 650;
     outline: none;
     cursor: pointer;
@@ -2025,7 +2025,7 @@ const estilos = `
   .epi-result-count {
     margin-top: 10px;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -2044,7 +2044,7 @@ const estilos = `
     border: 1px dashed #cbd5e1;
     border-radius: 14px;
     color: #64748b;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 650;
   }
 
@@ -2072,7 +2072,7 @@ const estilos = `
   .epi-table th {
     padding: 14px 16px;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: .5px;
     text-transform: uppercase;
@@ -2083,7 +2083,7 @@ const estilos = `
     padding: 16px;
     vertical-align: middle;
     color: #475569;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .epi-table tbody tr {
@@ -2122,7 +2122,7 @@ const estilos = `
   .epi-name-cell strong {
     display: block;
     color: #0f172a;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 750;
     line-height: 1.4;
     overflow-wrap: anywhere;
@@ -2132,7 +2132,7 @@ const estilos = `
     display: block;
     margin-top: 3px;
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .epi-ca-cell,
@@ -2167,14 +2167,14 @@ const estilos = `
   .epi-quantity {
     min-width: 85px;
     color: #0f172a;
-    font-size: 17px;
+    font-size: calc(17px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .epi-quantity span {
     margin-left: 4px;
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 650;
   }
 
@@ -2242,14 +2242,14 @@ const estilos = `
 
   .epi-empty > strong {
     color: #0f172a;
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
   }
 
   .epi-empty > span {
     max-width: 390px;
     margin: 6px 0 16px;
     color: #94a3b8;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -2316,14 +2316,14 @@ const estilos = `
     display: block;
     margin-bottom: 5px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 700;
     text-transform: uppercase;
   }
 
   .epi-mobile-data-grid > div > strong {
     color: #334155;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .epi-mobile-actions {
@@ -2344,7 +2344,7 @@ const estilos = `
     border: none;
     border-radius: 9px;
     font: inherit;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 750;
     cursor: pointer;
   }
@@ -2418,7 +2418,7 @@ const estilos = `
     display: block;
     margin-bottom: 3px;
     color: #2563eb;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .6px;
     text-transform: uppercase;
@@ -2427,14 +2427,14 @@ const estilos = `
   .epi-drawer-title h2 {
     margin: 0;
     color: #0f172a;
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .epi-drawer-title p {
     margin: 5px 0 0;
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -2479,7 +2479,7 @@ const estilos = `
   .epi-drawer-summary strong {
     display: block;
     color: #1e3a8a;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -2487,7 +2487,7 @@ const estilos = `
     display: block;
     margin-top: 3px;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -2529,21 +2529,21 @@ const estilos = `
     border-radius: 8px;
     background: #f1f5f9;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .epi-form-section-header h3 {
     margin: 0;
     color: #0f172a;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .epi-form-section-header p {
     margin: 3px 0 0;
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -2562,7 +2562,7 @@ const estilos = `
 
   .epi-field label {
     color: #334155;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
@@ -2582,7 +2582,7 @@ const estilos = `
     background: #ffffff;
     color: #0f172a;
     font: inherit;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
   }
@@ -2608,7 +2608,7 @@ const estilos = `
   .epi-stock-summary > div > span {
     display: block;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
     text-transform: uppercase;
   }
@@ -2617,13 +2617,13 @@ const estilos = `
     display: block;
     margin-top: 3px;
     color: #0f172a;
-    font-size: 22px;
+    font-size: calc(22px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .epi-stock-summary small {
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .epi-rule-note {
@@ -2633,7 +2633,7 @@ const estilos = `
     gap: 6px;
     margin-top: 10px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -2655,7 +2655,7 @@ const estilos = `
   }
 
   .epi-validity-notice > div {
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -2663,7 +2663,7 @@ const estilos = `
     display: block;
     margin-top: 3px;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -2726,7 +2726,7 @@ const estilos = `
 
     .epi-hero-copy h2,
     .epi-panel-heading h2 {
-      font-size: 16px;
+      font-size: calc(16px * var(--sk-text-scale, 1));
     }
 
     .epi-hero-metrics {

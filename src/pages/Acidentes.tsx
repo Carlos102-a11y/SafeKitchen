@@ -1604,7 +1604,7 @@ export default function Acidentes() {
                 "#2563EB",
 
               fontSize:
-                10,
+                "calc(10px * var(--sk-text-scale, 1))",
 
               fontWeight:
                 850,
@@ -1635,8 +1635,8 @@ export default function Acidentes() {
 
               fontSize:
                 mobile
-                  ? 18
-                  : 22,
+                  ? "calc(18px * var(--sk-text-scale, 1))"
+                  : "calc(22px * var(--sk-text-scale, 1))",
 
               fontWeight:
                 850,
@@ -1661,8 +1661,8 @@ export default function Acidentes() {
 
               fontSize:
                 mobile
-                  ? 11
-                  : 12,
+                  ? "calc(11px * var(--sk-text-scale, 1))"
+                  : "calc(12px * var(--sk-text-scale, 1))",
 
               lineHeight:
                 1.65,
@@ -1766,7 +1766,7 @@ export default function Acidentes() {
               "#B91C1C",
 
             fontSize:
-              12,
+              "calc(12px * var(--sk-text-scale, 1))",
 
             fontWeight:
               650,
@@ -2065,7 +2065,7 @@ export default function Acidentes() {
                   "#475569",
 
                 fontSize:
-                  11,
+                  "calc(11px * var(--sk-text-scale, 1))",
 
                 fontWeight:
                   700,
@@ -2270,8 +2270,8 @@ export default function Acidentes() {
 
                 fontSize:
                   mobile
-                    ? 16
-                    : 18,
+                    ? "calc(16px * var(--sk-text-scale, 1))"
+                    : "calc(18px * var(--sk-text-scale, 1))",
 
                 fontWeight:
                   800,
@@ -2292,7 +2292,7 @@ export default function Acidentes() {
                   "#94A3B8",
 
                 fontSize:
-                  12,
+                  "calc(12px * var(--sk-text-scale, 1))",
 
                 lineHeight:
                   1.5,
@@ -2336,7 +2336,7 @@ export default function Acidentes() {
                 "#15803D",
 
               fontSize:
-                10,
+                "calc(10px * var(--sk-text-scale, 1))",
 
               fontWeight:
                 800,
@@ -2436,7 +2436,7 @@ export default function Acidentes() {
                   "#475569",
 
                 fontSize:
-                  12,
+                  "calc(12px * var(--sk-text-scale, 1))",
 
                 fontWeight:
                   700,
@@ -2484,7 +2484,7 @@ export default function Acidentes() {
                     "#2563EB",
 
                   fontSize:
-                    11,
+                    "calc(11px * var(--sk-text-scale, 1))",
 
                   fontWeight:
                     700,
@@ -2621,7 +2621,7 @@ export default function Acidentes() {
                     "inherit",
 
                   fontSize:
-                    12,
+                    "calc(12px * var(--sk-text-scale, 1))",
                 }}
               />
             </div>
@@ -2736,7 +2736,7 @@ export default function Acidentes() {
                 "#64748B",
 
               fontSize:
-                11,
+                "calc(11px * var(--sk-text-scale, 1))",
 
               lineHeight:
                 1.5,
@@ -2797,7 +2797,7 @@ export default function Acidentes() {
                 "#64748B",
 
               fontSize:
-                12,
+                "calc(12px * var(--sk-text-scale, 1))",
 
               fontWeight:
                 600,
@@ -2965,7 +2965,7 @@ export default function Acidentes() {
                                   "#64748B",
 
                                 fontSize:
-                                  11,
+                                  "calc(11px * var(--sk-text-scale, 1))",
 
                                 whiteSpace:
                                   "nowrap",
@@ -3018,7 +3018,7 @@ export default function Acidentes() {
                                   "#0F172A",
 
                                 fontSize:
-                                  13,
+                                  "calc(13px * var(--sk-text-scale, 1))",
 
                                 fontWeight:
                                   700,
@@ -3070,7 +3070,7 @@ export default function Acidentes() {
                                   "#64748B",
 
                                 fontSize:
-                                  11,
+                                  "calc(11px * var(--sk-text-scale, 1))",
                               }}
                             >
                               <MapPin
@@ -3154,7 +3154,7 @@ export default function Acidentes() {
                                     "#0F172A",
 
                                   fontSize:
-                                    12,
+                                    "calc(12px * var(--sk-text-scale, 1))",
 
                                   fontWeight:
                                     700,
@@ -3197,7 +3197,7 @@ export default function Acidentes() {
                                     "#64748B",
 
                                   fontSize:
-                                    10,
+                                    "calc(10px * var(--sk-text-scale, 1))",
 
                                   lineHeight:
                                     1.4,
@@ -3261,7 +3261,7 @@ export default function Acidentes() {
                                     "#94A3B8",
 
                                   fontSize:
-                                    10,
+                                    "calc(10px * var(--sk-text-scale, 1))",
                                 }}
                               >
                                 O risco foi removido do PGR.
@@ -3274,7 +3274,7 @@ export default function Acidentes() {
                                   "#94A3B8",
 
                                 fontSize:
-                                  11,
+                                  "calc(11px * var(--sk-text-scale, 1))",
 
                                 whiteSpace:
                                   "nowrap",
@@ -4293,7 +4293,7 @@ function ResumoCorporativo({
               : "#64748B",
 
           fontSize:
-            9,
+            "calc(9px * var(--sk-text-scale, 1))",
 
           fontWeight:
             800,
@@ -4325,7 +4325,7 @@ function ResumoCorporativo({
               : "#0F172A",
 
           fontSize:
-            20,
+            "calc(20px * var(--sk-text-scale, 1))",
 
           lineHeight:
             1.1,
@@ -4343,7 +4343,7 @@ function ResumoCorporativo({
             "#94A3B8",
 
           fontSize:
-            9,
+            "calc(9px * var(--sk-text-scale, 1))",
 
           lineHeight:
             1.4,
@@ -4410,7 +4410,7 @@ function PainelExecutivo({
               "#0F172A",
 
             fontSize:
-              15,
+              "calc(15px * var(--sk-text-scale, 1))",
 
             fontWeight:
               800,
@@ -4431,7 +4431,7 @@ function PainelExecutivo({
               "#94A3B8",
 
             fontSize:
-              10,
+              "calc(10px * var(--sk-text-scale, 1))",
 
             lineHeight:
               1.45,
@@ -4498,7 +4498,7 @@ function LinhaExecutiva({
             "#475569",
 
           fontSize:
-            11,
+            "calc(11px * var(--sk-text-scale, 1))",
 
           fontWeight:
             650,
@@ -4537,7 +4537,7 @@ function LinhaExecutiva({
             "#0F172A",
 
           fontSize:
-            13,
+            "calc(13px * var(--sk-text-scale, 1))",
         }}
       >
         {valor}
@@ -4645,7 +4645,7 @@ function PrioridadeExecutiva({
               "#0F172A",
 
             fontSize:
-              11,
+              "calc(11px * var(--sk-text-scale, 1))",
 
             lineHeight:
               1.35,
@@ -4666,7 +4666,7 @@ function PrioridadeExecutiva({
               "#64748B",
 
             fontSize:
-              9,
+              "calc(9px * var(--sk-text-scale, 1))",
 
             lineHeight:
               1.4,
@@ -4688,7 +4688,7 @@ function PrioridadeExecutiva({
             configuracao.cor,
 
           fontSize:
-            18,
+            "calc(18px * var(--sk-text-scale, 1))",
         }}
       >
         {valor}
@@ -4792,7 +4792,7 @@ function EstadoVazio({
             "#334155",
 
           fontSize:
-            14,
+            "calc(14px * var(--sk-text-scale, 1))",
 
           lineHeight:
             1.4,
@@ -4810,7 +4810,7 @@ function EstadoVazio({
             360,
 
           fontSize:
-            12,
+            "calc(12px * var(--sk-text-scale, 1))",
 
           lineHeight:
             1.5,
@@ -4846,7 +4846,7 @@ function Th({
           "#64748B",
 
         fontSize:
-          10,
+          "calc(10px * var(--sk-text-scale, 1))",
 
         fontWeight:
           800,
@@ -4894,7 +4894,7 @@ function Td({
           "#475569",
 
         fontSize:
-          12,
+          "calc(12px * var(--sk-text-scale, 1))",
       }}
     >
       {
@@ -5000,7 +5000,7 @@ const estiloInput = {
     "inherit",
 
   fontSize:
-    13,
+    "calc(13px * var(--sk-text-scale, 1))",
 
   outline:
     "none",
@@ -5115,7 +5115,7 @@ const botaoSecundario = {
     "inherit",
 
   fontSize:
-    12,
+    "calc(12px * var(--sk-text-scale, 1))",
 
   fontWeight:
     700,
@@ -5156,7 +5156,7 @@ const botaoLink = {
     "inherit",
 
   fontSize:
-    10,
+    "calc(10px * var(--sk-text-scale, 1))",
 
   fontWeight:
     750,
@@ -5262,7 +5262,7 @@ const estilosResponsivos = `
 
     color: #0f172a;
 
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-text-scale, 1));
     font-weight: 800;
 
     line-height: 1.25;
@@ -5273,7 +5273,7 @@ const estilosResponsivos = `
 
     color: #64748b;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
 
     line-height: 1.5;
 
@@ -5363,8 +5363,7 @@ const estilosResponsivos = `
     color:
       #0f172a;
 
-    font-size:
-      12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
 
     font-weight:
       800;
@@ -5379,8 +5378,7 @@ const estilosResponsivos = `
     color:
       #64748b;
 
-    font-size:
-      10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
 
     line-height:
       1.5;
@@ -5437,8 +5435,7 @@ const estilosResponsivos = `
     color:
       #991b1b;
 
-    font-size:
-      11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .acidentes-alerta-gravidade span {
@@ -5450,8 +5447,7 @@ const estilosResponsivos = `
     color:
       #b91c1c;
 
-    font-size:
-      10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
 
     line-height:
       1.45;
@@ -5508,7 +5504,7 @@ const estilosResponsivos = `
 
     color: #0f172a;
 
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -5517,7 +5513,7 @@ const estilosResponsivos = `
 
     color: #94a3b8;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
 
     line-height: 1.5;
 
@@ -5540,7 +5536,7 @@ const estilosResponsivos = `
   .acidentes-label {
     color: #334155;
 
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
 
     font-weight: 650;
   }
@@ -5555,7 +5551,7 @@ const estilosResponsivos = `
 
     color: #334155;
 
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 650;
 
     cursor: pointer;
@@ -5579,7 +5575,7 @@ const estilosResponsivos = `
 
     color: #475569;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
 
     line-height: 1.5;
 
@@ -5620,7 +5616,7 @@ const estilosResponsivos = `
   .acidentes-risco-label {
     color: #64748b;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
 
     text-transform: uppercase;
@@ -5635,7 +5631,7 @@ const estilosResponsivos = `
 
     color: #0f172a;
 
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
 
     line-height: 1.4;
 
@@ -5647,7 +5643,7 @@ const estilosResponsivos = `
 
     color: #64748b;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
 
     line-height: 1.4;
 
@@ -5685,7 +5681,7 @@ const estilosResponsivos = `
   .acidentes-info-pgr-titulo {
     color: #94a3b8;
 
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
 
     font-weight: 800;
 
@@ -5697,7 +5693,7 @@ const estilosResponsivos = `
 
     color: #334155;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
 
     font-weight: 700;
 
@@ -5725,7 +5721,7 @@ const estilosResponsivos = `
   .acidentes-medida-controle > div {
     color: #64748b;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
 
     text-transform: uppercase;
@@ -5737,7 +5733,7 @@ const estilosResponsivos = `
 
     color: #475569;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
 
     line-height: 1.5;
 
@@ -5793,11 +5789,11 @@ const estilosResponsivos = `
     }
 
     .acidentes-drawer-title h2 {
-      font-size: 18px;
+      font-size: calc(18px * var(--sk-text-scale, 1));
     }
 
     .acidentes-drawer-title p {
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
     }
 
     .acidentes-drawer-content {

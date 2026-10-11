@@ -1056,13 +1056,13 @@ const pgrStyles = `
   }
 
   .pgr-alert-error-content strong {
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .pgr-alert-error-content span {
     margin-top: 3px;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1134,7 +1134,7 @@ const pgrStyles = `
 
   .pgr-context-copy > span {
     color: #93C5FD;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .9px;
   }
@@ -1142,7 +1142,7 @@ const pgrStyles = `
   .pgr-context-copy h2 {
     margin: 6px 0 0;
     color: #FFFFFF;
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-text-scale, 1));
     font-weight: 820;
     letter-spacing: -.3px;
     line-height: 1.3;
@@ -1152,7 +1152,7 @@ const pgrStyles = `
     max-width: 740px;
     margin: 7px 0 0;
     color: #94A3B8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.6;
   }
 
@@ -1165,7 +1165,7 @@ const pgrStyles = `
     flex-wrap: wrap;
     justify-content: flex-end;
     color: #94A3B8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     white-space: nowrap;
   }
 
@@ -1231,7 +1231,7 @@ const pgrStyles = `
   .pgr-metric-copy > span {
     display: block;
     color: ${colors.textLight};
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: .4px;
     text-transform: uppercase;
@@ -1241,7 +1241,7 @@ const pgrStyles = `
     display: block;
     margin-top: 2px;
     color: ${colors.title};
-    font-size: 21px;
+    font-size: calc(21px * var(--sk-text-scale, 1));
     font-weight: 850;
     line-height: 1.15;
   }
@@ -1250,7 +1250,7 @@ const pgrStyles = `
     display: block;
     margin-top: 3px;
     color: #94A3B8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -1317,14 +1317,14 @@ const pgrStyles = `
 
   .pgr-classification-title strong {
     color: ${colors.text};
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .pgr-classification-title span {
     margin-top: 2px;
     color: #94A3B8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
   }
 
   .pgr-classification-items {
@@ -1371,14 +1371,14 @@ const pgrStyles = `
 
   .pgr-classification-item strong {
     color: ${colors.text};
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .pgr-classification-item span {
     margin-top: 1px;
     color: #94A3B8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
   }
 
   .pgr-inventory-card {
@@ -1403,7 +1403,7 @@ const pgrStyles = `
 
   .pgr-section-eyebrow {
     color: ${colors.primary};
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .8px;
   }
@@ -1411,7 +1411,7 @@ const pgrStyles = `
   .pgr-section-header h2 {
     margin: 5px 0 0;
     color: ${colors.title};
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: -.35px;
   }
@@ -1419,7 +1419,7 @@ const pgrStyles = `
   .pgr-section-header p {
     margin: 5px 0 0;
     color: ${colors.textLight};
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1436,13 +1436,13 @@ const pgrStyles = `
 
   .pgr-section-count strong {
     color: ${colors.title};
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
   .pgr-section-count span {
     color: ${colors.textLight};
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
   }
 
   .pgr-filter-panel {
@@ -1466,7 +1466,7 @@ const pgrStyles = `
     align-items: center;
     gap: 8px;
     color: ${colors.text};
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -1483,7 +1483,7 @@ const pgrStyles = `
     background: transparent;
     color: ${colors.primary};
     font-family: inherit;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
     cursor: pointer;
   }
@@ -1534,7 +1534,7 @@ const pgrStyles = `
     background: transparent;
     color: ${colors.title};
     font-family: inherit;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .pgr-search-field input::placeholder {
@@ -1546,7 +1546,7 @@ const pgrStyles = `
     outline: none;
     color: ${colors.text};
     font-family: inherit;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 650;
     cursor: pointer;
   }
@@ -1558,7 +1558,7 @@ const pgrStyles = `
     gap: 12px;
     margin-top: 11px;
     color: #94A3B8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
   }
 
   .pgr-filter-summary {
@@ -1608,7 +1608,7 @@ const pgrStyles = `
   .pgr-loading-state strong {
     margin-top: 12px;
     color: ${colors.title};
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -1616,7 +1616,7 @@ const pgrStyles = `
     max-width: 380px;
     margin-top: 4px;
     color: ${colors.textLight};
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1668,7 +1668,7 @@ const pgrStyles = `
     }
 
     .pgr-context-copy h2 {
-      font-size: 16px;
+      font-size: calc(16px * var(--sk-text-scale, 1));
     }
 
     .pgr-context-tags {

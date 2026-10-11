@@ -32,7 +32,7 @@ interface RiskBadgeProps {
           color,
           padding: "6px 12px",
           borderRadius: "999px",
-          fontSize: "13px",
+          fontSize: "calc(13px * var(--sk-text-scale, 1))",
           fontWeight: 600,
           display: "inline-flex",
           alignItems: "center",

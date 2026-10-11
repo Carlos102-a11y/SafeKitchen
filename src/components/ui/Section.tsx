@@ -29,7 +29,7 @@ export default function Section({
             marginTop: 0,
             marginBottom: "20px",
             color: colors.title,
-            fontSize: "22px",
+            fontSize: "calc(22px * var(--sk-text-scale, 1))",
             fontWeight: 700,
           }}
         >

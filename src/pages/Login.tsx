@@ -602,7 +602,7 @@ const loginStyles = `
 
   .auth-login-brand-name {
     color: #ffffff;
-    font-size: 17px;
+    font-size: calc(17px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: -.25px;
   }
@@ -611,7 +611,7 @@ const loginStyles = `
     margin-top: 2px;
 
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -632,7 +632,7 @@ const loginStyles = `
       "Courier New",
       monospace;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .16em;
@@ -647,7 +647,7 @@ const loginStyles = `
     margin: 18px 0 0;
 
     color: #ffffff;
-    font-size: clamp(34px, 3.8vw, 50px);
+    font-size: calc(clamp(34px, 3.8vw, 50px) * var(--sk-text-scale, 1));
     font-weight: 750;
     line-height: 1.07;
     letter-spacing: -1.5px;
@@ -658,7 +658,7 @@ const loginStyles = `
     margin: 18px 0 0;
 
     color: #94a3b8;
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
     line-height: 1.7;
   }
 
@@ -696,7 +696,7 @@ const loginStyles = `
     display: block;
 
     color: #e2e8f0;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
@@ -704,7 +704,7 @@ const loginStyles = `
     margin: 4px 0 0;
 
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.55;
   }
 
@@ -731,7 +731,7 @@ const loginStyles = `
       "Courier New",
       monospace;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .12em;
@@ -773,7 +773,7 @@ const loginStyles = `
     margin: 9px 0 0;
 
     color: #0f172a;
-    font-size: 27px;
+    font-size: calc(27px * var(--sk-text-scale, 1));
     font-weight: 750;
     line-height: 1.2;
     letter-spacing: -.6px;
@@ -783,7 +783,7 @@ const loginStyles = `
     margin: 9px 0 0;
 
     color: #64748b;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.6;
   }
 
@@ -803,7 +803,7 @@ const loginStyles = `
 
   .auth-login-field label {
     color: #334155;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 700;
   }
 
@@ -851,7 +851,7 @@ const loginStyles = `
     color: #0f172a;
 
     font-family: inherit;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .auth-login-input-wrapper input::placeholder {
@@ -896,7 +896,7 @@ const loginStyles = `
     background: #fef2f2;
     color: #b91c1c;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 600;
     line-height: 1.45;
   }
@@ -920,7 +920,7 @@ const loginStyles = `
     color: #ffffff;
 
     font-family: inherit;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 750;
 
     cursor: pointer;
@@ -963,7 +963,7 @@ const loginStyles = `
     margin-top: 26px;
 
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .auth-login-access-link a {
@@ -985,7 +985,7 @@ const loginStyles = `
     border-top: 1px solid #e2e8f0;
 
     color: #94a3b8;
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--sk-text-scale, 1));
     line-height: 1.45;
     text-align: center;
   }
@@ -994,7 +994,7 @@ const loginStyles = `
     padding: 0 32px 28px;
 
     color: #94a3b8;
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--sk-text-scale, 1));
     text-align: center;
   }
 
@@ -1010,7 +1010,7 @@ const loginStyles = `
     }
 
     .auth-login-brand-message h1 {
-      font-size: 37px;
+      font-size: calc(37px * var(--sk-text-scale, 1));
     }
   }
 
@@ -1057,7 +1057,7 @@ const loginStyles = `
       display: block;
 
       color: #0f172a;
-      font-size: 14px;
+      font-size: calc(14px * var(--sk-text-scale, 1));
       font-weight: 800;
     }
 
@@ -1066,7 +1066,7 @@ const loginStyles = `
       margin-top: 1px;
 
       color: #94a3b8;
-      font-size: 9px;
+      font-size: calc(9px * var(--sk-text-scale, 1));
     }
 
     .auth-login-form-container {
@@ -1085,7 +1085,7 @@ const loginStyles = `
     }
 
     .auth-login-card-header h2 {
-      font-size: 25px;
+      font-size: calc(25px * var(--sk-text-scale, 1));
     }
 
     .auth-login-form-footer {

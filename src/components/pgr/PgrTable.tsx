@@ -338,7 +338,7 @@ function Th({
         padding: "14px 16px",
         textAlign: align,
         color: "#64748B",
-        fontSize: 10,
+        fontSize: "calc(10px * var(--sk-text-scale, 1))",
         fontWeight: 800,
         textTransform: "uppercase",
         letterSpacing: ".65px",
@@ -484,14 +484,14 @@ const estilosTabela = `
   .pgr-table-meta strong {
     color: #0f172a;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .pgr-table-meta span {
     color: #94a3b8;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 600;
   }
 
@@ -675,7 +675,7 @@ const estilosTabela = `
   .pgr-risco-perigo {
     color: #0f172a;
 
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 800;
 
     line-height: 1.4;
@@ -696,7 +696,7 @@ const estilosTabela = `
 
     color: #64748b;
 
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -732,7 +732,7 @@ const estilosTabela = `
     border: 1px solid transparent;
     border-radius: 10px;
 
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 850;
   }
 
@@ -770,7 +770,7 @@ const estilosTabela = `
 
     color: #94a3b8;
 
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 700;
 
     white-space: nowrap;
@@ -782,7 +782,7 @@ const estilosTabela = `
 
     color: #475569;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.55;
 
     display: -webkit-box;
@@ -809,7 +809,7 @@ const estilosTabela = `
 
     color: #475569;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 600;
   }
 
@@ -845,7 +845,7 @@ const estilosTabela = `
 
     color: #475569;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     font-weight: 650;
 
     white-space: nowrap;
@@ -876,7 +876,7 @@ const estilosTabela = `
     background: #fef2f2;
     color: #b91c1c;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
 
     text-transform: uppercase;
@@ -896,7 +896,7 @@ const estilosTabela = `
 
     color: #94a3b8;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 600;
 
     white-space: nowrap;
@@ -1022,7 +1022,7 @@ const estilosTabela = `
 
     color: #2563eb;
 
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
 
     text-transform: uppercase;
@@ -1032,7 +1032,7 @@ const estilosTabela = `
   .pgr-table-empty strong {
     color: #0f172a;
 
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -1043,7 +1043,7 @@ const estilosTabela = `
 
     color: #94a3b8;
 
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.6;
   }
 
@@ -1071,7 +1071,7 @@ const estilosTabela = `
     }
 
     .pgr-table-scroll-hint {
-      font-size: 9px !important;
+      font-size: calc(9px * var(--sk-text-scale, 1)) !important;
       text-align: left;
     }
 
@@ -1099,21 +1099,21 @@ const estilosTabela = `
     }
 
     .pgr-risco-perigo {
-      font-size: 12px;
+      font-size: calc(12px * var(--sk-text-scale, 1));
     }
 
     .pgr-medida {
       width: 205px;
       max-width: 205px;
 
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
     }
 
     .pgr-responsavel {
       width: 140px;
       min-width: 140px;
 
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
     }
 
     .pgr-table-empty {
@@ -1124,7 +1124,7 @@ const estilosTabela = `
     }
 
     .pgr-table-empty > span {
-      font-size: 11px;
+      font-size: calc(11px * var(--sk-text-scale, 1));
     }
   }
 

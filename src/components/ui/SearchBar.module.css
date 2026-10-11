@@ -15,7 +15,7 @@
   
     background: white;
   
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-text-scale, 1));
   
     outline: none;
   

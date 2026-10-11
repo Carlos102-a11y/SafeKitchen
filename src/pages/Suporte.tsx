@@ -720,7 +720,7 @@ const suporteStyles = `
     border-radius: 999px;
     background: rgba(37, 99, 235, .12);
     color: #93c5fd;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: .8px;
     text-transform: uppercase;
@@ -730,7 +730,7 @@ const suporteStyles = `
     margin: 18px 0 0;
     max-width: 690px;
     color: #fff;
-    font-size: clamp(30px, 4vw, 44px);
+    font-size: calc(clamp(30px, 4vw, 44px) * var(--sk-text-scale, 1));
     line-height: 1.08;
     font-weight: 850;
     letter-spacing: -1.2px;
@@ -740,7 +740,7 @@ const suporteStyles = `
     margin: 15px 0 0;
     max-width: 650px;
     color: #a8b4c7;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     line-height: 1.75;
   }
 
@@ -774,7 +774,7 @@ const suporteStyles = `
     background: transparent;
     color: #f8fafc;
     font-family: inherit;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .suporte-search input::placeholder {
@@ -800,14 +800,14 @@ const suporteStyles = `
   .suporte-hero-badge strong {
     margin-top: 13px;
     color: #fff;
-    font-size: 16px;
+    font-size: calc(16px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .suporte-hero-badge span {
     margin-top: 4px;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 700;
     letter-spacing: .7px;
     text-transform: uppercase;
@@ -828,7 +828,7 @@ const suporteStyles = `
   .suporte-section-heading > div > span,
   .suporte-about > div > span {
     color: #2563eb;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: 1px;
   }
@@ -837,7 +837,7 @@ const suporteStyles = `
   .suporte-about h2 {
     margin: 6px 0 0;
     color: #0f172a;
-    font-size: 21px;
+    font-size: calc(21px * var(--sk-text-scale, 1));
     line-height: 1.2;
     font-weight: 820;
     letter-spacing: -.45px;
@@ -847,7 +847,7 @@ const suporteStyles = `
     max-width: 420px;
     margin: 0;
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.55;
     text-align: right;
   }
@@ -901,14 +901,14 @@ const suporteStyles = `
     display: block;
     margin-top: 15px;
     color: #0f172a;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 780;
   }
 
   .suporte-quick-card p {
     margin: 7px 0 0;
     color: #64748b;
-    font-size: 10.5px;
+    font-size: calc(10.5px * var(--sk-text-scale, 1));
     line-height: 1.55;
   }
 
@@ -919,7 +919,7 @@ const suporteStyles = `
     margin-top: auto;
     padding-top: 18px;
     color: #2563eb;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
@@ -977,7 +977,7 @@ const suporteStyles = `
   .suporte-guide-copy strong {
     display: block;
     color: #0f172a;
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--sk-text-scale, 1));
     font-weight: 780;
   }
 
@@ -986,7 +986,7 @@ const suporteStyles = `
     margin-top: 4px;
     overflow: hidden;
     color: #64748b;
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--sk-text-scale, 1));
     line-height: 1.45;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -1024,7 +1024,7 @@ const suporteStyles = `
   .suporte-guide-detail-top span,
   .suporte-video-label {
     color: #2563eb;
-    font-size: 8.5px;
+    font-size: calc(8.5px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .9px;
   }
@@ -1033,7 +1033,7 @@ const suporteStyles = `
   .suporte-video-info h3 {
     margin: 4px 0 0;
     color: #0f172a;
-    font-size: 17px;
+    font-size: calc(17px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: -.25px;
   }
@@ -1041,7 +1041,7 @@ const suporteStyles = `
   .suporte-guide-detail-description {
     margin: 17px 0 0;
     color: #64748b;
-    font-size: 10.5px;
+    font-size: calc(10.5px * var(--sk-text-scale, 1));
     line-height: 1.65;
   }
 
@@ -1068,14 +1068,14 @@ const suporteStyles = `
     border-radius: 8px;
     background: #f1f5f9;
     color: #475569;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .suporte-step p {
     margin: 2px 0 0;
     color: #475569;
-    font-size: 10.5px;
+    font-size: calc(10.5px * var(--sk-text-scale, 1));
     line-height: 1.55;
   }
 
@@ -1090,7 +1090,7 @@ const suporteStyles = `
     border-radius: 10px;
     background: #2563eb;
     color: #fff;
-    font-size: 10.5px;
+    font-size: calc(10.5px * var(--sk-text-scale, 1));
     font-weight: 750;
     text-decoration: none;
     transition: background .16s ease, transform .16s ease;
@@ -1122,11 +1122,11 @@ const suporteStyles = `
   .suporte-empty strong {
     margin-top: 4px;
     color: #334155;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .suporte-empty span {
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .suporte-video-card {
@@ -1171,7 +1171,7 @@ const suporteStyles = `
     align-items: flex-start;
     gap: 9px;
     color: #475569;
-    font-size: 10.5px;
+    font-size: calc(10.5px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -1213,7 +1213,7 @@ const suporteStyles = `
     align-items: center;
     gap: 10px;
     color: #334155;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 720;
   }
 
@@ -1236,7 +1236,7 @@ const suporteStyles = `
     margin: 0;
     padding: 0 17px 17px 45px;
     color: #64748b;
-    font-size: 10.5px;
+    font-size: calc(10.5px * var(--sk-text-scale, 1));
     line-height: 1.65;
   }
 
@@ -1261,14 +1261,14 @@ const suporteStyles = `
 
   .suporte-tip strong {
     color: #92400e;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .suporte-tip p {
     margin: 5px 0 0;
     color: #a16207;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.55;
   }
 
@@ -1291,7 +1291,7 @@ const suporteStyles = `
   .suporte-about p {
     margin: 8px 0 0;
     color: #64748b;
-    font-size: 10.5px;
+    font-size: calc(10.5px * var(--sk-text-scale, 1));
     line-height: 1.6;
   }
 
@@ -1302,7 +1302,7 @@ const suporteStyles = `
     border-radius: 9px;
     background: #eff6ff;
     color: #2563eb;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: .5px;
   }
@@ -1364,7 +1364,7 @@ const suporteStyles = `
     }
 
     .suporte-hero h1 {
-      font-size: 29px;
+      font-size: calc(29px * var(--sk-text-scale, 1));
     }
 
     .suporte-section {
@@ -1427,7 +1427,7 @@ const suporteStyles = `
     }
 
     .suporte-faq-question {
-      font-size: 10.5px;
+      font-size: calc(10.5px * var(--sk-text-scale, 1));
     }
   }
 `;

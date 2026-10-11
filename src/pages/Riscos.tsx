@@ -1002,7 +1002,7 @@ const estiloSelect = {
   background: "#FFFFFF",
   color: "#475569",
   fontFamily: "inherit",
-  fontSize: 11,
+  fontSize: "calc(11px * var(--sk-text-scale, 1))",
   fontWeight: 600,
   outline: "none",
   cursor: "pointer",
@@ -1049,7 +1049,7 @@ const estilosPagina = `
 
   .riscos-eyebrow {
     color: #2563eb;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .8px;
   }
@@ -1058,7 +1058,7 @@ const estilosPagina = `
     display: block;
     margin-top: 4px;
     color: #0f172a;
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
     line-height: 1.35;
   }
 
@@ -1066,7 +1066,7 @@ const estilosPagina = `
     display: block;
     margin-top: 4px;
     color: #64748b;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1080,7 +1080,7 @@ const estilosPagina = `
     border-radius: 999px;
     background: #f0fdf4;
     color: #166534;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
@@ -1134,14 +1134,14 @@ const estilosPagina = `
   .riscos-insight-head h3 {
     margin: 0;
     color: #0f172a;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 800;
   }
 
   .riscos-insight-head p {
     margin: 4px 0 0;
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.45;
   }
 
@@ -1167,13 +1167,13 @@ const estilosPagina = `
     gap: 6px;
     min-width: 0;
     color: #475569;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-distribution-label strong {
     margin-left: auto;
     color: #0f172a;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-dot {
@@ -1199,7 +1199,7 @@ const estilosPagina = `
 
   .riscos-distribution-percent {
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 700;
     text-align: right;
   }
@@ -1215,14 +1215,14 @@ const estilosPagina = `
   .riscos-control-header > div:first-child span {
     display: block;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-control-header > div:first-child strong {
     display: block;
     margin-top: 2px;
     color: #0f172a;
-    font-size: 26px;
+    font-size: calc(26px * var(--sk-text-scale, 1));
     line-height: 1;
   }
 
@@ -1231,7 +1231,7 @@ const estilosPagina = `
     border-radius: 9px;
     background: #f8fafc;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
@@ -1267,13 +1267,13 @@ const estilosPagina = `
 
   .riscos-control-item strong {
     color: #0f172a;
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-text-scale, 1));
   }
 
   .riscos-control-item span {
     margin-top: 2px;
     color: #64748b;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     line-height: 1.3;
   }
 
@@ -1292,12 +1292,12 @@ const estilosPagina = `
     gap: 7px;
     min-width: 0;
     color: #475569;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-priority-row strong {
     flex-shrink: 0;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
   }
 
   .riscos-priority-indicator {
@@ -1319,12 +1319,12 @@ const estilosPagina = `
 
   .riscos-priority-footer strong {
     color: #c2410c;
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-text-scale, 1));
   }
 
   .riscos-priority-footer span {
     color: #9a3412;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -1350,7 +1350,7 @@ const estilosPagina = `
   .riscos-monitor-header h2 {
     margin: 4px 0 0;
     color: #0f172a;
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-text-scale, 1));
     font-weight: 820;
   }
 
@@ -1358,7 +1358,7 @@ const estilosPagina = `
     max-width: 700px;
     margin: 5px 0 0;
     color: #94a3b8;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1378,13 +1378,13 @@ const estilosPagina = `
 
   .riscos-monitor-count strong {
     color: #1d4ed8;
-    font-size: 16px;
+    font-size: calc(16px * var(--sk-text-scale, 1));
   }
 
   .riscos-monitor-count span {
     margin-top: 1px;
     color: #3b82f6;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     text-transform: uppercase;
     letter-spacing: .4px;
   }
@@ -1414,7 +1414,7 @@ const estilosPagina = `
 
   .riscos-filter-head > div {
     color: #475569;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     font-weight: 750;
   }
 
@@ -1424,7 +1424,7 @@ const estilosPagina = `
     background: transparent;
     color: #2563eb;
     font-family: inherit;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     font-weight: 750;
     cursor: pointer;
   }
@@ -1452,13 +1452,13 @@ const estilosPagina = `
     background: transparent;
     color: #0f172a;
     font-family: inherit;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
   }
 
   .riscos-filter-result {
     margin-top: 10px;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-filter-result strong {
@@ -1489,7 +1489,7 @@ const estilosPagina = `
   .riscos-table th {
     padding: 14px 16px;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 850;
     letter-spacing: .55px;
     text-align: left;
@@ -1555,20 +1555,20 @@ const estilosPagina = `
 
   .riscos-risk-copy strong {
     color: #0f172a;
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-text-scale, 1));
     line-height: 1.35;
   }
 
   .riscos-risk-copy span {
     margin-top: 4px;
     color: #64748b;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-risk-copy small {
     margin-top: 2px;
     color: #94a3b8;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
   }
 
   .riscos-risk-copy > div {
@@ -1588,21 +1588,21 @@ const estilosPagina = `
   .riscos-assessment-cell strong {
     margin-top: 7px;
     color: #334155;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-assessment-cell span,
   .riscos-status-cell small {
     margin-top: 3px;
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
   }
 
   .riscos-control-text {
     width: 220px;
     max-width: 220px;
     color: #475569;
-    font-size: 11px;
+    font-size: calc(11px * var(--sk-text-scale, 1));
     line-height: 1.5;
     overflow-wrap: anywhere;
   }
@@ -1613,7 +1613,7 @@ const estilosPagina = `
     align-items: center;
     gap: 7px;
     color: #475569;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
   }
 
   .riscos-person-cell {
@@ -1647,7 +1647,7 @@ const estilosPagina = `
     display: block;
     margin-top: 4px;
     color: #dc2626;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 800;
     letter-spacing: .4px;
     text-transform: uppercase;
@@ -1700,13 +1700,13 @@ const estilosPagina = `
 
   .riscos-state-box strong {
     color: #0f172a;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
   }
 
   .riscos-state-box span {
     max-width: 410px;
     color: #94a3b8;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1782,7 +1782,7 @@ const estilosPagina = `
 
   .riscos-mobile-card-title {
     color: #0f172a;
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-text-scale, 1));
     font-weight: 800;
     line-height: 1.4;
   }
@@ -1793,7 +1793,7 @@ const estilosPagina = `
     gap: 5px;
     margin-top: 5px;
     color: #64748b;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.4;
   }
 
@@ -1819,7 +1819,7 @@ const estilosPagina = `
   .riscos-mobile-meta-grid span,
   .riscos-mobile-control > span {
     color: #94a3b8;
-    font-size: 8px;
+    font-size: calc(8px * var(--sk-text-scale, 1));
     font-weight: 750;
     letter-spacing: .3px;
     text-transform: uppercase;
@@ -1828,7 +1828,7 @@ const estilosPagina = `
   .riscos-mobile-meta-grid strong {
     margin-top: 3px;
     color: #334155;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     line-height: 1.4;
     overflow-wrap: anywhere;
   }
@@ -1847,7 +1847,7 @@ const estilosPagina = `
   .riscos-mobile-control p {
     margin: 5px 0 0;
     color: #475569;
-    font-size: 10px;
+    font-size: calc(10px * var(--sk-text-scale, 1));
     line-height: 1.5;
   }
 
@@ -1869,7 +1869,7 @@ const estilosPagina = `
     background: #eff6ff;
     color: #2563eb;
     font-family: inherit;
-    font-size: 9px;
+    font-size: calc(9px * var(--sk-text-scale, 1));
     font-weight: 750;
     cursor: pointer;
   }
@@ -1915,11 +1915,11 @@ const estilosPagina = `
     }
 
     .riscos-source-copy strong {
-      font-size: 12px;
+      font-size: calc(12px * var(--sk-text-scale, 1));
     }
 
     .riscos-source-copy span {
-      font-size: 9px;
+      font-size: calc(9px * var(--sk-text-scale, 1));
     }
 
     .riscos-insights-grid {
@@ -1942,7 +1942,7 @@ const estilosPagina = `
     }
 
     .riscos-monitor-header h2 {
-      font-size: 15px;
+      font-size: calc(15px * var(--sk-text-scale, 1));
     }
 
     .riscos-monitor-count {

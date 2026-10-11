@@ -372,7 +372,7 @@ export default function Sidebar() {
                 color:
                   "#FFFFFF",
 
-                fontSize: 17,
+                fontSize: "calc(17px * var(--sk-text-scale, 1))",
 
                 fontWeight: 800,
 
@@ -392,7 +392,7 @@ export default function Sidebar() {
                 color:
                   "#94A3B8",
 
-                fontSize: 9,
+                fontSize: "calc(9px * var(--sk-text-scale, 1))",
 
                 fontWeight: 700,
 
@@ -720,7 +720,7 @@ function ConteudoSidebar({
           color:
             "#0F172A",
 
-          fontSize: 19,
+          fontSize: "calc(19px * var(--sk-text-scale, 1))",
           fontWeight: 800,
 
           letterSpacing:
@@ -738,7 +738,7 @@ function ConteudoSidebar({
           color:
             "#64748B",
 
-          fontSize: 12,
+          fontSize: "calc(12px * var(--sk-text-scale, 1))",
           lineHeight: 1.6,
         }}
       >
@@ -783,7 +783,7 @@ function ConteudoSidebar({
             color:
               "#334155",
 
-            fontSize: 12,
+            fontSize: "calc(12px * var(--sk-text-scale, 1))",
             fontWeight: 700,
 
             cursor:
@@ -822,7 +822,7 @@ function ConteudoSidebar({
             color:
               "#FFFFFF",
 
-            fontSize: 12,
+            fontSize: "calc(12px * var(--sk-text-scale, 1))",
             fontWeight: 750,
 
             cursor:
@@ -915,7 +915,7 @@ function ConteudoSidebar({
                 color:
                   "#FFFFFF",
 
-                fontSize: 22,
+                fontSize: "calc(22px * var(--sk-text-scale, 1))",
 
                 fontWeight: 750,
 
@@ -938,7 +938,7 @@ function ConteudoSidebar({
                 color:
                   "#94A3B8",
 
-                fontSize: 11,
+                fontSize: "calc(11px * var(--sk-text-scale, 1))",
 
                 fontWeight: 600,
 
@@ -1017,7 +1017,7 @@ function ConteudoSidebar({
                 color:
                   "#E2E8F0",
 
-                fontSize: 12,
+                fontSize: "calc(12px * var(--sk-text-scale, 1))",
 
                 fontWeight: 650,
               }}
@@ -1039,7 +1039,7 @@ function ConteudoSidebar({
                 color:
                   "#94A3B8",
 
-                fontSize: 10,
+                fontSize: "calc(10px * var(--sk-text-scale, 1))",
               }}
             >
               <span
@@ -1097,7 +1097,7 @@ function ConteudoSidebar({
                   color:
                     "#64748B",
 
-                  fontSize: 10,
+                  fontSize: "calc(10px * var(--sk-text-scale, 1))",
 
                   fontWeight:
                     800,
@@ -1177,7 +1177,7 @@ function ConteudoSidebar({
                             "none",
 
                           fontSize:
-                            13,
+                            "calc(13px * var(--sk-text-scale, 1))",
 
                           fontWeight:
                             isActive
@@ -1342,7 +1342,7 @@ function ConteudoSidebar({
                 borderRadius: 10,
                 background: "rgba(37, 99, 235, 0.16)",
                 color: "#60A5FA",
-                fontSize: 14,
+                fontSize: "calc(14px * var(--sk-text-scale, 1))",
                 fontWeight: 800,
                 textTransform: "uppercase",
               }}
@@ -1359,7 +1359,7 @@ function ConteudoSidebar({
               <div
                 style={{
                   color: "#E2E8F0",
-                  fontSize: 12,
+                  fontSize: "calc(12px * var(--sk-text-scale, 1))",
                   fontWeight: 700,
                   whiteSpace: "nowrap",
                   overflow: "hidden",
@@ -1374,7 +1374,7 @@ function ConteudoSidebar({
                 style={{
                   marginTop: 2,
                   color: "#64748B",
-                  fontSize: 9,
+                  fontSize: "calc(9px * var(--sk-text-scale, 1))",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -1404,7 +1404,7 @@ function ConteudoSidebar({
               borderRadius: 9,
               background: "#1E293B",
               color: "#CBD5E1",
-              fontSize: 11,
+              fontSize: "calc(11px * var(--sk-text-scale, 1))",
               fontWeight: 700,
               cursor: saindo
                 ? "not-allowed"
@@ -1426,7 +1426,7 @@ function ConteudoSidebar({
               style={{
                 marginTop: 8,
                 color: "#FCA5A5",
-                fontSize: 9,
+                fontSize: "calc(9px * var(--sk-text-scale, 1))",
                 lineHeight: 1.4,
                 textAlign: "center",
               }}
@@ -1469,7 +1469,7 @@ function ConteudoSidebar({
               color:
                 "#CBD5E1",
 
-              fontSize: 12,
+              fontSize: "calc(12px * var(--sk-text-scale, 1))",
 
               fontWeight: 650,
             }}
@@ -1490,7 +1490,7 @@ function ConteudoSidebar({
               color:
                 "#60A5FA",
 
-              fontSize: 9,
+              fontSize: "calc(9px * var(--sk-text-scale, 1))",
 
               fontWeight: 800,
 
@@ -1507,7 +1507,7 @@ function ConteudoSidebar({
             color:
               "#64748B",
 
-            fontSize: 10,
+            fontSize: "calc(10px * var(--sk-text-scale, 1))",
 
             lineHeight: 1.5,
           }}
