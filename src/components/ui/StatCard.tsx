@@ -109,7 +109,7 @@ export default function StatCard({
             color: colors.title,
 
             fontSize:
-              "clamp(25px, 2.2vw, 32px)",
+            "calc(clamp(25px, 2.2vw, 32px) * var(--sk-text-scale, 1))",
 
             fontWeight: 800,
 
