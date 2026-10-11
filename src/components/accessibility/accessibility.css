@@ -1,0 +1,712 @@
+/* ==========================================================
+   SAFEKITCHEN - ACESSIBILIDADE
+
+   Parte 1: visual do botão flutuante e do painel
+   Parte 2: classes globais aplicadas no <html>
+            pelo hook useAccessibility
+
+   Todas as classes usam o prefixo sk-a11y para não
+   colidir com nenhum estilo existente.
+   Nada aqui carrega recurso externo.
+========================================================== */
+
+/* ==========================================================
+   PARTE 1 - WIDGET
+========================================================== */
+
+.sk-a11y-root {
+    font-family:
+      Inter,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Helvetica,
+      Arial,
+      sans-serif;
+  
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: normal;
+    word-spacing: normal;
+  
+    color: #334155;
+  }
+  
+  /* ---------- BOTÃO FLUTUANTE ---------- */
+  
+  .sk-a11y-button {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right, 0px));
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    z-index: 1100;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  
+    width: 48px;
+    height: 48px;
+    margin: 0;
+    padding: 0;
+  
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+  
+    background: #2563eb;
+    color: #ffffff;
+  
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+  
+    cursor: pointer;
+  
+    transition: background-color 0.15s ease;
+  }
+  
+  .sk-a11y-button:hover,
+  .sk-a11y-button[aria-expanded="true"] {
+    background: #1d4ed8;
+  }
+  
+  /* Tooltip (apenas decorativo, o nome acessível vem do aria-label) */
+  
+  .sk-a11y-button-tip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 10px);
+  
+    padding: 6px 10px;
+  
+    border-radius: 8px;
+  
+    background: #0f172a;
+    color: #ffffff;
+  
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+  
+    opacity: 0;
+    pointer-events: none;
+  
+    transform: translateY(-50%);
+  
+    transition: opacity 0.12s ease;
+  }
+  
+  .sk-a11y-button:hover .sk-a11y-button-tip,
+  .sk-a11y-button:focus-visible .sk-a11y-button-tip {
+    opacity: 1;
+  }
+  
+  .sk-a11y-button[aria-expanded="true"] .sk-a11y-button-tip {
+    display: none;
+  }
+  
+  @media (hover: none) {
+    .sk-a11y-button-tip {
+      display: none;
+    }
+  }
+  
+  /* ---------- PAINEL ---------- */
+  
+  .sk-a11y-panel {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right, 0px));
+    bottom: calc(
+      max(16px, env(safe-area-inset-bottom, 0px)) + 60px
+    );
+    z-index: 1100;
+  
+    display: flex;
+    flex-direction: column;
+  
+    width: 340px;
+    max-width: calc(100vw - 32px);
+  
+    max-height: max(220px, min(640px, calc(100vh - 156px)));
+    max-height: max(220px, min(640px, calc(100dvh - 156px)));
+  
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+  
+    background: #ffffff;
+  
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+  
+    overflow: hidden;
+  
+    animation: sk-a11y-pop 0.14s ease-out;
+  }
+  
+  .sk-a11y-panel[hidden] {
+    display: none;
+  }
+  
+  @keyframes sk-a11y-pop {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  
+  /* Cabeçalho */
+  
+  .sk-a11y-header {
+    flex: none;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  
+    padding: 12px 12px 12px 16px;
+  
+    border-bottom: 1px solid #e2e8f0;
+  
+    background: #f8fafc;
+  }
+  
+  .sk-a11y-title {
+    margin: 0;
+  
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  
+    color: #0f172a;
+  
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  
+  .sk-a11y-title svg {
+    flex: none;
+  
+    color: #2563eb;
+  }
+  
+  .sk-a11y-close {
+    flex: none;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+  
+    border: 1px solid transparent;
+    border-radius: 10px;
+  
+    background: transparent;
+    color: #475569;
+  
+    cursor: pointer;
+  
+    transition: background-color 0.15s ease;
+  }
+  
+  .sk-a11y-close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+  
+  /* Corpo com rolagem interna */
+  
+  .sk-a11y-body {
+    flex: 1 1 auto;
+    min-height: 0;
+  
+    padding: 14px 16px 16px;
+  
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  
+  .sk-a11y-section + .sk-a11y-section {
+    margin-top: 16px;
+  }
+  
+  .sk-a11y-section-title {
+    margin: 0 0 8px;
+  
+    color: #475569;
+  
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+  
+  .sk-a11y-list {
+    display: grid;
+    gap: 8px;
+  
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* ---------- TAMANHO DO TEXTO ---------- */
+  
+  .sk-a11y-stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  
+    padding: 4px;
+  
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  
+    background: #f8fafc;
+  }
+  
+  .sk-a11y-step-btn {
+    flex: none;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+  
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+  
+    background: #ffffff;
+    color: #0f172a;
+  
+    cursor: pointer;
+  
+    transition: background-color 0.15s ease;
+  }
+  
+  .sk-a11y-step-btn:hover:not(:disabled) {
+    background: #f1f5f9;
+  }
+  
+  .sk-a11y-step-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  
+  .sk-a11y-step-value {
+    flex: 1 1 auto;
+  
+    color: #0f172a;
+  
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+  }
+  
+  .sk-a11y-link-btn {
+    margin: 6px 0 0;
+    padding: 6px 2px;
+  
+    border: none;
+  
+    background: none;
+    color: #1d4ed8;
+  
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+  
+    cursor: pointer;
+  }
+  
+  .sk-a11y-link-btn:disabled {
+    color: #64748b;
+    text-decoration: none;
+    cursor: default;
+  }
+  
+  /* ---------- OPÇÕES LIGA/DESLIGA ---------- */
+  
+  .sk-a11y-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 8px 12px;
+  
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  
+    background: #ffffff;
+    color: #0f172a;
+  
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+  
+    cursor: pointer;
+  
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  
+  .sk-a11y-switch:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+  
+  .sk-a11y-switch[aria-checked="true"] {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+  
+  .sk-a11y-switch[aria-checked="true"]:hover {
+    background: #dbeafe;
+  }
+  
+  .sk-a11y-switch-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  
+    min-width: 0;
+  }
+  
+  .sk-a11y-switch-icon {
+    flex: none;
+  
+    color: #475569;
+  }
+  
+  .sk-a11y-switch[aria-checked="true"] .sk-a11y-switch-icon {
+    color: #2563eb;
+  }
+  
+  .sk-a11y-track {
+    position: relative;
+    flex: none;
+  
+    width: 38px;
+    height: 22px;
+  
+    border-radius: 999px;
+  
+    background: #64748b;
+  
+    transition: background-color 0.15s ease;
+  }
+  
+  .sk-a11y-track::after {
+    content: "";
+  
+    position: absolute;
+    top: 3px;
+    left: 3px;
+  
+    width: 16px;
+    height: 16px;
+  
+    border-radius: 50%;
+  
+    background: #ffffff;
+  
+    transition: transform 0.15s ease;
+  }
+  
+  .sk-a11y-switch[aria-checked="true"] .sk-a11y-track {
+    background: #2563eb;
+  }
+  
+  .sk-a11y-switch[aria-checked="true"] .sk-a11y-track::after {
+    transform: translateX(16px);
+  }
+  
+  /* ---------- RODAPÉ ---------- */
+  
+  .sk-a11y-footer {
+    flex: none;
+  
+    padding: 12px 16px 14px;
+  
+    border-top: 1px solid #e2e8f0;
+  
+    background: #f8fafc;
+  }
+  
+  .sk-a11y-reset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  
+    width: 100%;
+    height: 40px;
+    margin: 0;
+    padding: 0 12px;
+  
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+  
+    background: #ffffff;
+    color: #334155;
+  
+    font-size: 14px;
+    font-weight: 600;
+  
+    cursor: pointer;
+  
+    transition: background-color 0.15s ease;
+  }
+  
+  .sk-a11y-reset:hover:not(:disabled) {
+    background: #f1f5f9;
+  }
+  
+  .sk-a11y-reset:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  
+  .sk-a11y-note {
+    margin: 10px 0 0;
+  
+    color: #475569;
+  
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  
+  /* ---------- FOCO DOS CONTROLES DO WIDGET ---------- */
+  
+  .sk-a11y-root button:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+  
+    box-shadow: 0 0 0 2px #ffffff;
+  }
+  
+  /* ---------- CELULAR ---------- */
+  
+  @media (max-width: 480px) {
+    .sk-a11y-button {
+      right: max(12px, env(safe-area-inset-right, 0px));
+      bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  
+      width: 44px;
+      height: 44px;
+    }
+  
+    .sk-a11y-panel {
+      right: max(12px, env(safe-area-inset-right, 0px));
+      left: max(12px, env(safe-area-inset-left, 0px));
+      bottom: calc(
+        max(12px, env(safe-area-inset-bottom, 0px)) + 54px
+      );
+  
+      width: auto;
+      max-width: none;
+    }
+  }
+  
+  /* ---------- MOVIMENTO, IMPRESSÃO E CORES FORÇADAS ---------- */
+  
+  @media (prefers-reduced-motion: reduce) {
+    .sk-a11y-root *,
+    .sk-a11y-root *::before,
+    .sk-a11y-root *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+  
+  @media print {
+    .sk-a11y-root {
+      display: none;
+    }
+  }
+  
+  @media (forced-colors: active) {
+    .sk-a11y-button,
+    .sk-a11y-close,
+    .sk-a11y-step-btn,
+    .sk-a11y-switch,
+    .sk-a11y-reset {
+      border: 2px solid ButtonText;
+    }
+  
+    .sk-a11y-track {
+      border: 2px solid ButtonText;
+    }
+  
+    .sk-a11y-switch[aria-checked="true"] {
+      outline: 2px solid Highlight;
+    }
+  }
+  
+  /* ==========================================================
+     PARTE 2 - CLASSES GLOBAIS (aplicadas no <html>)
+  
+     Regras com !important vencem estilos inline do React.
+     O widget fica de fora dos ajustes de espaçamento
+     para o painel não se desformatar.
+  ========================================================== */
+  
+  /* ---------- ESCALA DE CINZA E ALTO CONTRASTE ----------
+     Usam o mesmo filter, por isso a combinação é explícita.
+     O filter fica no <html>, e não no <body>, para não
+     quebrar elementos com position: fixed.            */
+  
+  html.sk-a11y-grayscale {
+    filter: grayscale(1);
+  }
+  
+  html.sk-a11y-high-contrast {
+    filter: contrast(1.25);
+  }
+  
+  html.sk-a11y-grayscale.sk-a11y-high-contrast {
+    filter: grayscale(1) contrast(1.25);
+  }
+  
+  /* ---------- ALTO CONTRASTE: reforços ---------- */
+  
+  html.sk-a11y-high-contrast :where(input, select, textarea) {
+    border-color: #0f172a !important;
+  }
+  
+  html.sk-a11y-high-contrast :where(th, td) {
+    border-color: #64748b !important;
+  }
+  
+  html.sk-a11y-high-contrast :where(input, textarea)::placeholder {
+    color: #475569 !important;
+    opacity: 1 !important;
+  }
+  
+  /* ---------- DESTACAR LINKS ---------- */
+  
+  html.sk-a11y-highlight-links
+    :is(a, [role="link"]):not(.sk-a11y-root a) {
+    text-decoration: underline !important;
+    text-decoration-thickness: 2px !important;
+    text-underline-offset: 3px !important;
+  }
+  
+  /* ---------- ESPAÇAMENTO DO TEXTO ----------
+     Aplicado no body e herdado pelos filhos.
+     O widget zera no próprio .sk-a11y-root.        */
+  
+  html.sk-a11y-text-spacing body {
+    letter-spacing: 0.04em;
+    word-spacing: 0.12em;
+  }
+  
+  html.sk-a11y-text-spacing
+    :where(button, input, select, textarea) {
+    letter-spacing: inherit;
+    word-spacing: inherit;
+  }
+  
+  /* ---------- ESPAÇAMENTO ENTRE LINHAS ---------- */
+  
+  html.sk-a11y-line-spacing
+    body
+    :where(
+      p,
+      li,
+      td,
+      th,
+      label,
+      span,
+      a,
+      div,
+      small,
+      strong,
+      em,
+      dd,
+      dt,
+      blockquote,
+      button,
+      textarea
+    ):not(.sk-a11y-root, .sk-a11y-root *) {
+    line-height: 1.7 !important;
+  }
+  
+  html.sk-a11y-line-spacing
+    body
+    :where(h1, h2, h3, h4, h5, h6):not(
+      .sk-a11y-root,
+      .sk-a11y-root *
+    ) {
+    line-height: 1.4 !important;
+  }
+  
+  /* ---------- FONTE MAIS LEGÍVEL ----------
+     Só fontes já instaladas no sistema do usuário.  */
+  
+  html.sk-a11y-readable-font body,
+  html.sk-a11y-readable-font body * {
+    font-family:
+      Verdana,
+      Tahoma,
+      "Segoe UI",
+      Arial,
+      sans-serif !important;
+  }
+  
+  /* ---------- REDUZIR ANIMAÇÕES ---------- */
+  
+  html.sk-a11y-reduce-motion *,
+  html.sk-a11y-reduce-motion *::before,
+  html.sk-a11y-reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+  
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  
+    scroll-behavior: auto !important;
+  }
+  
+  /* ---------- FOCO MAIS FORTE ----------
+     Também vale quando o alto contraste está ativo.
+     Anel duplo (azul + branco) para aparecer tanto
+     no fundo claro quanto na Sidebar escura.        */
+  
+  :is(html.sk-a11y-strong-focus, html.sk-a11y-high-contrast)
+    :is(
+      a,
+      button,
+      input,
+      select,
+      textarea,
+      summary,
+      [tabindex]:not([tabindex="-1"]),
+      [role="button"],
+      [role="switch"]
+    ):focus-visible {
+    outline: 3px solid #1d4ed8 !important;
+    outline-offset: 3px !important;
+  
+    box-shadow: 0 0 0 2px #ffffff !important;
+  }
