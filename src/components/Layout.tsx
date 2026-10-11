@@ -16,6 +16,7 @@ export default function Layout({
       style={{
         display: "flex",
         minHeight: "100vh",
+        width: "100%",
         background: colors.background,
       }}
     >
@@ -23,8 +24,10 @@ export default function Layout({
 
       <main
         style={{
-          flex: 1,
-          padding: "35px",
+          flex: "1 1 0",
+          minWidth: 0,
+          boxSizing: "border-box",
+          padding: "clamp(16px, 3vw, 35px)",
         }}
       >
         <div
@@ -38,6 +41,7 @@ export default function Layout({
               color: colors.title,
               fontSize: "calc(34px * var(--sk-text-scale, 1))",
               fontWeight: 700,
+              overflowWrap: "anywhere",
             }}
           >
             {title}
