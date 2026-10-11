@@ -16,6 +16,8 @@ import Epis from "../pages/Epis";
 import Checklists from "../pages/Checklists";
 import DDS from "../pages/DDS";
 import Auditorias from "../pages/Auditorias";
+import Suporte from "../pages/Suporte";
+import Perfil from "../pages/Perfil";
 
 import Login from "../pages/Login";
 import Cadastro from "../pages/Cadastro";
@@ -23,7 +25,8 @@ import Cadastro from "../pages/Cadastro";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Rotas públicas */}
+      {/* ROTAS PÚBLICAS */}
+
       <Route
         path="/login"
         element={<Login />}
@@ -34,7 +37,8 @@ export default function AppRoutes() {
         element={<Cadastro />}
       />
 
-      {/* Rotas protegidas */}
+      {/* ROTAS PROTEGIDAS */}
+
       <Route element={<ProtectedRoute />}>
         <Route element={<SistemaLayout />}>
           <Route
@@ -76,10 +80,21 @@ export default function AppRoutes() {
             path="/auditorias"
             element={<Auditorias />}
           />
+
+          <Route
+            path="/suporte"
+            element={<Suporte />}
+          />
+
+          <Route
+            path="/perfil"
+            element={<Perfil />}
+          />
         </Route>
       </Route>
 
-      {/* Rota inexistente */}
+      {/* ROTA INEXISTENTE */}
+
       <Route
         path="*"
         element={
@@ -100,33 +115,26 @@ function SistemaLayout() {
         width: "100%",
         minWidth: 0,
         minHeight: "100vh",
-
         display: "flex",
         alignItems: "stretch",
-
         background: "#F8FAFC",
-
         overflowX: "hidden",
       }}
     >
       <Sidebar />
 
-      <main
+      <div
         style={{
           flex: "1 1 0",
-
           minWidth: 0,
           minHeight: "100vh",
-
           position: "relative",
-
           background: "#F8FAFC",
-
           overflowX: "hidden",
         }}
       >
         <Outlet />
-      </main>
+      </div>
     </div>
   );
 }

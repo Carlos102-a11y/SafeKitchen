@@ -32,13 +32,16 @@ export default function PgrTable({
           <ShieldCheck size={25} />
         </div>
 
+        <div className="pgr-table-empty-kicker">
+          Inventário PGR
+        </div>
+
         <strong>
           Nenhum risco encontrado
         </strong>
 
         <span>
-          Cadastre um risco ou altere os
-          filtros de pesquisa.
+          Cadastre um novo risco ou altere os filtros para visualizar outros registros do inventário.
         </span>
 
         <style>
@@ -50,240 +53,266 @@ export default function PgrTable({
 
   return (
     <>
-      <div className="pgr-table-container">
-        <table className="pgr-table">
-          <thead>
-            <tr>
-              <Th>Risco</Th>
+      <div className="pgr-table-shell">
+        <div className="pgr-table-meta">
+          <div>
+            <strong>Inventário consolidado</strong>
+            <span>
+              {riscos.length} registro(s) exibido(s)
+            </span>
+          </div>
 
-              <Th>
-                Classificação
-              </Th>
+          <span className="pgr-table-scroll-hint">
+            Deslize horizontalmente para ver todos os campos
+          </span>
+        </div>
 
-              <Th>
-                Medida de Controle
-              </Th>
+        <div className="pgr-table-container">
+          <table className="pgr-table">
+            <thead>
+              <tr>
+                <Th>Risco identificado</Th>
+                <Th>Avaliação</Th>
+                <Th>Medida de controle</Th>
+                <Th>Responsável</Th>
+                <Th>Prazo</Th>
+                <Th>Status</Th>
+                <Th align="center">
+                  Ações
+                </Th>
+              </tr>
+            </thead>
 
-              <Th>
-                Responsável
-              </Th>
+            <tbody>
+              {riscos.map((risco) => {
+                const vencido =
+                  prazoVencido(risco);
 
-              <Th>Prazo</Th>
+                const classeRisco =
+                  classeClassificacao(
+                    risco.classificacao
+                  );
 
-              <Th>Status</Th>
+                return (
+                  <tr
+                    key={risco.id}
+                    className={`pgr-row pgr-row-${classeRisco}`}
+                  >
+                    {/* RISCO */}
 
-              <Th align="center">
-                Ações
-              </Th>
-            </tr>
-          </thead>
+                    <Td>
+                      <div className="pgr-risco-info">
+                        <div className="pgr-risco-icon">
+                          <Building2
+                            size={18}
+                          />
+                        </div>
 
-          <tbody>
-            {riscos.map(
-              (risco) => (
-                <tr
-                  key={risco.id}
-                >
-                  {/* RISCO */}
+                        <div className="pgr-risco-textos">
+                          <div className="pgr-risco-perigo">
+                            {risco.perigo}
+                          </div>
 
-                  <Td>
-                    <div className="pgr-risco-info">
-                      <div className="pgr-risco-icon">
-                        <Building2
-                          size={18}
-                        />
+                          <div className="pgr-risco-local">
+                            <span>
+                              {risco.setor}
+                            </span>
+
+                            <span
+                              aria-hidden="true"
+                              className="pgr-risco-separador"
+                            >
+                              •
+                            </span>
+
+                            <span>
+                              {risco.atividade}
+                            </span>
+                          </div>
+
+                          <div className="pgr-risco-categoria">
+                            <Badge color="blue">
+                              {risco.categoria}
+                            </Badge>
+                          </div>
+                        </div>
                       </div>
+                    </Td>
 
-                      <div className="pgr-risco-textos">
-                        <div className="pgr-risco-perigo">
-                          {
-                            risco.perigo
-                          }
-                        </div>
+                    {/* AVALIAÇÃO */}
 
-                        <div className="pgr-risco-setor">
-                          {
-                            risco.setor
-                          }
-                        </div>
+                    <Td>
+                      <div className="pgr-avaliacao">
+                        <div className="pgr-avaliacao-topo">
+                          <div
+                            className={`pgr-score pgr-score-${classeRisco}`}
+                          >
+                            {risco.nivel}
+                          </div>
 
-                        <div className="pgr-risco-atividade">
-                          {
-                            risco.atividade
-                          }
-                        </div>
-
-                        <div className="pgr-risco-categoria">
-                          <Badge color="blue">
-                            {
-                              risco.categoria
+                          <Badge
+                            color={
+                              risco.classificacao ===
+                              "Crítico"
+                                ? "red"
+                                : risco.classificacao ===
+                                    "Alto"
+                                  ? "orange"
+                                  : risco.classificacao ===
+                                      "Médio"
+                                    ? "yellow"
+                                    : "green"
                             }
+                          >
+                            {risco.classificacao}
                           </Badge>
                         </div>
+
+                        <div className="pgr-matriz-info">
+                          <TriangleAlert
+                            size={13}
+                          />
+
+                          <span>
+                            P{risco.probabilidade}
+                            {" × "}
+                            S{risco.severidade}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </Td>
+                    </Td>
 
-                  {/* CLASSIFICAÇÃO */}
+                    {/* MEDIDA DE CONTROLE */}
 
-                  <Td>
-                    <div className="pgr-classificacao">
-                      <Badge
-                        color={
-                          risco.classificacao ===
-                          "Crítico"
-                            ? "red"
-                            : risco.classificacao ===
-                                "Alto"
-                              ? "orange"
-                              : risco.classificacao ===
-                                  "Médio"
+                    <Td>
+                      <div
+                        className={
+                          risco.medidaControle
+                            ? "pgr-medida"
+                            : "pgr-medida pgr-medida-vazia"
+                        }
+                        title={
+                          risco.medidaControle ||
+                          "Não informada"
+                        }
+                      >
+                        {risco.medidaControle ||
+                          "Não informada"}
+                      </div>
+                    </Td>
+
+                    {/* RESPONSÁVEL */}
+
+                    <Td>
+                      <div className="pgr-responsavel">
+                        <div className="pgr-responsavel-icon">
+                          <UserRound
+                            size={15}
+                          />
+                        </div>
+
+                        <span>
+                          {risco.responsavel ||
+                            "Não definido"}
+                        </span>
+                      </div>
+                    </Td>
+
+                    {/* PRAZO */}
+
+                    <Td>
+                      <div
+                        className={
+                          vencido
+                            ? "pgr-prazo pgr-prazo-vencido"
+                            : "pgr-prazo"
+                        }
+                      >
+                        <CalendarDays
+                          size={15}
+                        />
+
+                        <span>
+                          {formatarData(
+                            risco.prazo
+                          )}
+                        </span>
+                      </div>
+
+                      {vencido && (
+                        <div className="pgr-prazo-alerta">
+                          Prazo vencido
+                        </div>
+                      )}
+                    </Td>
+
+                    {/* STATUS */}
+
+                    <Td>
+                      <div className="pgr-status-area">
+                        <Badge
+                          color={
+                            risco.status ===
+                            "Concluído"
+                              ? "green"
+                              : risco.status ===
+                                  "Em andamento"
                                 ? "yellow"
-                                : "green"
-                        }
-                      >
-                        {
-                          risco.classificacao
-                        }
-                      </Badge>
+                                : "gray"
+                          }
+                        >
+                          {risco.status}
+                        </Badge>
 
-                      <div className="pgr-nivel">
-                        <TriangleAlert
-                          size={14}
-                        />
-
-                        Nível{" "}
-                        {
-                          risco.nivel
-                        }
+                        <span className="pgr-status-legenda">
+                          {descricaoStatus(
+                            risco.status
+                          )}
+                        </span>
                       </div>
-                    </div>
-                  </Td>
+                    </Td>
 
-                  {/* MEDIDA DE CONTROLE */}
+                    {/* AÇÕES */}
 
-                  <Td>
-                    <div className="pgr-medida">
-                      {risco.medidaControle ||
-                        "Não informada"}
-                    </div>
-                  </Td>
+                    <Td align="center">
+                      <div className="pgr-acoes">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onEditar(risco)
+                          }
+                          title="Editar risco"
+                          aria-label={`Editar risco ${risco.perigo}`}
+                          className="pgr-acao pgr-acao-editar"
+                        >
+                          <Pencil
+                            size={16}
+                          />
+                        </button>
 
-                  {/* RESPONSÁVEL */}
-
-                  <Td>
-                    <div className="pgr-responsavel">
-                      <UserRound
-                        size={16}
-                        color="#94A3B8"
-                      />
-
-                      <span>
-                        {risco.responsavel ||
-                          "Não definido"}
-                      </span>
-                    </div>
-                  </Td>
-
-                  {/* PRAZO */}
-
-                  <Td>
-                    <div
-                      className={
-                        prazoVencido(
-                          risco
-                        )
-                          ? "pgr-prazo pgr-prazo-vencido"
-                          : "pgr-prazo"
-                      }
-                    >
-                      <CalendarDays
-                        size={16}
-                        color={
-                          prazoVencido(
-                            risco
-                          )
-                            ? "#DC2626"
-                            : "#94A3B8"
-                        }
-                      />
-
-                      <span>
-                        {formatarData(
-                          risco.prazo
-                        )}
-                      </span>
-                    </div>
-
-                    {prazoVencido(
-                      risco
-                    ) && (
-                      <div className="pgr-prazo-alerta">
-                        Prazo vencido
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onExcluir(
+                              risco.id
+                            )
+                          }
+                          title="Excluir risco"
+                          aria-label={`Excluir risco ${risco.perigo}`}
+                          className="pgr-acao pgr-acao-excluir"
+                        >
+                          <Trash2
+                            size={16}
+                          />
+                        </button>
                       </div>
-                    )}
-                  </Td>
-
-                  {/* STATUS */}
-
-                  <Td>
-                    <Badge
-                      color={
-                        risco.status ===
-                        "Concluído"
-                          ? "green"
-                          : risco.status ===
-                              "Em andamento"
-                            ? "yellow"
-                            : "gray"
-                      }
-                    >
-                      {risco.status}
-                    </Badge>
-                  </Td>
-
-                  {/* AÇÕES */}
-
-                  <Td align="center">
-                    <div className="pgr-acoes">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onEditar(
-                            risco
-                          )
-                        }
-                        title="Editar risco"
-                        aria-label="Editar risco"
-                        className="pgr-acao pgr-acao-editar"
-                      >
-                        <Pencil
-                          size={17}
-                        />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onExcluir(
-                            risco.id
-                          )
-                        }
-                        title="Excluir risco"
-                        aria-label="Excluir risco"
-                        className="pgr-acao pgr-acao-excluir"
-                      >
-                        <Trash2
-                          size={17}
-                        />
-                      </button>
-                    </div>
-                  </Td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
+                    </Td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <style>
@@ -306,26 +335,14 @@ function Th({
   return (
     <th
       style={{
-        padding:
-          "15px 18px",
-
+        padding: "14px 16px",
         textAlign: align,
-
-        color:
-          "#64748B",
-
-        fontSize: 11,
-
+        color: "#64748B",
+        fontSize: 10,
         fontWeight: 800,
-
-        textTransform:
-          "uppercase",
-
-        letterSpacing:
-          ".55px",
-
-        whiteSpace:
-          "nowrap",
+        textTransform: "uppercase",
+        letterSpacing: ".65px",
+        whiteSpace: "nowrap",
       }}
     >
       {children}
@@ -346,12 +363,9 @@ function Td({
   return (
     <td
       style={{
-        padding: 18,
-
+        padding: 16,
         textAlign: align,
-
-        verticalAlign:
-          "middle",
+        verticalAlign: "middle",
       }}
     >
       {children}
@@ -394,10 +408,9 @@ function prazoVencido(
     return false;
   }
 
-  const prazo =
-    new Date(
-      `${risco.prazo}T23:59:59`
-    );
+  const prazo = new Date(
+    `${risco.prazo}T23:59:59`
+  );
 
   return (
     prazo.getTime() <
@@ -405,7 +418,87 @@ function prazoVencido(
   );
 }
 
+function classeClassificacao(
+  classificacao: PgrItem["classificacao"]
+) {
+  if (classificacao === "Crítico") {
+    return "critico";
+  }
+
+  if (classificacao === "Alto") {
+    return "alto";
+  }
+
+  if (classificacao === "Médio") {
+    return "medio";
+  }
+
+  return "baixo";
+}
+
+function descricaoStatus(
+  status: PgrItem["status"]
+) {
+  if (status === "Concluído") {
+    return "Controle finalizado";
+  }
+
+  if (status === "Em andamento") {
+    return "Ação em execução";
+  }
+
+  return "Aguardando ação";
+}
+
 const estilosTabela = `
+  .pgr-table-shell {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .pgr-table-meta {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 10px;
+    padding: 0 2px;
+
+    box-sizing: border-box;
+  }
+
+  .pgr-table-meta > div {
+    min-width: 0;
+
+    display: flex;
+    align-items: baseline;
+
+    gap: 9px;
+  }
+
+  .pgr-table-meta strong {
+    color: #0f172a;
+
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .pgr-table-meta span {
+    color: #94a3b8;
+
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .pgr-table-scroll-hint {
+    display: none;
+  }
+
   .pgr-table-container {
     width: 100%;
     max-width: 100%;
@@ -421,16 +514,32 @@ const estilosTabela = `
     border: 1px solid #e2e8f0;
     border-radius: 16px;
 
+    box-shadow:
+      0 8px 28px
+      rgba(15, 23, 42, 0.04);
+
     -webkit-overflow-scrolling: touch;
 
     scrollbar-width: thin;
+    scrollbar-color:
+      #cbd5e1 transparent;
+  }
+
+  .pgr-table-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .pgr-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
   }
 
   .pgr-table {
     width: 100%;
-    min-width: 1080px;
+    min-width: 1160px;
 
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
 
     table-layout: auto;
   }
@@ -439,11 +548,95 @@ const estilosTabela = `
     background: #f8fafc;
   }
 
+  .pgr-table thead th {
+    border-bottom:
+      1px solid #e2e8f0;
+  }
+
   .pgr-table tbody tr {
+    position: relative;
+
     background: #ffffff;
 
+    transition:
+      background .16s ease,
+      box-shadow .16s ease;
+  }
+
+  .pgr-table tbody tr + tr td {
     border-top:
-      1px solid #e2e8f0;
+      1px solid #eef2f7;
+  }
+
+  .pgr-table tbody tr:hover {
+    background: #fbfdff;
+  }
+
+  .pgr-table tbody tr:hover td:first-child,
+  .pgr-table tbody tr:hover td:last-child {
+    background: #fbfdff;
+  }
+
+  .pgr-table th:first-child,
+  .pgr-table td:first-child {
+    position: sticky;
+    left: 0;
+
+    z-index: 2;
+
+    background: #ffffff;
+
+    box-shadow:
+      1px 0 0 #eef2f7;
+  }
+
+  .pgr-table thead th:first-child {
+    z-index: 4;
+
+    background: #f8fafc;
+  }
+
+  .pgr-table th:last-child,
+  .pgr-table td:last-child {
+    position: sticky;
+    right: 0;
+
+    z-index: 2;
+
+    background: #ffffff;
+
+    box-shadow:
+      -1px 0 0 #eef2f7;
+  }
+
+  .pgr-table thead th:last-child {
+    z-index: 4;
+
+    background: #f8fafc;
+  }
+
+  .pgr-row-baixo td:first-child {
+    box-shadow:
+      inset 3px 0 0 #16a34a,
+      1px 0 0 #eef2f7;
+  }
+
+  .pgr-row-medio td:first-child {
+    box-shadow:
+      inset 3px 0 0 #f59e0b,
+      1px 0 0 #eef2f7;
+  }
+
+  .pgr-row-alto td:first-child {
+    box-shadow:
+      inset 3px 0 0 #f97316,
+      1px 0 0 #eef2f7;
+  }
+
+  .pgr-row-critico td:first-child {
+    box-shadow:
+      inset 3px 0 0 #dc2626,
+      1px 0 0 #eef2f7;
   }
 
   .pgr-risco-info {
@@ -452,8 +645,8 @@ const estilosTabela = `
 
     gap: 12px;
 
-    width: 230px;
-    min-width: 230px;
+    width: 260px;
+    min-width: 260px;
   }
 
   .pgr-risco-icon {
@@ -466,85 +659,143 @@ const estilosTabela = `
 
     flex-shrink: 0;
 
+    border: 1px solid #e2e8f0;
     border-radius: 10px;
 
-    background: #f1f5f9;
+    background: #f8fafc;
 
     color: #64748b;
   }
 
   .pgr-risco-textos {
     min-width: 0;
-
     flex: 1;
   }
 
   .pgr-risco-perigo {
     color: #0f172a;
 
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
 
-    line-height: 1.35;
+    line-height: 1.4;
 
     overflow-wrap: anywhere;
   }
 
-  .pgr-risco-setor {
+  .pgr-risco-local {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 5px;
+
     margin-top: 5px;
 
     color: #64748b;
 
-    font-size: 12px;
-
-    overflow-wrap: anywhere;
+    font-size: 11px;
+    line-height: 1.45;
   }
 
-  .pgr-risco-atividade {
-    margin-top: 3px;
-
-    color: #94a3b8;
-
-    font-size: 11px;
-
-    overflow-wrap: anywhere;
+  .pgr-risco-separador {
+    color: #cbd5e1;
   }
 
   .pgr-risco-categoria {
     margin-top: 8px;
   }
 
-  .pgr-classificacao {
-    min-width: 125px;
+  .pgr-avaliacao {
+    min-width: 150px;
   }
 
-  .pgr-nivel {
+  .pgr-avaliacao-topo {
     display: flex;
     align-items: center;
 
-    gap: 6px;
+    gap: 9px;
+  }
+
+  .pgr-score {
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: 1px solid transparent;
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 850;
+  }
+
+  .pgr-score-baixo {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #15803d;
+  }
+
+  .pgr-score-medio {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #b45309;
+  }
+
+  .pgr-score-alto {
+    border-color: #fed7aa;
+    background: #fff7ed;
+    color: #c2410c;
+  }
+
+  .pgr-score-critico {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+
+  .pgr-matriz-info {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
 
     margin-top: 8px;
 
-    color: #64748b;
+    color: #94a3b8;
 
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
 
     white-space: nowrap;
   }
 
   .pgr-medida {
-    width: 220px;
-    max-width: 220px;
+    width: 240px;
+    max-width: 240px;
 
     color: #475569;
 
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.55;
 
-    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 
+    overflow: hidden;
     overflow-wrap: anywhere;
+  }
+
+  .pgr-medida-vazia {
+    color: #94a3b8;
+    font-style: italic;
   }
 
   .pgr-responsavel {
@@ -553,16 +804,29 @@ const estilosTabela = `
 
     gap: 8px;
 
-    width: 145px;
-    min-width: 145px;
+    width: 155px;
+    min-width: 155px;
 
     color: #475569;
 
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 600;
   }
 
-  .pgr-responsavel svg {
+  .pgr-responsavel-icon {
+    width: 29px;
+    height: 29px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background: #f1f5f9;
+    color: #64748b;
   }
 
   .pgr-responsavel span {
@@ -575,39 +839,65 @@ const estilosTabela = `
     display: flex;
     align-items: center;
 
-    gap: 8px;
+    gap: 7px;
 
-    min-width: 125px;
+    min-width: 120px;
 
     color: #475569;
 
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 650;
 
     white-space: nowrap;
   }
 
   .pgr-prazo svg {
     flex-shrink: 0;
+    color: #94a3b8;
   }
 
   .pgr-prazo-vencido {
     color: #dc2626;
+  }
 
-    font-weight: 700;
+  .pgr-prazo-vencido svg {
+    color: #dc2626;
   }
 
   .pgr-prazo-alerta {
-    margin-top: 6px;
+    display: inline-flex;
 
-    color: #dc2626;
+    margin-top: 7px;
+    padding: 4px 7px;
 
-    font-size: 10px;
-    font-weight: 700;
+    border: 1px solid #fecaca;
+    border-radius: 999px;
+
+    background: #fef2f2;
+    color: #b91c1c;
+
+    font-size: 9px;
+    font-weight: 800;
 
     text-transform: uppercase;
+    letter-spacing: .35px;
 
-    letter-spacing: .4px;
+    white-space: nowrap;
+  }
+
+  .pgr-status-area {
+    min-width: 122px;
+  }
+
+  .pgr-status-legenda {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #94a3b8;
+
+    font-size: 9px;
+    font-weight: 600;
 
     white-space: nowrap;
   }
@@ -619,12 +909,12 @@ const estilosTabela = `
 
     gap: 7px;
 
-    min-width: 80px;
+    min-width: 78px;
   }
 
   .pgr-acao {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
 
     display: flex;
     align-items: center;
@@ -634,36 +924,57 @@ const estilosTabela = `
 
     padding: 0;
 
-    border: none;
+    border: 1px solid transparent;
     border-radius: 9px;
 
     cursor: pointer;
 
     transition:
       transform .15s ease,
-      opacity .15s ease;
+      background .15s ease,
+      border-color .15s ease,
+      box-shadow .15s ease;
   }
 
   .pgr-acao:hover {
     transform: translateY(-1px);
   }
 
-  .pgr-acao-editar {
-    background: #eff6ff;
+  .pgr-acao:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+  }
 
+  .pgr-acao-editar {
+    border-color: #bfdbfe;
+    background: #eff6ff;
     color: #2563eb;
   }
 
-  .pgr-acao-excluir {
-    background: #fef2f2;
+  .pgr-acao-editar:hover {
+    background: #dbeafe;
+    box-shadow:
+      0 4px 12px
+      rgba(37, 99, 235, .12);
+  }
 
+  .pgr-acao-excluir {
+    border-color: #fecaca;
+    background: #fef2f2;
     color: #dc2626;
+  }
+
+  .pgr-acao-excluir:hover {
+    background: #fee2e2;
+    box-shadow:
+      0 4px 12px
+      rgba(220, 38, 38, .10);
   }
 
   .pgr-table-empty {
     width: 100%;
     min-width: 0;
-    min-height: 240px;
+    min-height: 260px;
 
     display: flex;
     flex-direction: column;
@@ -674,7 +985,12 @@ const estilosTabela = `
 
     box-sizing: border-box;
 
-    background: #ffffff;
+    background:
+      linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #fbfdff 100%
+      );
 
     border:
       1px dashed #cbd5e1;
@@ -685,56 +1001,136 @@ const estilosTabela = `
   }
 
   .pgr-table-empty-icon {
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 
-    border-radius: 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 15px;
 
     background: #eff6ff;
+    color: #2563eb;
+  }
+
+  .pgr-table-empty-kicker {
+    margin-bottom: 7px;
 
     color: #2563eb;
+
+    font-size: 9px;
+    font-weight: 850;
+
+    text-transform: uppercase;
+    letter-spacing: .8px;
   }
 
   .pgr-table-empty strong {
     color: #0f172a;
 
     font-size: 15px;
+    font-weight: 800;
   }
 
-  .pgr-table-empty span {
-    margin-top: 6px;
+  .pgr-table-empty > span {
+    margin-top: 7px;
 
-    max-width: 360px;
+    max-width: 420px;
 
     color: #94a3b8;
 
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
 
-    line-height: 1.5;
+  @media (max-width: 900px) {
+    .pgr-table-scroll-hint {
+      display: block;
+      text-align: right;
+    }
   }
 
   @media (max-width: 650px) {
+    .pgr-table-meta {
+      align-items: flex-start;
+      flex-direction: column;
+
+      gap: 5px;
+
+      margin-bottom: 9px;
+    }
+
+    .pgr-table-meta > div {
+      width: 100%;
+
+      justify-content: space-between;
+    }
+
+    .pgr-table-scroll-hint {
+      font-size: 9px !important;
+      text-align: left;
+    }
+
     .pgr-table-container {
       border-radius: 12px;
     }
 
     .pgr-table {
-      min-width: 980px;
+      min-width: 1080px;
     }
 
     .pgr-table th {
       padding:
-        13px 14px;
+        12px 13px !important;
     }
 
     .pgr-table td {
-      padding: 14px;
+      padding:
+        14px 13px !important;
+    }
+
+    .pgr-risco-info {
+      width: 225px;
+      min-width: 225px;
+    }
+
+    .pgr-risco-perigo {
+      font-size: 12px;
+    }
+
+    .pgr-medida {
+      width: 205px;
+      max-width: 205px;
+
+      font-size: 11px;
+    }
+
+    .pgr-responsavel {
+      width: 140px;
+      min-width: 140px;
+
+      font-size: 11px;
+    }
+
+    .pgr-table-empty {
+      min-height: 220px;
+
+      padding:
+        28px 18px;
+    }
+
+    .pgr-table-empty > span {
+      font-size: 11px;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .pgr-table {
+      min-width: 1030px;
     }
 
     .pgr-risco-info {
@@ -742,54 +1138,19 @@ const estilosTabela = `
       min-width: 205px;
     }
 
-    .pgr-risco-perigo {
-      font-size: 13px;
+    .pgr-risco-icon {
+      width: 34px;
+      height: 34px;
     }
 
     .pgr-medida {
       width: 190px;
       max-width: 190px;
-
-      font-size: 12px;
-    }
-
-    .pgr-responsavel {
-      width: 135px;
-      min-width: 135px;
-
-      font-size: 12px;
-    }
-
-    .pgr-table-empty {
-      min-height: 210px;
-
-      padding:
-        26px 18px;
-    }
-
-    .pgr-table-empty span {
-      font-size: 12px;
-    }
-  }
-
-  @media (max-width: 430px) {
-    .pgr-table {
-      min-width: 930px;
-    }
-
-    .pgr-risco-info {
-      width: 190px;
-      min-width: 190px;
-    }
-
-    .pgr-medida {
-      width: 175px;
-      max-width: 175px;
     }
 
     .pgr-acao {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
     }
   }
 `;

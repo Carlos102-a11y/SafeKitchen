@@ -864,8 +864,8 @@ export async function gerarPDF() {
 
   novaPagina(
     doc,
-    "Resumo Executivo",
-    "Visão consolidada dos principais indicadores de SST."
+    "Resumo Geral",
+    "Principais indicadores de segurança registrados no sistema."
   );
 
   let y = 42;
@@ -956,7 +956,7 @@ export async function gerarPDF() {
   y = desenharSecao(
     doc,
     y,
-    "Síntese da Situação"
+    "Situação Geral"
   );
 
   y = escreverParagrafo(
@@ -1674,7 +1674,7 @@ export async function gerarPDF() {
 
   novaPagina(
     doc,
-    "Auditorias de SST",
+    "Auditorias de Segurança",
     "Conformidade, não conformidades e acompanhamento das ações corretivas."
   );
 
@@ -1963,9 +1963,9 @@ export async function gerarPDF() {
   novaPagina(
     doc,
     "Considerações Finais",
-    "Síntese gerencial das informações registradas no SafeKitchen."
+    "Resumo das informações registradas no SafeKitchen."
   );
-
+  
   y = 44;
 
   y = escreverParagrafo(
@@ -2107,7 +2107,7 @@ function desenharCapa(
   );
 
   doc.text(
-    "GESTÃO DE SEGURANÇA E SAÚDE NO TRABALHO",
+    "SEGURANÇA DO TRABALHO EM COZINHA INDUSTRIAL",
     44,
     45
   );
@@ -2132,7 +2132,7 @@ function desenharCapa(
   );
 
   doc.text(
-    "GERENCIAL DE SST",
+    "DE SEGURANÇA",
     20,
     118
   );
@@ -2283,7 +2283,7 @@ function desenharCapa(
   );
 
   doc.text(
-    "SafeKitchen - Sistema de Gestão de SST",
+   "SafeKitchen - Segurança do Trabalho em Cozinha Industrial",
     20,
     278
   );
@@ -3078,7 +3078,7 @@ function aplicarCabecalhosERodapes(
     );
 
     doc.text(
-      "SAFETY MANAGEMENT - SAFEKITCHEN",
+      "SAFEKITCHEN - SEGURANÇA DO TRABALHO",
       15,
       10
     );
@@ -3106,7 +3106,7 @@ function aplicarCabecalhosERodapes(
     );
 
     doc.text(
-      "SafeKitchen - Relatório Gerencial de SST",
+      "SafeKitchen - Relatório de Segurança",
       15,
       290
     );

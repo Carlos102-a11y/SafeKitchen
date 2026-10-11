@@ -693,51 +693,36 @@ export default function Dashboard() {
     <main
       style={{
         width: "100%",
-
         minWidth: 0,
-
         padding: mobile
-          ? "18px 14px 28px"
+          ? "18px 14px 30px"
           : tablet
-            ? "24px 20px 32px"
+            ? "24px 20px 34px"
             : "32px",
-
-        boxSizing:
-          "border-box",
-
-        overflow:
-          "hidden",
+        boxSizing: "border-box",
+        overflow: "hidden",
+        background: "#F8FAFC",
       }}
     >
-      {/* CABEÇALHO */}
-
       <PageHeader
-        title="Dashboard Executivo"
-        subtitle="Visão consolidada dos indicadores de Segurança e Saúde no Trabalho."
-        icon={LayoutDashboard}
-      >
-        <Button
-  onClick={() => {
-    void gerarPDF();
-  }}
+  title="Painel Geral"
+  subtitle="Acompanhe os principais indicadores de segurança do sistema."
+  icon={LayoutDashboard}
 >
+        <Button
+          onClick={() => {
+            void gerarPDF();
+          }}
+        >
           <span
             style={{
               display: "flex",
-
-              alignItems:
-                "center",
-
-              justifyContent:
-                "center",
-
+              alignItems: "center",
+              justifyContent: "center",
               gap: 8,
             }}
           >
-            <FileText
-              size={18}
-            />
-
+            <FileText size={18} />
             Gerar Relatório
           </span>
         </Button>
@@ -749,10 +734,8 @@ export default function Dashboard() {
             width: "100%",
             minWidth: 0,
             marginBottom: 18,
-            padding:
-              "12px 14px",
-            boxSizing:
-              "border-box",
+            padding: "12px 14px",
+            boxSizing: "border-box",
             border: erroBanco
               ? "1px solid #FECACA"
               : "1px solid #DBEAFE",
@@ -774,123 +757,76 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* INDICADORES PRINCIPAIS */}
-
+<SectionTitle
+  eyebrow="VISÃO GERAL"
+  titulo="Panorama da Segurança"
+  subtitulo="Indicadores principais para acompanhamento da operação."
+  mobile={mobile}
+/>
       <div
         style={{
           display: "grid",
-
-          gridTemplateColumns:
-            mobile
-              ? "minmax(0, 1fr)"
-              : "repeat(auto-fit, minmax(220px, 1fr))",
-
-          gap: mobile
-            ? 12
-            : 20,
-
-          marginBottom: 20,
-
+          gridTemplateColumns: mobile
+            ? "minmax(0, 1fr)"
+            : "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: mobile ? 12 : 18,
+          marginBottom: 14,
           minWidth: 0,
         }}
       >
         <StatCard
           title="Inventário PGR"
           value={pgr.length}
-          icon={
-            <ShieldCheck
-              size={22}
-            />
-          }
+          icon={<ShieldCheck size={22} />}
           color="#2563EB"
         />
 
         <StatCard
           title="Riscos Críticos"
-          value={
-            riscosCriticos
-          }
-          icon={
-            <TriangleAlert
-              size={22}
-            />
-          }
+          value={riscosCriticos}
+          icon={<TriangleAlert size={22} />}
           color="#DC2626"
         />
 
         <StatCard
           title="Acidentes"
-          value={
-            acidentesReais
-          }
-          icon={
-            <Ambulance
-              size={22}
-            />
-          }
+          value={acidentesReais}
+          icon={<Ambulance size={22} />}
           color="#7C3AED"
         />
 
         <StatCard
           title="Alertas Ativos"
-          value={
-            totalAlertas
-          }
-          icon={
-            <AlertTriangle
-              size={22}
-            />
-          }
+          value={totalAlertas}
+          icon={<AlertTriangle size={22} />}
           color="#F59E0B"
         />
       </div>
 
-      {/* INDICADORES OPERACIONAIS */}
-
       <div
         style={{
           display: "grid",
-
-          gridTemplateColumns:
-            mobile
-              ? "minmax(0, 1fr)"
-              : "repeat(auto-fit, minmax(185px, 1fr))",
-
-          gap: mobile
-            ? 10
-            : 14,
-
-          marginBottom:
-            mobile
-              ? 18
-              : 28,
-
+          gridTemplateColumns: mobile
+            ? "minmax(0, 1fr)"
+            : "repeat(auto-fit, minmax(190px, 1fr))",
+          gap: mobile ? 10 : 12,
+          marginBottom: mobile ? 24 : 34,
           minWidth: 0,
         }}
       >
         <MiniCard
           titulo="EPIs"
           valor={epis.length}
-          detalhe={`${quantidadeEpis} unidade(s)`}
-          icon={
-            <HardHat
-              size={19}
-            />
-          }
+          detalhe={`${quantidadeEpis} unidade(s) em estoque`}
+          icon={<HardHat size={19} />}
           mobile={mobile}
         />
 
         <MiniCard
           titulo="Checklists"
-          valor={
-            checklists.length
-          }
-          detalhe={`${conformidadeChecklists}% conformidade`}
-          icon={
-            <ClipboardCheck
-              size={19}
-            />
-          }
+          valor={checklists.length}
+          detalhe={`${conformidadeChecklists}% de conformidade`}
+          icon={<ClipboardCheck size={19} />}
           mobile={mobile}
         />
 
@@ -898,90 +834,62 @@ export default function Dashboard() {
           titulo="DDS"
           valor={dds.length}
           detalhe={`${ddsUltimos30Dias} nos últimos 30 dias`}
-          icon={
-            <BookOpen
-              size={19}
-            />
-          }
+          icon={<BookOpen size={19} />}
           mobile={mobile}
         />
 
         <MiniCard
           titulo="Auditorias"
-          valor={
-            auditorias.length
-          }
-          detalhe={`${conformidadeAuditorias}% conformidade`}
-          icon={
-            <ClipboardList
-              size={19}
-            />
-          }
+          valor={auditorias.length}
+          detalhe={`${conformidadeAuditorias}% de conformidade`}
+          icon={<ClipboardList size={19} />}
           mobile={mobile}
         />
       </div>
 
-      {/* GRÁFICO + PGR */}
+      <SectionTitle
+        eyebrow="GESTÃO PREVENTIVA"
+        titulo="Riscos e plano de controle"
+        subtitulo="Leitura gerencial do inventário e das medidas de controle do PGR."
+        mobile={mobile}
+      />
 
       <div
         style={{
           display: "grid",
-
-          gridTemplateColumns:
-            telaMedia
-              ? "minmax(0, 1fr)"
-              : "minmax(0, 1.35fr) minmax(330px, .8fr)",
-
-          gap: mobile
-            ? 14
-            : 22,
-
-          marginBottom:
-            mobile
-              ? 14
-              : 22,
-
+          gridTemplateColumns: telaMedia
+            ? "minmax(0, 1fr)"
+            : "minmax(0, 1.45fr) minmax(330px, .75fr)",
+          gap: mobile ? 14 : 20,
+          marginBottom: mobile ? 26 : 34,
           minWidth: 0,
         }}
       >
         <Painel
           titulo="Distribuição dos Riscos"
-          subtitulo="Classificação dos riscos cadastrados no PGR."
+          subtitulo="Classificação dos riscos cadastrados no inventário do PGR."
           mobile={mobile}
         >
           {pgr.length === 0 ? (
-            <EstadoVazio
-              texto="Nenhum risco cadastrado no PGR."
-            />
+            <EstadoVazio texto="Nenhum risco cadastrado no PGR." />
           ) : (
             <div
               style={{
                 display: "grid",
-
-                gridTemplateColumns:
-                  mobile
-                    ? "minmax(0, 1fr)"
-                    : "minmax(250px, 1fr) 180px",
-
-                gap: mobile
-                  ? 12
-                  : 20,
-
-                alignItems:
-                  "center",
-
+                gridTemplateColumns: mobile
+                  ? "minmax(0, 1fr)"
+                  : "minmax(260px, 1fr) 190px",
+                gap: mobile ? 16 : 24,
+                alignItems: "center",
                 minWidth: 0,
               }}
             >
               <div
                 style={{
                   width: "100%",
-
                   minWidth: 0,
-
-                  height: mobile
-                    ? 230
-                    : 280,
+                  height: mobile ? 230 : 290,
+                  position: "relative",
                 }}
               >
                 <ResponsiveContainer
@@ -990,78 +898,86 @@ export default function Dashboard() {
                 >
                   <PieChart>
                     <Pie
-                      data={
-                        distribuicaoRiscos
-                      }
+                      data={distribuicaoRiscos}
                       dataKey="value"
                       nameKey="name"
-                      innerRadius={
-                        mobile
-                          ? 52
-                          : 65
-                      }
-                      outerRadius={
-                        mobile
-                          ? 82
-                          : 103
-                      }
+                      innerRadius={mobile ? 54 : 68}
+                      outerRadius={mobile ? 84 : 106}
                       paddingAngle={4}
-                      stroke="none"
+                      stroke="#FFFFFF"
+                      strokeWidth={2}
                     >
                       {distribuicaoRiscos.map(
                         (item) => (
                           <Cell
-                            key={
-                              item.name
-                            }
-                            fill={
-                              item.color
-                            }
+                            key={item.name}
+                            fill={item.color}
                           />
                         )
                       )}
                     </Pie>
-
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
+
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <strong
+                    style={{
+                      color: "#0F172A",
+                      fontSize: mobile ? 24 : 28,
+                      fontWeight: 850,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {pgr.length}
+                  </strong>
+
+                  <span
+                    style={{
+                      marginTop: 5,
+                      color: "#94A3B8",
+                      fontSize: 9,
+                      fontWeight: 750,
+                      letterSpacing: ".6px",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    riscos
+                  </span>
+                </div>
               </div>
 
               <div
                 style={{
-                  display:
-                    mobile
-                      ? "grid"
-                      : "flex",
-
-                  gridTemplateColumns:
-                    mobile
-                      ? "repeat(2, minmax(0, 1fr))"
-                      : undefined,
-
-                  flexDirection:
-                    mobile
-                      ? undefined
-                      : "column",
-
-                  gap: 12,
+                  display: mobile
+                    ? "grid"
+                    : "flex",
+                  gridTemplateColumns: mobile
+                    ? "repeat(2, minmax(0, 1fr))"
+                    : undefined,
+                  flexDirection: mobile
+                    ? undefined
+                    : "column",
+                  gap: 10,
                 }}
               >
                 {distribuicaoRiscos.map(
                   (item) => (
                     <Legenda
-                      key={
-                        item.name
-                      }
-                      titulo={
-                        item.name
-                      }
-                      valor={
-                        item.value
-                      }
-                      cor={
-                        item.color
-                      }
+                      key={item.name}
+                      titulo={item.name}
+                      valor={item.value}
+                      cor={item.color}
                     />
                   )
                 )}
@@ -1072,46 +988,36 @@ export default function Dashboard() {
 
         <Painel
           titulo="Plano de Controle"
-          subtitulo="Acompanhamento das medidas definidas no PGR."
+          subtitulo="Situação das medidas definidas para os riscos cadastrados."
           mobile={mobile}
         >
           <ResumoLinha
             titulo="Concluídas"
-            valor={
-              acoesPgrConcluidas
-            }
+            valor={acoesPgrConcluidas}
             cor="#16A34A"
           />
 
           <ResumoLinha
             titulo="Em andamento"
-            valor={
-              acoesPgrAndamento
-            }
+            valor={acoesPgrAndamento}
             cor="#F59E0B"
           />
 
           <ResumoLinha
             titulo="Pendentes"
-            valor={
-              acoesPgrPendentes
-            }
+            valor={acoesPgrPendentes}
             cor="#64748B"
           />
 
           <ResumoLinha
             titulo="Riscos altos"
-            valor={
-              riscosAltos
-            }
+            valor={riscosAltos}
             cor="#F97316"
           />
 
           <ResumoLinha
             titulo="Prazos vencidos"
-            valor={
-              prazosPgrVencidos
-            }
+            valor={prazosPgrVencidos}
             cor="#DC2626"
           />
 
@@ -1123,225 +1029,167 @@ export default function Dashboard() {
             style={botaoLink}
           >
             Abrir PGR
-
-            <ArrowRight
-              size={16}
-            />
+            <ArrowRight size={16} />
           </button>
         </Painel>
       </div>
 
-      {/* CONFORMIDADE */}
+      <SectionTitle
+        eyebrow="DESEMPENHO OPERACIONAL"
+        titulo="Conformidade e capacitação"
+        subtitulo="Indicadores gerados a partir dos registros operacionais do sistema."
+        mobile={mobile}
+      />
 
       <div
         style={{
           display: "grid",
-
-          gridTemplateColumns:
-            tablet
-              ? "minmax(0, 1fr)"
-              : "repeat(2, minmax(0, 1fr))",
-
-          gap: mobile
-            ? 14
-            : 22,
-
-          marginBottom:
-            mobile
-              ? 14
-              : 22,
-
+          gridTemplateColumns: tablet
+            ? "minmax(0, 1fr)"
+            : "repeat(2, minmax(0, 1fr))",
+          gap: mobile ? 14 : 20,
+          marginBottom: mobile ? 26 : 34,
           minWidth: 0,
         }}
       >
         <Painel
           titulo="Conformidade Operacional"
-          subtitulo="Indicadores calculados a partir dos registros do sistema."
+          subtitulo="Média de conformidade registrada nos processos de inspeção."
           mobile={mobile}
         >
           <IndicadorProgresso
             titulo="Checklists"
-            valor={
+            valor={conformidadeChecklists}
+            cor={corConformidade(
               conformidadeChecklists
-            }
-            cor={
-              corConformidade(
-                conformidadeChecklists
-              )
-            }
+            )}
           />
 
           <IndicadorProgresso
             titulo="Auditorias"
-            valor={
+            valor={conformidadeAuditorias}
+            cor={corConformidade(
               conformidadeAuditorias
-            }
-            cor={
-              corConformidade(
-                conformidadeAuditorias
-              )
-            }
+            )}
           />
 
           <div
             style={{
               display: "grid",
-
-              gridTemplateColumns:
-                mobilePequeno
-                  ? "minmax(0, 1fr)"
-                  : "repeat(2, minmax(0, 1fr))",
-
+              gridTemplateColumns: mobilePequeno
+                ? "minmax(0, 1fr)"
+                : "repeat(2, minmax(0, 1fr))",
               gap: 12,
-
               marginTop: 20,
             }}
           >
             <DadoPequeno
               titulo="Não conformidades"
-              valor={
-                naoConformidades
-              }
+              valor={naoConformidades}
             />
 
             <DadoPequeno
               titulo="Auditorias pendentes"
-              valor={
-                auditoriasPendentes
-              }
+              valor={auditoriasPendentes}
             />
           </div>
         </Painel>
 
         <Painel
           titulo="DDS e Capacitação"
-          subtitulo="Indicadores dos diálogos de segurança registrados."
+          subtitulo="Acompanhamento dos diálogos de segurança registrados."
           mobile={mobile}
         >
           <div
             style={{
               display: "grid",
-
-              gridTemplateColumns:
-                mobilePequeno
-                  ? "minmax(0, 1fr)"
-                  : "repeat(2, minmax(0, 1fr))",
-
+              gridTemplateColumns: mobilePequeno
+                ? "minmax(0, 1fr)"
+                : "repeat(2, minmax(0, 1fr))",
               gap: 12,
             }}
           >
             <DadoDestaque
               titulo="DDS realizados"
               valor={dds.length}
-              icon={
-                <BookOpen
-                  size={20}
-                />
-              }
+              icon={<BookOpen size={20} />}
             />
 
             <DadoDestaque
               titulo="Participações"
-              valor={
-                totalParticipacoesDDS
-              }
-              icon={
-                <Activity
-                  size={20}
-                />
-              }
+              valor={totalParticipacoesDDS}
+              icon={<Activity size={20} />}
             />
 
             <DadoDestaque
               titulo="Últimos 30 dias"
-              valor={
-                ddsUltimos30Dias
-              }
-              icon={
-                <Clock3
-                  size={20}
-                />
-              }
+              valor={ddsUltimos30Dias}
+              icon={<Clock3 size={20} />}
             />
 
             <DadoDestaque
               titulo="Checklists críticos"
-              valor={
-                checklistsCriticos
-              }
-              icon={
-                <TriangleAlert
-                  size={20}
-                />
-              }
+              valor={checklistsCriticos}
+              icon={<TriangleAlert size={20} />}
             />
           </div>
         </Painel>
       </div>
 
-      {/* ALERTAS + RISCOS RECENTES */}
+      <SectionTitle
+        eyebrow="PRIORIDADES"
+        titulo="Pontos que exigem atenção"
+        subtitulo="Alertas consolidados e registros recentes do inventário."
+        mobile={mobile}
+      />
 
       <div
         style={{
           display: "grid",
-
-          gridTemplateColumns:
-            telaMedia
-              ? "minmax(0, 1fr)"
-              : "minmax(340px, .85fr) minmax(0, 1.3fr)",
-
-          gap: mobile
-            ? 14
-            : 22,
-
-          marginBottom:
-            mobile
-              ? 14
-              : 22,
-
+          gridTemplateColumns: telaMedia
+            ? "minmax(0, 1fr)"
+            : "minmax(340px, .85fr) minmax(0, 1.3fr)",
+          gap: mobile ? 14 : 20,
+          marginBottom: mobile ? 26 : 34,
           minWidth: 0,
         }}
       >
         <Painel
           titulo="Alertas Prioritários"
-          subtitulo="Itens que exigem acompanhamento da gestão."
+          subtitulo="Itens que demandam acompanhamento da gestão."
           mobile={mobile}
         >
           {totalAlertas === 0 ? (
             <div
               style={{
-                minHeight: 180,
-
+                minHeight: 190,
                 display: "flex",
-
-                flexDirection:
-                  "column",
-
-                alignItems:
-                  "center",
-
-                justifyContent:
-                  "center",
-
-                textAlign:
-                  "center",
-
-                padding:
-                  "0 10px",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                padding: "0 10px",
               }}
             >
-              <CircleCheckBig
-                size={34}
-                color="#16A34A"
-              />
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 14,
+                  background: "#F0FDF4",
+                  color: "#16A34A",
+                }}
+              >
+                <CircleCheckBig size={25} />
+              </div>
 
               <strong
                 style={{
-                  marginTop: 10,
-
-                  color:
-                    "#0F172A",
-
+                  marginTop: 12,
+                  color: "#0F172A",
                   fontSize: 13,
                 }}
               >
@@ -1351,34 +1199,25 @@ export default function Dashboard() {
               <span
                 style={{
                   marginTop: 4,
-
-                  color:
-                    "#94A3B8",
-
-                  fontSize: 11,
-
-                  lineHeight: 1.5,
+                  maxWidth: 290,
+                  color: "#94A3B8",
+                  fontSize: 10,
+                  lineHeight: 1.6,
                 }}
               >
-                Os principais controles estão
-                dentro dos parâmetros.
+                Os principais controles estão dentro dos parâmetros acompanhados pelo sistema.
               </span>
             </div>
           ) : (
             <div
               style={{
                 display: "flex",
-
-                flexDirection:
-                  "column",
-
+                flexDirection: "column",
                 gap: 10,
-
                 minWidth: 0,
               }}
             >
-              {riscosCriticos >
-                0 && (
+              {riscosCriticos > 0 && (
                 <Alerta
                   titulo="Riscos críticos"
                   texto={`${riscosCriticos} risco(s) classificados como críticos.`}
@@ -1386,8 +1225,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {prazosPgrVencidos >
-                0 && (
+              {prazosPgrVencidos > 0 && (
                 <Alerta
                   titulo="PGR com prazo vencido"
                   texto={`${prazosPgrVencidos} medida(s) de controle estão atrasadas.`}
@@ -1395,8 +1233,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {episSemEstoque >
-                0 && (
+              {episSemEstoque > 0 && (
                 <Alerta
                   titulo="EPIs sem estoque"
                   texto={`${episSemEstoque} equipamento(s) estão sem unidades disponíveis.`}
@@ -1404,8 +1241,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {episEstoqueBaixo >
-                0 && (
+              {episEstoqueBaixo > 0 && (
                 <Alerta
                   titulo="Estoque baixo"
                   texto={`${episEstoqueBaixo} EPI(s) possuem menos de 5 unidades.`}
@@ -1413,8 +1249,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {episVencidos >
-                0 && (
+              {episVencidos > 0 && (
                 <Alerta
                   titulo="EPIs vencidos"
                   texto={`${episVencidos} EPI(s) possuem validade vencida.`}
@@ -1422,8 +1257,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {episProximosVencimento >
-                0 && (
+              {episProximosVencimento > 0 && (
                 <Alerta
                   titulo="Validade próxima"
                   texto={`${episProximosVencimento} EPI(s) vencem nos próximos 30 dias.`}
@@ -1431,8 +1265,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {checklistsCriticos >
-                0 && (
+              {checklistsCriticos > 0 && (
                 <Alerta
                   titulo="Checklists críticos"
                   texto={`${checklistsCriticos} checklist(s) possuem conformidade inferior a 75%.`}
@@ -1440,8 +1273,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {auditoriasVencidas >
-                0 && (
+              {auditoriasVencidas > 0 && (
                 <Alerta
                   titulo="Ações de auditoria atrasadas"
                   texto={`${auditoriasVencidas} ação(ões) possuem prazo vencido.`}
@@ -1449,8 +1281,7 @@ export default function Dashboard() {
                 />
               )}
 
-              {ocorrenciasGraves >
-                0 && (
+              {ocorrenciasGraves > 0 && (
                 <Alerta
                   titulo="Ocorrências graves"
                   texto={`${ocorrenciasGraves} ocorrência(s) possuem gravidade Grave ou Crítica.`}
@@ -1466,125 +1297,73 @@ export default function Dashboard() {
           subtitulo="Últimos registros adicionados ao inventário do PGR."
           mobile={mobile}
         >
-          {riscosRecentes.length ===
-          0 ? (
-            <EstadoVazio
-              texto="Nenhum risco cadastrado."
-            />
+          {riscosRecentes.length === 0 ? (
+            <EstadoVazio texto="Nenhum risco cadastrado." />
           ) : (
-            <div
-              style={{
-                minWidth: 0,
-              }}
-            >
+            <div style={{ minWidth: 0 }}>
               {riscosRecentes.map(
-                (
-                  risco,
-                  index
-                ) => (
+                (risco, index) => (
                   <div
                     key={risco.id}
                     style={{
-                      display:
-                        "grid",
-
-                      gridTemplateColumns:
-                        mobile
-                          ? "minmax(0, 1fr)"
-                          : "minmax(130px, 1fr) minmax(180px, 1.5fr) auto",
-
-                      alignItems:
-                        mobile
-                          ? "start"
-                          : "center",
-
-                      gap: mobile
-                        ? 9
-                        : 14,
-
-                      padding:
-                        mobile
-                          ? "14px 0"
-                          : "15px 2px",
-
+                      display: "grid",
+                      gridTemplateColumns: mobile
+                        ? "minmax(0, 1fr)"
+                        : "minmax(130px, 1fr) minmax(180px, 1.5fr) auto",
+                      alignItems: mobile
+                        ? "start"
+                        : "center",
+                      gap: mobile ? 9 : 14,
+                      padding: mobile
+                        ? "14px 0"
+                        : "15px 2px",
                       borderBottom:
                         index ===
-                        riscosRecentes.length -
-                          1
+                        riscosRecentes.length - 1
                           ? "none"
                           : "1px solid #E2E8F0",
-
                       minWidth: 0,
                     }}
                   >
-                    <div
-                      style={{
-                        minWidth: 0,
-                      }}
-                    >
+                    <div style={{ minWidth: 0 }}>
                       <strong
                         style={{
-                          color:
-                            "#0F172A",
-
-                          fontSize:
-                            12,
-
-                          overflowWrap:
-                            "anywhere",
+                          color: "#0F172A",
+                          fontSize: 12,
+                          overflowWrap: "anywhere",
                         }}
                       >
-                        {
-                          risco.setor
-                        }
+                        {risco.setor}
                       </strong>
 
                       <div
                         style={{
-                          marginTop:
-                            3,
-
-                          color:
-                            "#94A3B8",
-
-                          fontSize:
-                            10,
+                          marginTop: 3,
+                          color: "#94A3B8",
+                          fontSize: 10,
                         }}
                       >
-                        {
-                          risco.categoria
-                        }
+                        {risco.categoria}
                       </div>
                     </div>
 
                     <div
                       style={{
                         minWidth: 0,
-
-                        color:
-                          "#475569",
-
-                        fontSize:
-                          12,
-
-                        lineHeight:
-                          1.5,
-
-                        overflowWrap:
-                          "anywhere",
+                        color: "#475569",
+                        fontSize: 12,
+                        lineHeight: 1.5,
+                        overflowWrap: "anywhere",
                       }}
                     >
-                      {
-                        risco.perigo
-                      }
+                      {risco.perigo}
                     </div>
 
                     <div
                       style={{
-                        justifySelf:
-                          mobile
-                            ? "start"
-                            : "end",
+                        justifySelf: mobile
+                          ? "start"
+                          : "end",
                       }}
                     >
                       <Badge
@@ -1601,9 +1380,7 @@ export default function Dashboard() {
                                 : "green"
                         }
                       >
-                        {
-                          risco.classificacao
-                        }
+                        {risco.classificacao}
                       </Badge>
                     </div>
                   </div>
@@ -1618,42 +1395,34 @@ export default function Dashboard() {
                 style={botaoLink}
               >
                 Ver inventário completo
-
-                <ArrowRight
-                  size={16}
-                />
+                <ArrowRight size={16} />
               </button>
             </div>
           )}
         </Painel>
       </div>
 
-      {/* EPIs + ACIDENTES */}
+      <SectionTitle
+        eyebrow="CONTROLE OPERACIONAL"
+        titulo="Recursos e ocorrências"
+        subtitulo="Situação de EPIs e registros de ocorrências de SST."
+        mobile={mobile}
+      />
 
       <div
         style={{
           display: "grid",
-
-          gridTemplateColumns:
-            tablet
-              ? "minmax(0, 1fr)"
-              : "repeat(2, minmax(0, 1fr))",
-
-          gap: mobile
-            ? 14
-            : 22,
-
-          marginBottom:
-            mobile
-              ? 14
-              : 22,
-
+          gridTemplateColumns: tablet
+            ? "minmax(0, 1fr)"
+            : "repeat(2, minmax(0, 1fr))",
+          gap: mobile ? 14 : 20,
+          marginBottom: mobile ? 26 : 34,
           minWidth: 0,
         }}
       >
         <Painel
           titulo="Controle de EPIs"
-          subtitulo="Situação atual do estoque e validade."
+          subtitulo="Situação atual do estoque e da validade dos equipamentos."
           mobile={mobile}
         >
           <ResumoLinha
@@ -1664,41 +1433,31 @@ export default function Dashboard() {
 
           <ResumoLinha
             titulo="Unidades em estoque"
-            valor={
-              quantidadeEpis
-            }
+            valor={quantidadeEpis}
             cor="#16A34A"
           />
 
           <ResumoLinha
             titulo="Estoque baixo"
-            valor={
-              episEstoqueBaixo
-            }
+            valor={episEstoqueBaixo}
             cor="#F59E0B"
           />
 
           <ResumoLinha
             titulo="Sem estoque"
-            valor={
-              episSemEstoque
-            }
+            valor={episSemEstoque}
             cor="#DC2626"
           />
 
           <ResumoLinha
             titulo="Validade vencida"
-            valor={
-              episVencidos
-            }
+            valor={episVencidos}
             cor="#DC2626"
           />
 
           <ResumoLinha
             titulo="Próximos do vencimento"
-            valor={
-              episProximosVencimento
-            }
+            valor={episProximosVencimento}
             cor="#F59E0B"
           />
 
@@ -1710,122 +1469,101 @@ export default function Dashboard() {
             style={botaoLink}
           >
             Abrir Gestão de EPIs
-
-            <ArrowRight
-              size={16}
-            />
+            <ArrowRight size={16} />
           </button>
         </Painel>
 
         <Painel
           titulo="Ocorrências de SST"
-          subtitulo="Resumo dos acidentes e incidentes registrados."
+          subtitulo="Resumo dos acidentes, incidentes e afastamentos registrados."
           mobile={mobile}
         >
           <ResumoLinha
             titulo="Registros"
-            valor={
-              acidentes.length
-            }
+            valor={acidentes.length}
             cor="#2563EB"
           />
 
           <ResumoLinha
             titulo="Acidentes"
-            valor={
-              acidentesReais
-            }
+            valor={acidentesReais}
             cor="#DC2626"
           />
 
           <ResumoLinha
             titulo="Graves / críticos"
-            valor={
-              ocorrenciasGraves
-            }
+            valor={ocorrenciasGraves}
             cor="#F97316"
           />
 
           <ResumoLinha
             titulo="Com afastamento"
-            valor={
-              afastamentos
-            }
+            valor={afastamentos}
             cor="#7C3AED"
           />
 
           <button
             type="button"
             onClick={() =>
-              navigate(
-                "/acidentes"
-              )
+              navigate("/acidentes")
             }
             style={botaoLink}
           >
             Abrir Ocorrências
-
-            <ArrowRight
-              size={16}
-            />
+            <ArrowRight size={16} />
           </button>
         </Painel>
       </div>
 
-      {/* ATALHOS */}
+      <SectionTitle
+        eyebrow="NAVEGAÇÃO"
+        titulo="Acesso rápido"
+        subtitulo="Atalhos para os principais módulos operacionais do SafeKitchen."
+        mobile={mobile}
+      />
 
       <Painel
-        titulo="Acesso Rápido"
-        subtitulo="Acesse os principais módulos do SafeKitchen."
+        titulo="Módulos do sistema"
+        subtitulo="Acesse diretamente a área que deseja consultar ou atualizar."
         mobile={mobile}
       >
         <div
           style={{
             display: "grid",
-
-            gridTemplateColumns:
-              mobile
-                ? "minmax(0, 1fr)"
-                : "repeat(auto-fit, minmax(180px, 1fr))",
-
+            gridTemplateColumns: mobile
+              ? "minmax(0, 1fr)"
+              : "repeat(auto-fit, minmax(180px, 1fr))",
             gap: 10,
-
             minWidth: 0,
           }}
         >
           <Atalho
             titulo="PGR"
-            icon={
-              <ShieldCheck
-                size={20}
-              />
-            }
+            icon={<ShieldCheck size={20} />}
             onClick={() =>
               navigate("/pgr")
             }
           />
 
+<Atalho
+  titulo="Gestão de Riscos"
+  icon={<TriangleAlert size={20} />}
+  onClick={() =>
+    navigate("/riscos")
+  }
+/>
+
           <Atalho
             titulo="Acidentes"
-            icon={
-              <Ambulance
-                size={20}
-              />
-            }
+            icon={<Ambulance size={20} />}
             onClick={() =>
-              navigate(
-                "/acidentes"
-              )
+              navigate("/acidentes")
             }
           />
 
           <Atalho
             titulo="EPIs"
-            icon={
-              <HardHat
-                size={20}
-              />
-            }
+            icon={<HardHat size={20} />}
             onClick={() =>
               navigate("/epis")
             }
@@ -1833,25 +1571,15 @@ export default function Dashboard() {
 
           <Atalho
             titulo="Checklists"
-            icon={
-              <ClipboardCheck
-                size={20}
-              />
-            }
+            icon={<ClipboardCheck size={20} />}
             onClick={() =>
-              navigate(
-                "/checklists"
-              )
+              navigate("/checklists")
             }
           />
 
           <Atalho
             titulo="DDS"
-            icon={
-              <BookOpen
-                size={20}
-              />
-            }
+            icon={<BookOpen size={20} />}
             onClick={() =>
               navigate("/dds")
             }
@@ -1859,15 +1587,9 @@ export default function Dashboard() {
 
           <Atalho
             titulo="Auditorias"
-            icon={
-              <ClipboardList
-                size={20}
-              />
-            }
+            icon={<ClipboardList size={20} />}
             onClick={() =>
-              navigate(
-                "/auditorias"
-              )
+              navigate("/auditorias")
             }
           />
         </div>
@@ -1877,8 +1599,68 @@ export default function Dashboard() {
 }
 
 /*
- * COMPONENTES
+ * COMPONENTES VISUAIS
  */
+
+function SectionTitle({
+  eyebrow,
+  titulo,
+  subtitulo,
+  mobile = false,
+}: {
+  eyebrow: string;
+  titulo: string;
+  subtitulo: string;
+  mobile?: boolean;
+}) {
+  return (
+    <div
+      style={{
+        marginBottom: mobile ? 13 : 16,
+        minWidth: 0,
+      }}
+    >
+      <span
+        style={{
+          color: "#2563EB",
+          fontSize: 9,
+          fontWeight: 850,
+          letterSpacing: ".85px",
+          textTransform: "uppercase",
+        }}
+      >
+        {eyebrow}
+      </span>
+
+      <h2
+        style={{
+          margin: "6px 0 0",
+          color: "#0F172A",
+          fontSize: mobile ? 17 : 19,
+          fontWeight: 850,
+          letterSpacing: "-.35px",
+          lineHeight: 1.25,
+          overflowWrap: "anywhere",
+        }}
+      >
+        {titulo}
+      </h2>
+
+      <p
+        style={{
+          margin: "5px 0 0",
+          maxWidth: 700,
+          color: "#64748B",
+          fontSize: 10,
+          lineHeight: 1.55,
+          overflowWrap: "anywhere",
+        }}
+      >
+        {subtitulo}
+      </p>
+    </div>
+  );
+}
 
 function Painel({
   titulo,
@@ -1895,82 +1677,49 @@ function Painel({
     <section
       style={{
         width: "100%",
-
         minWidth: 0,
-
-        padding:
-          mobile
-            ? 17
-            : 24,
-
-        boxSizing:
-          "border-box",
-
-        background:
-          "#FFFFFF",
-
-        border:
-          "1px solid #E2E8F0",
-
-        borderRadius:
-          mobile
-            ? 14
-            : 18,
-
+        boxSizing: "border-box",
+        background: "#FFFFFF",
+        border: "1px solid #E2E8F0",
+        borderRadius: mobile ? 14 : 17,
         boxShadow:
-          "0 6px 20px rgba(15,23,42,.04)",
-
-        overflow:
-          "hidden",
+          "0 10px 30px rgba(15, 23, 42, .045)",
+        overflow: "hidden",
       }}
     >
       <div
         style={{
-          marginBottom:
-            mobile
-              ? 16
-              : 20,
-
+          padding: mobile
+            ? "16px 17px 14px"
+            : "19px 22px 16px",
+          borderBottom: "1px solid #EEF2F7",
+          background:
+            "linear-gradient(180deg, #FFFFFF 0%, #FCFDFE 100%)",
           minWidth: 0,
         }}
       >
-        <h2
+        <h3
           style={{
             margin: 0,
-
             color: "#0F172A",
-
-            fontSize:
-              mobile
-                ? 15
-                : 17,
-
-            fontWeight: 800,
-
+            fontSize: mobile ? 14 : 15,
+            fontWeight: 820,
             lineHeight: 1.3,
-
-            overflowWrap:
-              "anywhere",
+            letterSpacing: "-.2px",
+            overflowWrap: "anywhere",
           }}
         >
           {titulo}
-        </h2>
+        </h3>
 
         {subtitulo && (
           <p
             style={{
-              margin:
-                "5px 0 0",
-
-              color:
-                "#94A3B8",
-
-              fontSize: 11,
-
+              margin: "5px 0 0",
+              color: "#94A3B8",
+              fontSize: 10,
               lineHeight: 1.5,
-
-              overflowWrap:
-                "anywhere",
+              overflowWrap: "anywhere",
             }}
           >
             {subtitulo}
@@ -1978,7 +1727,14 @@ function Painel({
         )}
       </div>
 
-      {children}
+      <div
+        style={{
+          padding: mobile ? 17 : 22,
+          minWidth: 0,
+        }}
+      >
+        {children}
+      </div>
     </section>
   );
 }
@@ -2000,56 +1756,32 @@ function MiniCard({
     <div
       style={{
         width: "100%",
-
         minWidth: 0,
-
         display: "flex",
-
-        alignItems:
-          "center",
-
+        alignItems: "center",
         gap: 12,
-
-        padding:
-          mobile
-            ? "14px 15px"
-            : "16px 17px",
-
-        boxSizing:
-          "border-box",
-
-        background:
-          "#FFFFFF",
-
-        border:
-          "1px solid #E2E8F0",
-
-        borderRadius: 14,
+        padding: mobile
+          ? "14px 15px"
+          : "15px 16px",
+        boxSizing: "border-box",
+        background: "#FFFFFF",
+        border: "1px solid #E2E8F0",
+        borderRadius: 13,
+        boxShadow:
+          "0 7px 22px rgba(15, 23, 42, .035)",
       }}
     >
       <div
         style={{
           width: 40,
-
           height: 40,
-
           display: "flex",
-
-          alignItems:
-            "center",
-
-          justifyContent:
-            "center",
-
+          alignItems: "center",
+          justifyContent: "center",
           flexShrink: 0,
-
-          borderRadius: 10,
-
-          background:
-            "#F1F5F9",
-
-          color:
-            "#475569",
+          borderRadius: 11,
+          background: "#EFF6FF",
+          color: "#2563EB",
         }}
       >
         {icon}
@@ -2058,62 +1790,52 @@ function MiniCard({
       <div
         style={{
           minWidth: 0,
-
           flex: 1,
         }}
       >
         <div
           style={{
-            color:
-              "#64748B",
-
-            fontSize: 10,
-
-            fontWeight: 800,
-
-            textTransform:
-              "uppercase",
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            gap: 10,
           }}
         >
-          {titulo}
+          <span
+            style={{
+              color: "#64748B",
+              fontSize: 9,
+              fontWeight: 850,
+              letterSpacing: ".55px",
+              textTransform: "uppercase",
+            }}
+          >
+            {titulo}
+          </span>
+
+          <strong
+            style={{
+              flexShrink: 0,
+              color: "#0F172A",
+              fontSize: 19,
+              fontWeight: 850,
+            }}
+          >
+            {valor}
+          </strong>
         </div>
 
         <div
           style={{
-            marginTop: 2,
-
-            color:
-              "#0F172A",
-
-            fontSize: 20,
-
-            fontWeight: 800,
-          }}
-        >
-          {valor}
-        </div>
-
-        <div
-          style={{
-            marginTop: 2,
-
-            color:
-              "#94A3B8",
-
+            marginTop: 3,
+            color: "#94A3B8",
             fontSize: 9,
-
             lineHeight: 1.4,
-
-            whiteSpace:
-              mobile
-                ? "normal"
-                : "nowrap",
-
-            overflow:
-              "hidden",
-
-            textOverflow:
-              "ellipsis",
+            whiteSpace: mobile
+              ? "normal"
+              : "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {detalhe}
@@ -2136,55 +1858,40 @@ function Legenda({
     <div
       style={{
         minWidth: 0,
-
         display: "flex",
-
-        alignItems:
-          "center",
-
-        justifyContent:
-          "space-between",
-
+        alignItems: "center",
+        justifyContent: "space-between",
         gap: 10,
+        padding: "10px 11px",
+        border: "1px solid #EEF2F7",
+        borderRadius: 10,
+        background: "#F8FAFC",
       }}
     >
       <div
         style={{
           minWidth: 0,
-
           display: "flex",
-
-          alignItems:
-            "center",
-
+          alignItems: "center",
           gap: 8,
-
-          color:
-            "#475569",
-
-          fontSize: 12,
+          color: "#475569",
+          fontSize: 10,
+          fontWeight: 650,
         }}
       >
         <span
           style={{
             width: 8,
-
             height: 8,
-
             flexShrink: 0,
-
-            borderRadius:
-              "50%",
-
-            background:
-              cor,
+            borderRadius: "50%",
+            background: cor,
+            boxShadow: `0 0 0 3px ${cor}18`,
           }}
         />
-
         <span
           style={{
-            overflowWrap:
-              "anywhere",
+            overflowWrap: "anywhere",
           }}
         >
           {titulo}
@@ -2193,12 +1900,14 @@ function Legenda({
 
       <strong
         style={{
+          minWidth: 28,
           flexShrink: 0,
-
-          color:
-            "#0F172A",
-
-          fontSize: 13,
+          padding: "3px 7px",
+          borderRadius: 7,
+          background: "#FFFFFF",
+          color: "#0F172A",
+          fontSize: 11,
+          textAlign: "center",
         }}
       >
         {valor}
@@ -2220,63 +1929,39 @@ function ResumoLinha({
     <div
       style={{
         minWidth: 0,
-
         display: "flex",
-
-        alignItems:
-          "center",
-
-        justifyContent:
-          "space-between",
-
+        alignItems: "center",
+        justifyContent: "space-between",
         gap: 12,
-
-        padding:
-          "11px 0",
-
-        borderBottom:
-          "1px solid #F1F5F9",
+        padding: "11px 0",
+        borderBottom: "1px solid #F1F5F9",
       }}
     >
       <div
         style={{
           minWidth: 0,
-
           display: "flex",
-
-          alignItems:
-            "center",
-
-          gap: 8,
-
-          color:
-            "#475569",
-
-          fontSize: 12,
-
+          alignItems: "center",
+          gap: 9,
+          color: "#475569",
+          fontSize: 11,
           lineHeight: 1.4,
         }}
       >
         <span
           style={{
-            width: 8,
-
-            height: 8,
-
+            width: 7,
+            height: 7,
             flexShrink: 0,
-
-            borderRadius:
-              "50%",
-
-            background:
-              cor,
+            borderRadius: "50%",
+            background: cor,
+            boxShadow: `0 0 0 3px ${cor}16`,
           }}
         />
 
         <span
           style={{
-            overflowWrap:
-              "anywhere",
+            overflowWrap: "anywhere",
           }}
         >
           {titulo}
@@ -2285,12 +1970,14 @@ function ResumoLinha({
 
       <strong
         style={{
+          minWidth: 31,
           flexShrink: 0,
-
-          color:
-            "#0F172A",
-
-          fontSize: 13,
+          padding: "4px 8px",
+          borderRadius: 8,
+          background: "#F8FAFC",
+          color: "#0F172A",
+          fontSize: 11,
+          textAlign: "center",
         }}
       >
         {valor}
@@ -2312,36 +1999,26 @@ function IndicadorProgresso({
     <div
       style={{
         marginBottom: 20,
-
         minWidth: 0,
       }}
     >
       <div
         style={{
           display: "flex",
-
-          justifyContent:
-            "space-between",
-
+          justifyContent: "space-between",
           gap: 12,
-
           marginBottom: 8,
-
-          color:
-            "#475569",
-
-          fontSize: 12,
+          color: "#475569",
+          fontSize: 11,
         }}
       >
-        <span>
-          {titulo}
-        </span>
+        <span>{titulo}</span>
 
         <strong
           style={{
             flexShrink: 0,
-
             color: cor,
+            fontSize: 12,
           }}
         >
           {valor}%
@@ -2351,29 +2028,18 @@ function IndicadorProgresso({
       <div
         style={{
           width: "100%",
-
-          height: 8,
-
-          background:
-            "#E2E8F0",
-
+          height: 9,
+          background: "#EEF2F7",
           borderRadius: 999,
-
-          overflow:
-            "hidden",
+          overflow: "hidden",
         }}
       >
         <div
           style={{
             width: `${valor}%`,
-
             height: "100%",
-
-            background:
-              cor,
-
-            borderRadius:
-              999,
+            background: cor,
+            borderRadius: 999,
           }}
         />
       </div>
@@ -2392,29 +2058,19 @@ function DadoPequeno({
     <div
       style={{
         minWidth: 0,
-
         padding: 14,
-
-        background:
-          "#F8FAFC",
-
+        background: "#F8FAFC",
         borderRadius: 11,
-
-        border:
-          "1px solid #E2E8F0",
+        border: "1px solid #E2E8F0",
       }}
     >
       <div
         style={{
-          color:
-            "#64748B",
-
-          fontSize: 10,
-
+          color: "#64748B",
+          fontSize: 9,
+          fontWeight: 700,
           lineHeight: 1.4,
-
-          overflowWrap:
-            "anywhere",
+          overflowWrap: "anywhere",
         }}
       >
         {titulo}
@@ -2422,15 +2078,11 @@ function DadoPequeno({
 
       <strong
         style={{
-          display:
-            "block",
-
-          marginTop: 5,
-
-          color:
-            "#0F172A",
-
-          fontSize: 20,
+          display: "block",
+          marginTop: 6,
+          color: "#0F172A",
+          fontSize: 21,
+          fontWeight: 850,
         }}
       >
         {valor}
@@ -2452,22 +2104,22 @@ function DadoDestaque({
     <div
       style={{
         minWidth: 0,
-
-        padding: 15,
-
-        background:
-          "#F8FAFC",
-
-        border:
-          "1px solid #E2E8F0",
-
+        padding: 14,
+        background: "#F8FAFC",
+        border: "1px solid #E2E8F0",
         borderRadius: 12,
       }}
     >
       <div
         style={{
-          color:
-            "#2563EB",
+          width: 34,
+          height: 34,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 9,
+          background: "#EFF6FF",
+          color: "#2563EB",
         }}
       >
         {icon}
@@ -2475,15 +2127,11 @@ function DadoDestaque({
 
       <strong
         style={{
-          display:
-            "block",
-
+          display: "block",
           marginTop: 10,
-
-          color:
-            "#0F172A",
-
+          color: "#0F172A",
           fontSize: 21,
+          fontWeight: 850,
         }}
       >
         {valor}
@@ -2492,16 +2140,10 @@ function DadoDestaque({
       <div
         style={{
           marginTop: 3,
-
-          color:
-            "#64748B",
-
-          fontSize: 10,
-
+          color: "#64748B",
+          fontSize: 9,
           lineHeight: 1.4,
-
-          overflowWrap:
-            "anywhere",
+          overflowWrap: "anywhere",
         }}
       >
         {titulo}
@@ -2517,46 +2159,38 @@ function Alerta({
 }: {
   titulo: string;
   texto: string;
-  tipo:
-    | "critico"
-    | "atencao";
+  tipo: "critico" | "atencao";
 }) {
   const critico =
-    tipo ===
-    "critico";
+    tipo === "critico";
 
   return (
     <div
       style={{
         width: "100%",
-
         minWidth: 0,
-
         display: "flex",
-
         gap: 11,
-
         padding: 13,
-
-        boxSizing:
-          "border-box",
-
+        boxSizing: "border-box",
         borderRadius: 11,
-
         border: `1px solid ${
           critico
             ? "#FECACA"
             : "#FDE68A"
         }`,
-
-        background:
+        borderLeft: `3px solid ${
           critico
-            ? "#FEF2F2"
-            : "#FFFBEB",
+            ? "#DC2626"
+            : "#F59E0B"
+        }`,
+        background: critico
+          ? "#FEF2F2"
+          : "#FFFBEB",
       }}
     >
       <AlertTriangle
-        size={18}
+        size={17}
         color={
           critico
             ? "#DC2626"
@@ -2564,25 +2198,18 @@ function Alerta({
         }
         style={{
           flexShrink: 0,
+          marginTop: 1,
         }}
       />
 
-      <div
-        style={{
-          minWidth: 0,
-        }}
-      >
+      <div style={{ minWidth: 0 }}>
         <strong
           style={{
-            color:
-              critico
-                ? "#991B1B"
-                : "#92400E",
-
-            fontSize: 11,
-
-            overflowWrap:
-              "anywhere",
+            color: critico
+              ? "#991B1B"
+              : "#92400E",
+            fontSize: 10,
+            overflowWrap: "anywhere",
           }}
         >
           {titulo}
@@ -2591,16 +2218,10 @@ function Alerta({
         <div
           style={{
             marginTop: 3,
-
-            color:
-              "#64748B",
-
-            fontSize: 10,
-
-            lineHeight: 1.5,
-
-            overflowWrap:
-              "anywhere",
+            color: "#64748B",
+            fontSize: 9,
+            lineHeight: 1.55,
+            overflowWrap: "anywhere",
           }}
         >
           {texto}
@@ -2625,61 +2246,42 @@ function Atalho({
       onClick={onClick}
       style={{
         width: "100%",
-
         minWidth: 0,
-
         display: "flex",
-
-        alignItems:
-          "center",
-
-        justifyContent:
-          "space-between",
-
+        alignItems: "center",
+        justifyContent: "space-between",
         gap: 12,
-
-        padding: 15,
-
-        boxSizing:
-          "border-box",
-
-        border:
-          "1px solid #E2E8F0",
-
-        borderRadius: 12,
-
-        background:
-          "#F8FAFC",
-
-        color:
-          "#334155",
-
-        cursor:
-          "pointer",
-
+        minHeight: 58,
+        padding: "10px 12px",
+        boxSizing: "border-box",
+        border: "1px solid #E2E8F0",
+        borderRadius: 11,
+        background: "#F8FAFC",
+        color: "#334155",
+        cursor: "pointer",
         fontWeight: 700,
-
-        fontSize: 11,
+        fontSize: 10,
       }}
     >
       <span
         style={{
           minWidth: 0,
-
           display: "flex",
-
-          alignItems:
-            "center",
-
-          gap: 9,
+          alignItems: "center",
+          gap: 10,
         }}
       >
         <span
           style={{
+            width: 34,
+            height: 34,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             flexShrink: 0,
-
-            color:
-              "#2563EB",
+            borderRadius: 9,
+            background: "#EFF6FF",
+            color: "#2563EB",
           }}
         >
           {icon}
@@ -2687,8 +2289,7 @@ function Atalho({
 
         <span
           style={{
-            overflowWrap:
-              "anywhere",
+            overflowWrap: "anywhere",
           }}
         >
           {titulo}
@@ -2698,9 +2299,7 @@ function Atalho({
       <ArrowRight
         size={15}
         color="#94A3B8"
-        style={{
-          flexShrink: 0,
-        }}
+        style={{ flexShrink: 0 }}
       />
     </button>
   );
@@ -2715,41 +2314,37 @@ function EstadoVazio({
     <div
       style={{
         minHeight: 180,
-
         display: "flex",
-
-        flexDirection:
-          "column",
-
-        alignItems:
-          "center",
-
-        justifyContent:
-          "center",
-
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
         padding: 12,
-
-        boxSizing:
-          "border-box",
-
-        color:
-          "#94A3B8",
-
-        textAlign:
-          "center",
+        boxSizing: "border-box",
+        color: "#94A3B8",
+        textAlign: "center",
       }}
     >
-      <ShieldCheck
-        size={32}
-      />
+      <div
+        style={{
+          width: 46,
+          height: 46,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 13,
+          background: "#F1F5F9",
+          color: "#64748B",
+        }}
+      >
+        <ShieldCheck size={23} />
+      </div>
 
       <span
         style={{
-          marginTop: 9,
-
-          fontSize: 11,
-
-          lineHeight: 1.5,
+          marginTop: 10,
+          maxWidth: 300,
+          fontSize: 10,
+          lineHeight: 1.55,
         }}
       >
         {texto}

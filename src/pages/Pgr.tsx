@@ -5,18 +5,22 @@ import {
 } from "react";
 
 import {
-  ShieldCheck,
-  TriangleAlert,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronRight,
+  CircleDot,
   ClipboardList,
-  Search,
+  Filter,
   Plus,
+  Search,
+  ShieldCheck,
   SlidersHorizontal,
+  Target,
+  TriangleAlert,
   X,
 } from "lucide-react";
 
 import PageHeader from "../components/ui/PageHeader";
-import Section from "../components/ui/Section";
-import StatCard from "../components/ui/StatCard";
 import Button from "../components/ui/Button";
 
 import PgrTable from "../components/pgr/PgrTable";
@@ -25,6 +29,7 @@ import PgrDrawer from "../components/pgr/PgrDrawer";
 import type { PgrItem } from "../models/Pgr";
 
 import { supabase } from "../lib/supabase";
+import { colors } from "../styles/theme";
 
 type FiltroCategoria =
   | ""
@@ -40,33 +45,21 @@ type FiltroStatus =
 
 interface PgrRow {
   id: number;
-
   setor: string;
-
   atividade: string;
-
   perigo: string;
-
   categoria:
     PgrItem["categoria"];
-
   probabilidade:
     PgrItem["probabilidade"];
-
   severidade:
     PgrItem["severidade"];
-
   nivel: number;
-
   classificacao:
     PgrItem["classificacao"];
-
   medida_controle: string;
-
   responsavel: string;
-
   prazo: string | null;
-
   status:
     PgrItem["status"];
 }
@@ -92,42 +85,24 @@ function converterLinhaPgr(
 ): PgrItem {
   return {
     id: linha.id,
-
-    setor:
-      linha.setor,
-
-    atividade:
-      linha.atividade,
-
-    perigo:
-      linha.perigo,
-
-    categoria:
-      linha.categoria,
-
+    setor: linha.setor,
+    atividade: linha.atividade,
+    perigo: linha.perigo,
+    categoria: linha.categoria,
     probabilidade:
       linha.probabilidade,
-
     severidade:
       linha.severidade,
-
-    nivel:
-      linha.nivel,
-
+    nivel: linha.nivel,
     classificacao:
       linha.classificacao,
-
     medidaControle:
       linha.medida_controle,
-
     responsavel:
       linha.responsavel,
-
     prazo:
       linha.prazo ?? "",
-
-    status:
-      linha.status,
+    status: linha.status,
   };
 }
 
@@ -135,50 +110,31 @@ function criarPayloadPgr(
   risco: PgrItem
 ) {
   return {
-    setor:
-      risco.setor,
-
+    setor: risco.setor,
     atividade:
       risco.atividade,
-
-    perigo:
-      risco.perigo,
-
+    perigo: risco.perigo,
     categoria:
       risco.categoria,
-
     probabilidade:
       risco.probabilidade,
-
     severidade:
       risco.severidade,
-
-    nivel:
-      risco.nivel,
-
+    nivel: risco.nivel,
     classificacao:
       risco.classificacao,
-
     medida_controle:
       risco.medidaControle,
-
     responsavel:
       risco.responsavel,
-
     prazo:
-      risco.prazo ||
-      null,
-
-    status:
-      risco.status,
+      risco.prazo || null,
+    status: risco.status,
   };
 }
 
 function useViewportWidth() {
-  const [
-    largura,
-    setLargura,
-  ] =
+  const [largura, setLargura] =
     useState(() =>
       typeof window !== "undefined"
         ? window.innerWidth
@@ -217,48 +173,33 @@ export default function Pgr() {
   const mobile =
     largura <= 650;
 
-  const mobilePequeno =
-    largura <= 430;
-
   const tablet =
     largura <= 900;
 
-  const telaMedia =
-    largura <= 1150;
-
-  const [
-    riscos,
-    setRiscos,
-  ] =
-    useState<PgrItem[]>(
-      []
-    );
+  const [riscos, setRiscos] =
+    useState<PgrItem[]>([]);
 
   const [
     carregando,
     setCarregando,
-  ] =
-    useState(true);
+  ] = useState(true);
 
   const [
     erroBanco,
     setErroBanco,
-  ] =
-    useState("");
+  ] = useState("");
 
   const [
     pesquisa,
     setPesquisa,
-  ] =
-    useState("");
+  ] = useState("");
 
   const [
     filtroCategoria,
     setFiltroCategoria,
-  ] =
-    useState<FiltroCategoria>(
-      ""
-    );
+  ] = useState<FiltroCategoria>(
+    ""
+  );
 
   const [
     filtroClassificacao,
@@ -271,35 +212,27 @@ export default function Pgr() {
   const [
     filtroStatus,
     setFiltroStatus,
-  ] =
-    useState<FiltroStatus>(
-      ""
-    );
+  ] = useState<FiltroStatus>(
+    ""
+  );
 
   const [
     drawerAberto,
     setDrawerAberto,
-  ] =
-    useState(false);
+  ] = useState(false);
 
   const [
     editando,
     setEditando,
-  ] =
-    useState<PgrItem | null>(
-      null
-    );
+  ] = useState<PgrItem | null>(
+    null
+  );
 
-  /*
-   * CARREGAR PGR DO SUPABASE
-   */
   useEffect(() => {
-    let componenteAtivo =
-      true;
+    let componenteAtivo = true;
 
     async function carregarPgr() {
       setCarregando(true);
-
       setErroBanco("");
 
       const {
@@ -311,16 +244,11 @@ export default function Pgr() {
           .select(
             CAMPOS_PGR
           )
-          .order(
-            "id",
-            {
-              ascending: true,
-            }
-          );
+          .order("id", {
+            ascending: true,
+          });
 
-      if (
-        !componenteAtivo
-      ) {
+      if (!componenteAtivo) {
         return;
       }
 
@@ -330,24 +258,17 @@ export default function Pgr() {
           error
         );
 
-        setRiscos(
-          []
-        );
-
+        setRiscos([]);
         setErroBanco(
           "Não foi possível carregar o inventário de riscos."
         );
-
-        setCarregando(
-          false
-        );
+        setCarregando(false);
 
         return;
       }
 
       const linhas =
-        (data ??
-          []) as PgrRow[];
+        (data ?? []) as PgrRow[];
 
       setRiscos(
         linhas.map(
@@ -355,22 +276,16 @@ export default function Pgr() {
         )
       );
 
-      setCarregando(
-        false
-      );
+      setCarregando(false);
     }
 
     void carregarPgr();
 
     return () => {
-      componenteAtivo =
-        false;
+      componenteAtivo = false;
     };
   }, []);
 
-  /*
-   * FILTROS
-   */
   const riscosFiltrados =
     useMemo(() => {
       const termo =
@@ -429,9 +344,6 @@ export default function Pgr() {
       filtroStatus,
     ]);
 
-  /*
-   * INDICADORES
-   */
   const totalCriticos =
     riscos.filter(
       (risco) =>
@@ -453,45 +365,33 @@ export default function Pgr() {
         "Concluído"
     ).length;
 
+  const totalPendentes =
+    riscos.filter(
+      (risco) =>
+        risco.status ===
+        "Pendente"
+    ).length;
+
   const filtrosAtivos =
     pesquisa.trim() !== "" ||
     filtroCategoria !== "" ||
     filtroClassificacao !== "" ||
     filtroStatus !== "";
 
-  /*
-   * NOVO RISCO
-   */
   function abrirNovoRisco() {
     setEditando(null);
-
     setErroBanco("");
-
-    setDrawerAberto(
-      true
-    );
+    setDrawerAberto(true);
   }
 
-  /*
-   * EDITAR RISCO
-   */
   function editarRisco(
     item: PgrItem
   ) {
-    setEditando(
-      item
-    );
-
+    setEditando(item);
     setErroBanco("");
-
-    setDrawerAberto(
-      true
-    );
+    setDrawerAberto(true);
   }
 
-  /*
-   * EXCLUIR RISCO
-   */
   async function excluirRisco(
     id: number
   ) {
@@ -512,10 +412,7 @@ export default function Pgr() {
       await supabase
         .from("pgr")
         .delete()
-        .eq(
-          "id",
-          id
-        );
+        .eq("id", id);
 
     if (error) {
       console.error(
@@ -531,33 +428,22 @@ export default function Pgr() {
     }
 
     setRiscos(
-      (
-        listaAtual
-      ) =>
+      (listaAtual) =>
         listaAtual.filter(
           (risco) =>
-            risco.id !==
-            id
+            risco.id !== id
         )
     );
   }
 
-  /*
-   * SALVAR RISCO
-   */
   async function salvarRisco(
     risco: PgrItem
   ) {
     setErroBanco("");
 
     const payload =
-      criarPayloadPgr(
-        risco
-      );
+      criarPayloadPgr(risco);
 
-    /*
-     * EDIÇÃO
-     */
     if (editando) {
       const {
         data,
@@ -565,22 +451,14 @@ export default function Pgr() {
       } =
         await supabase
           .from("pgr")
-          .update(
-            payload
-          )
-          .eq(
-            "id",
-            risco.id
-          )
+          .update(payload)
+          .eq("id", risco.id)
           .select(
             CAMPOS_PGR
           )
           .single();
 
-      if (
-        error ||
-        !data
-      ) {
+      if (error || !data) {
         console.error(
           "Erro ao atualizar risco:",
           error
@@ -599,9 +477,7 @@ export default function Pgr() {
         );
 
       setRiscos(
-        (
-          listaAtual
-        ) =>
+        (listaAtual) =>
           listaAtual.map(
             (item) =>
               item.id ===
@@ -611,38 +487,25 @@ export default function Pgr() {
           )
       );
 
-      setDrawerAberto(
-        false
-      );
-
-      setEditando(
-        null
-      );
+      setDrawerAberto(false);
+      setEditando(null);
 
       return;
     }
 
-    /*
-     * NOVO REGISTRO
-     */
     const {
       data,
       error,
     } =
       await supabase
         .from("pgr")
-        .insert(
-          payload
-        )
+        .insert(payload)
         .select(
           CAMPOS_PGR
         )
         .single();
 
-    if (
-      error ||
-      !data
-    ) {
+    if (error || !data) {
       console.error(
         "Erro ao cadastrar risco:",
         error
@@ -661,71 +524,39 @@ export default function Pgr() {
       );
 
     setRiscos(
-      (
-        listaAtual
-      ) => [
+      (listaAtual) => [
         ...listaAtual,
         novoRisco,
       ]
     );
 
-    setDrawerAberto(
-      false
-    );
-
-    setEditando(
-      null
-    );
+    setDrawerAberto(false);
+    setEditando(null);
   }
 
-  /*
-   * FECHAR DRAWER
-   */
   function fecharDrawer() {
-    setDrawerAberto(
-      false
-    );
-
-    setEditando(
-      null
-    );
+    setDrawerAberto(false);
+    setEditando(null);
   }
 
-  /*
-   * LIMPAR FILTROS
-   */
   function limparFiltros() {
     setPesquisa("");
-
     setFiltroCategoria("");
-
     setFiltroClassificacao("");
-
     setFiltroStatus("");
   }
 
   return (
     <main
+      className="pgr-page"
       style={{
-        width: "100%",
-
-        minWidth: 0,
-
         padding: mobile
           ? "18px 14px 28px"
           : tablet
             ? "24px 20px 32px"
             : "32px",
-
-        boxSizing:
-          "border-box",
-
-        overflowX:
-          "hidden",
       }}
     >
-      {/* CABEÇALHO */}
-
       <PageHeader
         title="Programa de Gerenciamento de Riscos"
         subtitle="Inventário, avaliação e controle dos riscos ocupacionais."
@@ -736,99 +567,32 @@ export default function Pgr() {
             abrirNovoRisco
           }
         >
-          <span
-            style={{
-              display:
-                "flex",
-
-              alignItems:
-                "center",
-
-              justifyContent:
-                "center",
-
-              gap: 8,
-            }}
-          >
-            <Plus
-              size={18}
-            />
-
+          <span className="pgr-button-content">
+            <Plus size={18} />
             Novo Risco
           </span>
         </Button>
       </PageHeader>
 
-      {/* ERRO DO BANCO */}
-
       {erroBanco && (
         <div
+          className="pgr-alert-error"
           role="alert"
-          style={{
-            width: "100%",
-
-            display: "flex",
-
-            alignItems:
-              "flex-start",
-
-            justifyContent:
-              "space-between",
-
-            gap: 14,
-
-            marginBottom: 20,
-
-            padding:
-              "13px 15px",
-
-            boxSizing:
-              "border-box",
-
-            border:
-              "1px solid #FECACA",
-
-            borderRadius:
-              12,
-
-            background:
-              "#FEF2F2",
-
-            color:
-              "#B91C1C",
-
-            fontSize: 12,
-
-            fontWeight:
-              650,
-
-            lineHeight:
-              1.5,
-          }}
         >
-          <div
-            style={{
-              display:
-                "flex",
-
-              alignItems:
-                "flex-start",
-
-              gap: 9,
-            }}
-          >
+          <div className="pgr-alert-error-content">
             <TriangleAlert
-              size={17}
-              style={{
-                flexShrink: 0,
-
-                marginTop: 1,
-              }}
+              size={18}
             />
 
-            <span>
-              {erroBanco}
-            </span>
+            <div>
+              <strong>
+                Falha ao processar o inventário
+              </strong>
+
+              <span>
+                {erroBanco}
+              </span>
+            </div>
           </div>
 
           <button
@@ -837,604 +601,309 @@ export default function Pgr() {
               setErroBanco("")
             }
             aria-label="Fechar aviso"
-            style={{
-              display:
-                "flex",
-
-              alignItems:
-                "center",
-
-              justifyContent:
-                "center",
-
-              flexShrink: 0,
-
-              padding: 2,
-
-              border:
-                "none",
-
-              background:
-                "transparent",
-
-              color:
-                "#B91C1C",
-
-              cursor:
-                "pointer",
-            }}
           >
-            <X
-              size={16}
-            />
+            <X size={16} />
           </button>
         </div>
       )}
 
-      {/* INDICADORES */}
+      <section className="pgr-context-banner">
+        <div className="pgr-context-icon">
+          <Target size={24} />
+        </div>
 
-      <div
-        style={{
-          width: "100%",
+        <div className="pgr-context-copy">
+          <span>
+            INVENTÁRIO CENTRAL DE RISCOS
+          </span>
 
-          minWidth: 0,
+          <h2>
+            Avaliação estruturada com matriz de risco 5 × 5
+          </h2>
 
-          display: "grid",
+          <p>
+            Os registros deste módulo alimentam a Gestão de Riscos,
+            indicadores do Dashboard, vínculos de ocorrências e o relatório
+            consolidado do SafeKitchen.
+          </p>
+        </div>
 
-          gridTemplateColumns:
-            mobile
-              ? "minmax(0, 1fr)"
-              : telaMedia
-                ? "repeat(2, minmax(0, 1fr))"
-                : "repeat(4, minmax(0, 1fr))",
+        <div className="pgr-context-tags">
+          <span>
+            Probabilidade 1–5
+          </span>
+          <ChevronRight size={14} />
+          <span>
+            Severidade 1–5
+          </span>
+          <ChevronRight size={14} />
+          <strong>
+            Nível 1–25
+          </strong>
+        </div>
+      </section>
 
-          gap: mobile
-            ? 12
-            : 20,
-
-          marginBottom:
-            mobile
-              ? 18
-              : 28,
-        }}
-      >
-        <StatCard
-          title="Inventário"
-          value={
-            riscos.length
-          }
-          icon={
-            <ShieldCheck
-              size={22}
-            />
-          }
-          color="#2563EB"
+      <section className="pgr-metrics-grid">
+        <MetricCard
+          label="Inventário"
+          value={riscos.length}
+          detail="riscos cadastrados"
+          icon={ShieldCheck}
+          tone="blue"
         />
 
-        <StatCard
-          title="Riscos Críticos"
-          value={
-            totalCriticos
-          }
-          icon={
-            <TriangleAlert
-              size={22}
-            />
-          }
-          color="#DC2626"
+        <MetricCard
+          label="Riscos críticos"
+          value={totalCriticos}
+          detail="prioridade máxima"
+          icon={AlertTriangle}
+          tone="red"
         />
 
-        <StatCard
-          title="Em andamento"
-          value={
-            totalAndamento
-          }
-          icon={
-            <ClipboardList
-              size={22}
-            />
-          }
-          color="#F59E0B"
+        <MetricCard
+          label="Em andamento"
+          value={totalAndamento}
+          detail="controles em execução"
+          icon={ClipboardList}
+          tone="amber"
         />
 
-        <StatCard
-          title="Concluídos"
-          value={
-            totalConcluidos
-          }
-          icon={
-            <ShieldCheck
-              size={22}
-            />
-          }
-          color="#16A34A"
+        <MetricCard
+          label="Concluídos"
+          value={totalConcluidos}
+          detail={`${totalPendentes} pendente(s)`}
+          icon={CheckCircle2}
+          tone="green"
         />
-      </div>
-
-      {/* INVENTÁRIO */}
-
-      <div
-        style={{
-          width: "100%",
-
-          minWidth: 0,
-        }}
-      >
-        <Section title="Inventário de Riscos">
-          {/* BARRA DE FILTROS */}
-
-          <div
-            style={{
-              width: "100%",
-
-              minWidth: 0,
-
-              marginBottom:
-                mobile
-                  ? 16
-                  : 22,
-
-              padding: mobile
-                ? 14
-                : 18,
-
-              boxSizing:
-                "border-box",
-
-              background:
-                "#F8FAFC",
-
-              border:
-                "1px solid #E2E8F0",
-
-              borderRadius:
-                mobile
-                  ? 12
-                  : 14,
-            }}
-          >
-            {/* TÍTULO DOS FILTROS */}
-
-            <div
-              style={{
-                display:
-                  "flex",
-
-                flexDirection:
-                  mobilePequeno
-                    ? "column"
-                    : "row",
-
-                alignItems:
-                  mobilePequeno
-                    ? "flex-start"
-                    : "center",
-
-                justifyContent:
-                  "space-between",
-
-                gap: mobile
-                  ? 10
-                  : 16,
-
-                marginBottom:
-                  mobile
-                    ? 13
-                    : 15,
-
-                minWidth: 0,
-              }}
-            >
-              <div
-                style={{
-                  display:
-                    "flex",
-
-                  alignItems:
-                    "center",
-
-                  gap: 9,
-
-                  minWidth: 0,
-
-                  color:
-                    "#334155",
-
-                  fontSize: 13,
-
-                  fontWeight:
-                    700,
-
-                  lineHeight:
-                    1.4,
-                }}
-              >
-                <SlidersHorizontal
-                  size={17}
-                  color="#64748B"
-                  style={{
-                    flexShrink:
-                      0,
-                  }}
-                />
-
-                <span>
-                  Filtros do inventário
-                </span>
-              </div>
-
-              {filtrosAtivos && (
-                <button
-                  type="button"
-                  onClick={
-                    limparFiltros
-                  }
-                  style={{
-                    display:
-                      "flex",
-
-                    alignItems:
-                      "center",
-
-                    gap: 6,
-
-                    padding: 0,
-
-                    border:
-                      "none",
-
-                    background:
-                      "transparent",
-
-                    color:
-                      "#2563EB",
-
-                    fontSize:
-                      12,
-
-                    fontWeight:
-                      700,
-
-                    whiteSpace:
-                      "nowrap",
-
-                    cursor:
-                      "pointer",
-                  }}
-                >
-                  <X
-                    size={14}
-                  />
-
-                  Limpar filtros
-                </button>
-              )}
-            </div>
-
-            {/* CAMPOS */}
-
-            <div
-              style={{
-                width: "100%",
-
-                minWidth: 0,
-
-                display:
-                  "grid",
-
-                gridTemplateColumns:
-                  mobile
-                    ? "minmax(0, 1fr)"
-                    : tablet
-                      ? "repeat(2, minmax(0, 1fr))"
-                      : "minmax(260px, 2fr) repeat(3, minmax(160px, 1fr))",
-
-                gap: mobile
-                  ? 10
-                  : 12,
-              }}
-            >
-              {/* PESQUISA */}
-
-              <div
-                style={{
-                  width:
-                    "100%",
-
-                  minWidth:
-                    0,
-
-                  height:
-                    44,
-
-                  display:
-                    "flex",
-
-                  alignItems:
-                    "center",
-
-                  gap: 10,
-
-                  padding:
-                    "0 13px",
-
-                  boxSizing:
-                    "border-box",
-
-                  background:
-                    "#FFFFFF",
-
-                  border:
-                    "1px solid #CBD5E1",
-
-                  borderRadius:
-                    10,
-                }}
-              >
-                <Search
-                  size={17}
-                  color="#94A3B8"
-                  style={{
-                    flexShrink:
-                      0,
-                  }}
-                />
-
-                <input
-                  type="text"
-                  placeholder={
-                    mobile
-                      ? "Pesquisar riscos..."
-                      : "Pesquisar risco, setor, atividade ou responsável..."
-                  }
-                  value={
-                    pesquisa
-                  }
-                  onChange={(e) =>
-                    setPesquisa(
-                      e.target.value
-                    )
-                  }
-                  style={{
-                    width:
-                      "100%",
-
-                    minWidth:
-                      0,
-
-                    border:
-                      "none",
-
-                    outline:
-                      "none",
-
-                    background:
-                      "transparent",
-
-                    color:
-                      "#0F172A",
-
-                    fontSize:
-                      13,
-
-                    fontFamily:
-                      "inherit",
-                  }}
-                />
-              </div>
-
-              {/* CATEGORIA */}
-
-              <select
-                value={
-                  filtroCategoria
-                }
-                onChange={(e) =>
-                  setFiltroCategoria(
-                    e.target
-                      .value as FiltroCategoria
-                  )
-                }
-                style={
-                  estiloSelect
-                }
-              >
-                <option value="">
-                  Todas as categorias
-                </option>
-
-                <option value="Físico">
-                  Físico
-                </option>
-
-                <option value="Químico">
-                  Químico
-                </option>
-
-                <option value="Biológico">
-                  Biológico
-                </option>
-
-                <option value="Ergonômico">
-                  Ergonômico
-                </option>
-
-                <option value="Acidente">
-                  Acidente
-                </option>
-              </select>
-
-              {/* CLASSIFICAÇÃO */}
-
-              <select
-                value={
-                  filtroClassificacao
-                }
-                onChange={(e) =>
-                  setFiltroClassificacao(
-                    e.target
-                      .value as FiltroClassificacao
-                  )
-                }
-                style={
-                  estiloSelect
-                }
-              >
-                <option value="">
-                  Todas as classificações
-                </option>
-
-                <option value="Baixo">
-                  Baixo
-                </option>
-
-                <option value="Médio">
-                  Médio
-                </option>
-
-                <option value="Alto">
-                  Alto
-                </option>
-
-                <option value="Crítico">
-                  Crítico
-                </option>
-              </select>
-
-              {/* STATUS */}
-
-              <select
-                value={
-                  filtroStatus
-                }
-                onChange={(e) =>
-                  setFiltroStatus(
-                    e.target
-                      .value as FiltroStatus
-                  )
-                }
-                style={
-                  estiloSelect
-                }
-              >
-                <option value="">
-                  Todos os status
-                </option>
-
-                <option value="Pendente">
-                  Pendente
-                </option>
-
-                <option value="Em andamento">
-                  Em andamento
-                </option>
-
-                <option value="Concluído">
-                  Concluído
-                </option>
-              </select>
-            </div>
-
-            {/* RESULTADO */}
-
-            <div
-              style={{
-                marginTop:
-                  12,
-
-                color:
-                  "#64748B",
-
-                fontSize:
-                  11,
-
-                fontWeight:
-                  600,
-
-                lineHeight:
-                  1.5,
-              }}
-            >
-              Exibindo{" "}
-              <strong
-                style={{
-                  color:
-                    "#0F172A",
-                }}
-              >
-                {
-                  riscosFiltrados.length
-                }
-              </strong>{" "}
-              de{" "}
-              <strong
-                style={{
-                  color:
-                    "#0F172A",
-                }}
-              >
-                {
-                  riscos.length
-                }
-              </strong>{" "}
-              registro(s)
-            </div>
+      </section>
+
+      <section className="pgr-classification-strip">
+        <div className="pgr-classification-title">
+          <CircleDot size={16} />
+
+          <div>
+            <strong>
+              Faixas de classificação
+            </strong>
+
+            <span>
+              Resultado de Probabilidade × Severidade
+            </span>
+          </div>
+        </div>
+
+        <div className="pgr-classification-items">
+          <ClassificationItem
+            label="Baixo"
+            range="1–4"
+            tone="green"
+          />
+          <ClassificationItem
+            label="Médio"
+            range="5–9"
+            tone="yellow"
+          />
+          <ClassificationItem
+            label="Alto"
+            range="10–16"
+            tone="orange"
+          />
+          <ClassificationItem
+            label="Crítico"
+            range="17–25"
+            tone="red"
+          />
+        </div>
+      </section>
+
+      <section className="pgr-inventory-card">
+        <div className="pgr-section-header">
+          <div>
+            <span className="pgr-section-eyebrow">
+              GESTÃO PREVENTIVA
+            </span>
+
+            <h2>
+              Inventário de Riscos
+            </h2>
+
+            <p>
+              Pesquise, filtre e acompanhe os registros do PGR.
+            </p>
           </div>
 
-          {/* TABELA */}
+          <div className="pgr-section-count">
+            <strong>
+              {riscosFiltrados.length}
+            </strong>
 
-          {carregando ? (
-            <div
-              style={{
-                width:
-                  "100%",
+            <span>
+              de {riscos.length} registro(s)
+            </span>
+          </div>
+        </div>
 
-                padding:
-                  "42px 20px",
+        <div className="pgr-filter-panel">
+          <div className="pgr-filter-heading">
+            <div>
+              <SlidersHorizontal
+                size={17}
+              />
 
-                boxSizing:
-                  "border-box",
+              <span>
+                Filtros do inventário
+              </span>
+            </div>
 
-                border:
-                  "1px solid #E2E8F0",
+            {filtrosAtivos && (
+              <button
+                type="button"
+                className="pgr-clear-filters"
+                onClick={
+                  limparFiltros
+                }
+              >
+                <X size={14} />
+                Limpar filtros
+              </button>
+            )}
+          </div>
 
-                borderRadius:
-                  12,
+          <div className="pgr-filter-grid">
+            <label className="pgr-search-field">
+              <Search size={17} />
 
-                background:
-                  "#FFFFFF",
+              <input
+                type="text"
+                placeholder="Pesquisar risco, setor, atividade ou responsável..."
+                value={pesquisa}
+                onChange={(event) =>
+                  setPesquisa(
+                    event.target.value
+                  )
+                }
+              />
+            </label>
 
-                color:
-                  "#64748B",
-
-                fontSize:
-                  12,
-
-                fontWeight:
-                  600,
-
-                textAlign:
-                  "center",
-              }}
+            <select
+              value={
+                filtroCategoria
+              }
+              onChange={(event) =>
+                setFiltroCategoria(
+                  event.target
+                    .value as FiltroCategoria
+                )
+              }
             >
-              Carregando inventário de riscos...
+              <option value="">
+                Todas as categorias
+              </option>
+              <option value="Físico">
+                Físico
+              </option>
+              <option value="Químico">
+                Químico
+              </option>
+              <option value="Biológico">
+                Biológico
+              </option>
+              <option value="Ergonômico">
+                Ergonômico
+              </option>
+              <option value="Acidente">
+                Acidente
+              </option>
+            </select>
+
+            <select
+              value={
+                filtroClassificacao
+              }
+              onChange={(event) =>
+                setFiltroClassificacao(
+                  event.target
+                    .value as FiltroClassificacao
+                )
+              }
+            >
+              <option value="">
+                Todas as classificações
+              </option>
+              <option value="Baixo">
+                Baixo
+              </option>
+              <option value="Médio">
+                Médio
+              </option>
+              <option value="Alto">
+                Alto
+              </option>
+              <option value="Crítico">
+                Crítico
+              </option>
+            </select>
+
+            <select
+              value={filtroStatus}
+              onChange={(event) =>
+                setFiltroStatus(
+                  event.target
+                    .value as FiltroStatus
+                )
+              }
+            >
+              <option value="">
+                Todos os status
+              </option>
+              <option value="Pendente">
+                Pendente
+              </option>
+              <option value="Em andamento">
+                Em andamento
+              </option>
+              <option value="Concluído">
+                Concluído
+              </option>
+            </select>
+          </div>
+
+          <div className="pgr-filter-footer">
+            <div className="pgr-filter-summary">
+              <Filter size={14} />
+
+              <span>
+                {filtrosAtivos
+                  ? "Filtros aplicados"
+                  : "Exibindo todo o inventário"}
+              </span>
+            </div>
+
+            <span>
+              {riscosFiltrados.length} resultado(s)
+            </span>
+          </div>
+        </div>
+
+        <div className="pgr-table-area">
+          {carregando ? (
+            <div className="pgr-loading-state">
+              <div className="pgr-loading-icon">
+                <ShieldCheck
+                  size={22}
+                />
+              </div>
+
+              <strong>
+                Carregando inventário
+              </strong>
+
+              <span>
+                Consultando os registros do PGR no Supabase...
+              </span>
             </div>
           ) : (
-            <div
-              style={{
-                width:
-                  "100%",
-
-                minWidth:
-                  0,
-
-                overflowX:
-                  "auto",
-
-                WebkitOverflowScrolling:
-                  "touch",
-              }}
-            >
+            <div className="pgr-table-scroll">
               <PgrTable
                 riscos={
                   riscosFiltrados
@@ -1448,66 +917,828 @@ export default function Pgr() {
               />
             </div>
           )}
-        </Section>
-      </div>
-
-      {/* DRAWER */}
+        </div>
+      </section>
 
       <PgrDrawer
-        open={
-          drawerAberto
-        }
-        editingItem={
-          editando
-        }
-        onClose={
-          fecharDrawer
-        }
-        onSave={
-          salvarRisco
-        }
+        open={drawerAberto}
+        editingItem={editando}
+        onClose={fecharDrawer}
+        onSave={salvarRisco}
       />
+
+      <style>
+        {pgrStyles}
+      </style>
     </main>
   );
 }
 
-const estiloSelect = {
-  width: "100%",
+function MetricCard({
+  label,
+  value,
+  detail,
+  icon: Icon,
+  tone,
+}: {
+  label: string;
+  value: number;
+  detail: string;
+  icon: typeof ShieldCheck;
+  tone:
+    | "blue"
+    | "red"
+    | "amber"
+    | "green";
+}) {
+  return (
+    <article
+      className={`pgr-metric pgr-metric-${tone}`}
+    >
+      <div className="pgr-metric-icon">
+        <Icon size={20} />
+      </div>
 
-  minWidth: 0,
+      <div className="pgr-metric-copy">
+        <span>
+          {label}
+        </span>
 
-  height: 44,
+        <strong>
+          {value}
+        </strong>
 
-  padding:
-    "0 12px",
+        <small>
+          {detail}
+        </small>
+      </div>
+    </article>
+  );
+}
 
-  boxSizing:
-    "border-box" as const,
+function ClassificationItem({
+  label,
+  range,
+  tone,
+}: {
+  label: string;
+  range: string;
+  tone:
+    | "green"
+    | "yellow"
+    | "orange"
+    | "red";
+}) {
+  return (
+    <div className="pgr-classification-item">
+      <span
+        className={`pgr-risk-dot pgr-risk-dot-${tone}`}
+      />
 
-  border:
-    "1px solid #CBD5E1",
+      <div>
+        <strong>
+          {label}
+        </strong>
 
-  borderRadius:
-    10,
+        <span>
+          {range}
+        </span>
+      </div>
+    </div>
+  );
+}
 
-  background:
-    "#FFFFFF",
+const pgrStyles = `
+  .pgr-page {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    background: ${colors.background};
+  }
 
-  color:
-    "#475569",
+  .pgr-button-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
 
-  fontFamily:
-    "inherit",
+  .pgr-alert-error {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 14px 15px;
+    box-sizing: border-box;
+    border: 1px solid #FECACA;
+    border-radius: 12px;
+    background: #FEF2F2;
+    color: #B91C1C;
+  }
 
-  fontSize:
-    12,
+  .pgr-alert-error-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
 
-  fontWeight:
-    600,
+  .pgr-alert-error-content svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
 
-  outline:
-    "none",
+  .pgr-alert-error-content strong,
+  .pgr-alert-error-content span {
+    display: block;
+  }
 
-  cursor:
-    "pointer",
-};
+  .pgr-alert-error-content strong {
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .pgr-alert-error-content span {
+    margin-top: 3px;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .pgr-alert-error > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 2px;
+    border: none;
+    background: transparent;
+    color: #B91C1C;
+    cursor: pointer;
+  }
+
+  .pgr-context-banner {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+    padding: 22px;
+    overflow: hidden;
+    border: 1px solid #1E293B;
+    border-radius: 18px;
+    background:
+      linear-gradient(
+        135deg,
+        #0F172A 0%,
+        #111F38 55%,
+        #172554 100%
+      );
+    box-shadow:
+      0 14px 35px rgba(15, 23, 42, .12);
+  }
+
+  .pgr-context-banner::after {
+    content: "";
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    right: -105px;
+    top: -130px;
+    border-radius: 50%;
+    background:
+      rgba(37, 99, 235, .18);
+    pointer-events: none;
+  }
+
+  .pgr-context-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(96, 165, 250, .22);
+    border-radius: 15px;
+    background: rgba(37, 99, 235, .16);
+    color: #60A5FA;
+  }
+
+  .pgr-context-copy {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+  }
+
+  .pgr-context-copy > span {
+    color: #93C5FD;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .9px;
+  }
+
+  .pgr-context-copy h2 {
+    margin: 6px 0 0;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 820;
+    letter-spacing: -.3px;
+    line-height: 1.3;
+  }
+
+  .pgr-context-copy p {
+    max-width: 740px;
+    margin: 7px 0 0;
+    color: #94A3B8;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .pgr-context-tags {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    color: #94A3B8;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+
+  .pgr-context-tags span,
+  .pgr-context-tags strong {
+    padding: 7px 9px;
+    border: 1px solid rgba(148, 163, 184, .16);
+    border-radius: 8px;
+    background: rgba(15, 23, 42, .30);
+  }
+
+  .pgr-context-tags strong {
+    color: #BFDBFE;
+    font-weight: 800;
+  }
+
+  .pgr-metrics-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .pgr-metric {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 17px;
+    border: 1px solid ${colors.border};
+    border-radius: 15px;
+    background: #FFFFFF;
+    box-shadow:
+      0 8px 24px rgba(15, 23, 42, .045);
+  }
+
+  .pgr-metric::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 16px;
+    bottom: 16px;
+    width: 3px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .pgr-metric-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 11px;
+  }
+
+  .pgr-metric-copy {
+    min-width: 0;
+  }
+
+  .pgr-metric-copy > span {
+    display: block;
+    color: ${colors.textLight};
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+
+  .pgr-metric-copy strong {
+    display: block;
+    margin-top: 2px;
+    color: ${colors.title};
+    font-size: 21px;
+    font-weight: 850;
+    line-height: 1.15;
+  }
+
+  .pgr-metric-copy small {
+    display: block;
+    margin-top: 3px;
+    color: #94A3B8;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+
+  .pgr-metric-blue::before {
+    background: #2563EB;
+  }
+
+  .pgr-metric-blue .pgr-metric-icon {
+    background: #EFF6FF;
+    color: #2563EB;
+  }
+
+  .pgr-metric-red::before {
+    background: #DC2626;
+  }
+
+  .pgr-metric-red .pgr-metric-icon {
+    background: #FEF2F2;
+    color: #DC2626;
+  }
+
+  .pgr-metric-amber::before {
+    background: #F59E0B;
+  }
+
+  .pgr-metric-amber .pgr-metric-icon {
+    background: #FFFBEB;
+    color: #D97706;
+  }
+
+  .pgr-metric-green::before {
+    background: #16A34A;
+  }
+
+  .pgr-metric-green .pgr-metric-icon {
+    background: #F0FDF4;
+    color: #16A34A;
+  }
+
+  .pgr-classification-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 22px;
+    padding: 14px 16px;
+    border: 1px solid ${colors.border};
+    border-radius: 14px;
+    background: #FFFFFF;
+  }
+
+  .pgr-classification-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: ${colors.primary};
+  }
+
+  .pgr-classification-title strong,
+  .pgr-classification-title span {
+    display: block;
+  }
+
+  .pgr-classification-title strong {
+    color: ${colors.text};
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .pgr-classification-title span {
+    margin-top: 2px;
+    color: #94A3B8;
+    font-size: 8px;
+  }
+
+  .pgr-classification-items {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .pgr-classification-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pgr-risk-dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+  }
+
+  .pgr-risk-dot-green {
+    background: #16A34A;
+  }
+
+  .pgr-risk-dot-yellow {
+    background: #F59E0B;
+  }
+
+  .pgr-risk-dot-orange {
+    background: #F97316;
+  }
+
+  .pgr-risk-dot-red {
+    background: #DC2626;
+  }
+
+  .pgr-classification-item strong,
+  .pgr-classification-item span {
+    display: block;
+  }
+
+  .pgr-classification-item strong {
+    color: ${colors.text};
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  .pgr-classification-item span {
+    margin-top: 1px;
+    color: #94A3B8;
+    font-size: 8px;
+  }
+
+  .pgr-inventory-card {
+    width: 100%;
+    min-width: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    border: 1px solid ${colors.border};
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow:
+      0 10px 30px rgba(15, 23, 42, .05);
+  }
+
+  .pgr-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+
+  .pgr-section-eyebrow {
+    color: ${colors.primary};
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .8px;
+  }
+
+  .pgr-section-header h2 {
+    margin: 5px 0 0;
+    color: ${colors.title};
+    font-size: 18px;
+    font-weight: 850;
+    letter-spacing: -.35px;
+  }
+
+  .pgr-section-header p {
+    margin: 5px 0 0;
+    color: ${colors.textLight};
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .pgr-section-count {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    flex-shrink: 0;
+    padding: 9px 11px;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    background: #F8FAFC;
+  }
+
+  .pgr-section-count strong {
+    color: ${colors.title};
+    font-size: 14px;
+    font-weight: 850;
+  }
+
+  .pgr-section-count span {
+    color: ${colors.textLight};
+    font-size: 8px;
+  }
+
+  .pgr-filter-panel {
+    margin-bottom: 18px;
+    padding: 16px;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    background: #F8FAFC;
+  }
+
+  .pgr-filter-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 13px;
+  }
+
+  .pgr-filter-heading > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: ${colors.text};
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .pgr-filter-heading svg {
+    color: #64748B;
+  }
+
+  .pgr-clear-filters {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: ${colors.primary};
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .pgr-filter-grid {
+    display: grid;
+    grid-template-columns:
+      minmax(260px, 2fr)
+      repeat(3, minmax(155px, 1fr));
+    gap: 10px;
+  }
+
+  .pgr-search-field,
+  .pgr-filter-grid select {
+    width: 100%;
+    min-width: 0;
+    height: 43px;
+    box-sizing: border-box;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    background: #FFFFFF;
+    transition:
+      border-color .15s ease,
+      box-shadow .15s ease;
+  }
+
+  .pgr-search-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    color: #94A3B8;
+  }
+
+  .pgr-search-field:focus-within,
+  .pgr-filter-grid select:focus {
+    border-color: ${colors.primary};
+    box-shadow:
+      0 0 0 3px rgba(37, 99, 235, .08);
+  }
+
+  .pgr-search-field input {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: ${colors.title};
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  .pgr-search-field input::placeholder {
+    color: #94A3B8;
+  }
+
+  .pgr-filter-grid select {
+    padding: 0 11px;
+    outline: none;
+    color: ${colors.text};
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 650;
+    cursor: pointer;
+  }
+
+  .pgr-filter-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 11px;
+    color: #94A3B8;
+    font-size: 8px;
+  }
+
+  .pgr-filter-summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: ${colors.textLight};
+    font-weight: 700;
+  }
+
+  .pgr-table-area {
+    min-width: 0;
+  }
+
+  .pgr-table-scroll {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pgr-loading-state {
+    min-height: 210px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    box-sizing: border-box;
+    border: 1px dashed #CBD5E1;
+    border-radius: 13px;
+    background: #F8FAFC;
+    text-align: center;
+  }
+
+  .pgr-loading-icon {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: #EFF6FF;
+    color: ${colors.primary};
+  }
+
+  .pgr-loading-state strong {
+    margin-top: 12px;
+    color: ${colors.title};
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .pgr-loading-state span {
+    max-width: 380px;
+    margin-top: 4px;
+    color: ${colors.textLight};
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1180px) {
+    .pgr-context-banner {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .pgr-context-tags {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+      padding-left: 70px;
+    }
+
+    .pgr-metrics-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
+    .pgr-filter-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .pgr-classification-strip {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .pgr-classification-items {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 650px) {
+    .pgr-context-banner {
+      grid-template-columns: 1fr;
+      gap: 13px;
+      padding: 18px;
+    }
+
+    .pgr-context-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 13px;
+    }
+
+    .pgr-context-copy h2 {
+      font-size: 16px;
+    }
+
+    .pgr-context-tags {
+      grid-column: auto;
+      padding-left: 0;
+      gap: 5px;
+    }
+
+    .pgr-context-tags svg {
+      display: none;
+    }
+
+    .pgr-metrics-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .pgr-classification-items {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .pgr-inventory-card {
+      padding: 17px;
+      border-radius: 15px;
+    }
+
+    .pgr-section-header {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pgr-section-count {
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: center;
+    }
+
+    .pgr-filter-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .pgr-filter-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pgr-filter-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 6px;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .pgr-context-tags span,
+    .pgr-context-tags strong {
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .pgr-classification-strip {
+      padding: 13px;
+    }
+
+    .pgr-classification-items {
+      grid-template-columns: 1fr;
+    }
+  }
+`;

@@ -225,8 +225,7 @@ export default function PgrDrawer({
               </h2>
 
               <p>
-                Inventário e avaliação de
-                riscos ocupacionais do PGR.
+                Cadastre, avalie e acompanhe os riscos ocupacionais do PGR.
               </p>
             </div>
           </div>
@@ -244,6 +243,24 @@ export default function PgrDrawer({
         {/* CONTEÚDO */}
 
         <div className="pgr-drawer-content">
+          <div className="pgr-form-context">
+            <div className="pgr-form-context-icon">
+              <ShieldCheck size={18} />
+            </div>
+
+            <div className="pgr-form-context-copy">
+              <strong>Matriz de risco 5 × 5</strong>
+              <span>
+                O nível é calculado automaticamente pela relação entre
+                probabilidade e severidade.
+              </span>
+            </div>
+
+            <div className="pgr-form-context-rule">
+              P × S
+            </div>
+          </div>
+
           {/* IDENTIFICAÇÃO */}
 
           <Secao
@@ -252,7 +269,7 @@ export default function PgrDrawer({
           >
             <div className="pgr-drawer-grid-2">
               <Input
-                label="Setor"
+                label="Setor *"
                 placeholder="Ex.: Cozinha quente"
                 value={
                   risco.setor
@@ -273,7 +290,7 @@ export default function PgrDrawer({
               />
 
               <Input
-                label="Atividade"
+                label="Atividade *"
                 placeholder="Ex.: Fritura"
                 value={
                   risco.atividade
@@ -290,7 +307,7 @@ export default function PgrDrawer({
             </div>
 
             <Input
-              label="Perigo"
+              label="Perigo *"
               placeholder="Ex.: Óleo em alta temperatura"
               value={
                 risco.perigo
@@ -370,17 +387,36 @@ export default function PgrDrawer({
             </div>
 
             <div className="pgr-risk-result">
-              <div>
-                <div className="pgr-risk-result-label">
-                  Nível calculado
+              <div className="pgr-risk-calculation">
+                <div className="pgr-risk-factor">
+                  <span>Probabilidade</span>
+                  <strong>{risco.probabilidade}</strong>
                 </div>
 
-                <div className="pgr-risk-result-number">
-                  {risco.nivel}
+                <div className="pgr-risk-operator">
+                  ×
+                </div>
+
+                <div className="pgr-risk-factor">
+                  <span>Severidade</span>
+                  <strong>{risco.severidade}</strong>
+                </div>
+
+                <div className="pgr-risk-operator">
+                  =
+                </div>
+
+                <div className="pgr-risk-factor pgr-risk-factor-result">
+                  <span>Nível</span>
+                  <strong>{risco.nivel}</strong>
                 </div>
               </div>
 
               <div className="pgr-risk-result-status">
+                <span className="pgr-risk-result-eyebrow">
+                  Classificação automática
+                </span>
+
                 <Badge
                   color={
                     risco.classificacao ===
@@ -399,10 +435,32 @@ export default function PgrDrawer({
                     risco.classificacao
                   }
                 </Badge>
+              </div>
+            </div>
 
-                <span>
-                  Probabilidade × Severidade
-                </span>
+            <div className="pgr-risk-scale">
+              <div>
+                <span className="pgr-risk-scale-dot pgr-risk-scale-low" />
+                <strong>1–4</strong>
+                <small>Baixo</small>
+              </div>
+
+              <div>
+                <span className="pgr-risk-scale-dot pgr-risk-scale-medium" />
+                <strong>5–9</strong>
+                <small>Médio</small>
+              </div>
+
+              <div>
+                <span className="pgr-risk-scale-dot pgr-risk-scale-high" />
+                <strong>10–16</strong>
+                <small>Alto</small>
+              </div>
+
+              <div>
+                <span className="pgr-risk-scale-dot pgr-risk-scale-critical" />
+                <strong>17–25</strong>
+                <small>Crítico</small>
               </div>
             </div>
           </Secao>
@@ -536,7 +594,7 @@ export default function PgrDrawer({
           }
 
           .pgr-drawer {
-            width: 570px;
+            width: 620px;
             max-width: 100%;
             height: 100vh;
             height: 100dvh;
@@ -572,6 +630,13 @@ export default function PgrDrawer({
 
             border-bottom:
               1px solid #e2e8f0;
+
+            background:
+              linear-gradient(
+                180deg,
+                #ffffff 0%,
+                #f8fbff 100%
+              );
           }
 
           .pgr-drawer-header-main {
@@ -659,6 +724,8 @@ export default function PgrDrawer({
 
             box-sizing: border-box;
 
+            background: #f8fafc;
+
             -webkit-overflow-scrolling:
               touch;
           }
@@ -679,12 +746,150 @@ export default function PgrDrawer({
             min-width: 0;
           }
 
+          .pgr-form-context {
+            width: 100%;
+
+            margin-bottom: 18px;
+            padding: 14px 15px;
+
+            display: grid;
+            grid-template-columns:
+              auto minmax(0, 1fr) auto;
+            align-items: center;
+
+            gap: 12px;
+
+            box-sizing: border-box;
+
+            border:
+              1px solid #bfdbfe;
+
+            border-radius: 13px;
+
+            background:
+              linear-gradient(
+                135deg,
+                #eff6ff 0%,
+                #f8fbff 100%
+              );
+          }
+
+          .pgr-form-context-icon {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: #dbeafe;
+            color: #2563eb;
+          }
+
+          .pgr-form-context-copy {
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 3px;
+          }
+
+          .pgr-form-context-copy strong {
+            color: #1e3a8a;
+
+            font-size: 12px;
+            font-weight: 800;
+          }
+
+          .pgr-form-context-copy span {
+            color: #64748b;
+
+            font-size: 10px;
+            line-height: 1.45;
+
+            overflow-wrap: anywhere;
+          }
+
+          .pgr-form-context-rule {
+            padding: 7px 9px;
+
+            border:
+              1px solid #bfdbfe;
+
+            border-radius: 9px;
+
+            background: #ffffff;
+
+            color: #2563eb;
+
+            font-size: 11px;
+            font-weight: 850;
+
+            white-space: nowrap;
+          }
+
+          .pgr-form-section {
+            width: 100%;
+            min-width: 0;
+
+            margin-bottom: 16px;
+            padding: 18px;
+
+            box-sizing: border-box;
+
+            border:
+              1px solid #e2e8f0;
+
+            border-radius: 14px;
+
+            background: #ffffff;
+
+            box-shadow:
+              0 5px 18px
+              rgba(15, 23, 42, 0.035);
+          }
+
+          .pgr-form-section:last-of-type {
+            margin-bottom: 0;
+          }
+
+          .pgr-form-section-header {
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+
+            border-bottom:
+              1px solid #f1f5f9;
+          }
+
+          .pgr-form-section-header h3 {
+            margin: 0;
+
+            color: #0f172a;
+
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.4;
+          }
+
+          .pgr-form-section-header p {
+            margin: 4px 0 0;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+            line-height: 1.5;
+
+            overflow-wrap: anywhere;
+          }
+
           .pgr-risk-result {
             width: 100%;
 
             margin-top: 4px;
-
-            padding: 18px;
+            padding: 16px;
 
             display: flex;
             align-items: center;
@@ -694,32 +899,83 @@ export default function PgrDrawer({
 
             box-sizing: border-box;
 
-            background: #f8fafc;
+            background:
+              linear-gradient(
+                135deg,
+                #f8fafc 0%,
+                #ffffff 100%
+              );
 
             border:
-              1px solid #e2e8f0;
+              1px solid #dbe3ee;
 
             border-radius: 13px;
           }
 
-          .pgr-risk-result-label {
-            color: #64748b;
+          .pgr-risk-calculation {
+            min-width: 0;
 
-            font-size: 11px;
-            font-weight: 800;
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+          }
+
+          .pgr-risk-factor {
+            min-width: 72px;
+
+            padding: 9px 10px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 2px;
+
+            box-sizing: border-box;
+
+            border:
+              1px solid #e2e8f0;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+          }
+
+          .pgr-risk-factor span {
+            color: #94a3b8;
+
+            font-size: 8px;
+            font-weight: 750;
 
             text-transform: uppercase;
 
-            letter-spacing: .5px;
+            letter-spacing: .35px;
           }
 
-          .pgr-risk-result-number {
-            margin-top: 5px;
-
+          .pgr-risk-factor strong {
             color: #0f172a;
 
-            font-size: 31px;
+            font-size: 20px;
             font-weight: 850;
+          }
+
+          .pgr-risk-factor-result {
+            border-color: #bfdbfe;
+
+            background: #eff6ff;
+          }
+
+          .pgr-risk-factor-result strong {
+            color: #2563eb;
+          }
+
+          .pgr-risk-operator {
+            flex-shrink: 0;
+
+            color: #94a3b8;
+
+            font-size: 15px;
+            font-weight: 800;
           }
 
           .pgr-risk-result-status {
@@ -732,12 +988,116 @@ export default function PgrDrawer({
             text-align: right;
           }
 
-          .pgr-risk-result-status span {
+          .pgr-risk-result-eyebrow {
             color: #94a3b8;
 
-            font-size: 10px;
+            font-size: 8px;
+            font-weight: 800;
 
+            text-transform: uppercase;
+
+            letter-spacing: .4px;
+          }
+
+          .pgr-risk-scale {
+            width: 100%;
+
+            margin-top: 10px;
+
+            display: grid;
+            grid-template-columns:
+              repeat(4, minmax(0, 1fr));
+
+            gap: 7px;
+          }
+
+          .pgr-risk-scale > div {
+            min-width: 0;
+
+            padding: 8px;
+
+            display: grid;
+            grid-template-columns:
+              auto auto minmax(0, 1fr);
+            align-items: center;
+
+            gap: 5px;
+
+            box-sizing: border-box;
+
+            border:
+              1px solid #e2e8f0;
+
+            border-radius: 9px;
+
+            background: #ffffff;
+          }
+
+          .pgr-risk-scale-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+          }
+
+          .pgr-risk-scale-low {
+            background: #16a34a;
+          }
+
+          .pgr-risk-scale-medium {
+            background: #f59e0b;
+          }
+
+          .pgr-risk-scale-high {
+            background: #f97316;
+          }
+
+          .pgr-risk-scale-critical {
+            background: #dc2626;
+          }
+
+          .pgr-risk-scale strong {
+            color: #334155;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            white-space: nowrap;
+          }
+
+          .pgr-risk-scale small {
+            min-width: 0;
+
+            color: #94a3b8;
+
+            font-size: 8px;
+            font-weight: 650;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .pgr-level-helper {
+            margin-top: 7px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 8px;
+
+            color: #94a3b8;
+
+            font-size: 9px;
             line-height: 1.4;
+          }
+
+          .pgr-level-helper strong {
+            color: #64748b;
+
+            font-size: 9px;
+            font-weight: 750;
           }
 
           .pgr-drawer-footer {
@@ -756,7 +1116,7 @@ export default function PgrDrawer({
             border-top:
               1px solid #e2e8f0;
 
-            background: #ffffff;
+            background: #f8fafc;
 
             padding-bottom:
               max(
@@ -832,6 +1192,39 @@ export default function PgrDrawer({
               padding: 15px;
             }
 
+            .pgr-form-context {
+              grid-template-columns:
+                auto minmax(0, 1fr);
+
+              padding: 12px;
+            }
+
+            .pgr-form-context-rule {
+              display: none;
+            }
+
+            .pgr-form-section {
+              padding: 15px;
+            }
+
+            .pgr-risk-result {
+              align-items: flex-start;
+              flex-direction: column;
+            }
+
+            .pgr-risk-result-status {
+              width: 100%;
+
+              align-items: flex-start;
+
+              text-align: left;
+            }
+
+            .pgr-risk-scale {
+              grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            }
+
             .pgr-drawer-footer {
               padding:
                 14px 16px;
@@ -878,6 +1271,32 @@ export default function PgrDrawer({
               text-align: left;
             }
 
+            .pgr-risk-calculation {
+              width: 100%;
+
+              display: grid;
+              grid-template-columns:
+                minmax(0, 1fr) auto
+                minmax(0, 1fr) auto
+                minmax(0, 1fr);
+
+              gap: 5px;
+            }
+
+            .pgr-risk-factor {
+              min-width: 0;
+
+              padding: 8px;
+            }
+
+            .pgr-risk-factor span {
+              font-size: 7px;
+            }
+
+            .pgr-risk-factor strong {
+              font-size: 18px;
+            }
+
             .pgr-drawer-footer {
               flex-direction:
                 column;
@@ -917,53 +1336,11 @@ function Secao({
   children: ReactNode;
 }) {
   return (
-    <section
-      style={{
-        width: "100%",
+    <section className="pgr-form-section">
+      <div className="pgr-form-section-header">
+        <h3>{titulo}</h3>
 
-        minWidth: 0,
-
-        marginBottom: 26,
-      }}
-    >
-      <div
-        style={{
-          marginBottom: 16,
-        }}
-      >
-        <h3
-          style={{
-            margin: 0,
-
-            color: "#0F172A",
-
-            fontSize: 14,
-
-            fontWeight: 800,
-
-            lineHeight: 1.4,
-          }}
-        >
-          {titulo}
-        </h3>
-
-        <p
-          style={{
-            margin:
-              "4px 0 0",
-
-            color: "#94A3B8",
-
-            fontSize: 11,
-
-            lineHeight: 1.5,
-
-            overflowWrap:
-              "anywhere",
-          }}
-        >
-          {descricao}
-        </p>
+        <p>{descricao}</p>
       </div>
 
       {children}
@@ -1134,6 +1511,23 @@ function CampoNivel({
     5,
   ];
 
+  const descricoes =
+    label === "Probabilidade"
+      ? [
+          "Rara",
+          "Improvável",
+          "Possível",
+          "Provável",
+          "Muito provável",
+        ]
+      : [
+          "Insignificante",
+          "Leve",
+          "Moderada",
+          "Grave",
+          "Muito grave",
+        ];
+
   return (
     <div
       style={{
@@ -1183,6 +1577,8 @@ function CampoNivel({
               <button
                 key={nivel}
                 type="button"
+                aria-label={`${label}: nível ${nivel} - ${descricoes[nivel - 1]}`}
+                title={descricoes[nivel - 1]}
                 onClick={() =>
                   onChange(
                     nivel
@@ -1223,6 +1619,11 @@ function CampoNivel({
             );
           }
         )}
+      </div>
+
+      <div className="pgr-level-helper">
+        <span>Nível selecionado: {value}</span>
+        <strong>{descricoes[value - 1]}</strong>
       </div>
     </div>
   );

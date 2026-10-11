@@ -826,6 +826,69 @@ export default function Acidentes() {
         "Pendente"
     ).length;
 
+  const totalIncidentes =
+    acidentes.filter(
+      (
+        registro
+      ) =>
+        registro.tipo ===
+        "Incidente"
+    ).length;
+
+  const totalQuaseAcidentes =
+    acidentes.filter(
+      (
+        registro
+      ) =>
+        registro.tipo ===
+        "Quase acidente"
+    ).length;
+
+  const semVinculoPgr =
+    Math.max(
+      0,
+      acidentes.length -
+        vinculadosPgr
+    );
+
+  const percentualVinculoPgr =
+    acidentes.length > 0
+      ? Math.round(
+          (
+            vinculadosPgr /
+            acidentes.length
+          ) * 100
+        )
+      : 0;
+
+  const totalDiasAfastados =
+    acidentes.reduce(
+      (
+        total,
+        registro
+      ) =>
+        total +
+        (
+          registro.afastamento
+            ? Math.max(
+                0,
+                Number(
+                  registro.diasAfastado
+                )
+              )
+            : 0
+        ),
+      0
+    );
+
+  const semAcaoCorretiva =
+    acidentes.filter(
+      (
+        registro
+      ) =>
+        !registro.acaoCorretiva.trim()
+    ).length;
+
   /*
    * FILTROS
    */
@@ -1463,6 +1526,203 @@ export default function Acidentes() {
         </div>
       </PageHeader>
 
+      {/* VISÃO CORPORATIVA */}
+
+      <section
+        style={{
+          width:
+            "100%",
+
+          minWidth:
+            0,
+
+          marginBottom:
+            mobile
+              ? 18
+              : 24,
+
+          padding:
+            mobile
+              ? "18px 16px"
+              : "20px 22px",
+
+          boxSizing:
+            "border-box",
+
+          display:
+            "grid",
+
+          gridTemplateColumns:
+            tablet
+              ? "minmax(0, 1fr)"
+              : "minmax(0, 1.35fr) minmax(320px, .65fr)",
+
+          gap:
+            mobile
+              ? 16
+              : 22,
+
+          alignItems:
+            "center",
+
+          border:
+            "1px solid #DBEAFE",
+
+          borderRadius:
+            mobile
+              ? 14
+              : 18,
+
+          background:
+            "linear-gradient(135deg, #F8FBFF 0%, #EFF6FF 100%)",
+
+          boxShadow:
+            "0 10px 30px rgba(37, 99, 235, .06)",
+        }}
+      >
+        <div
+          style={{
+            minWidth:
+              0,
+          }}
+        >
+          <div
+            style={{
+              display:
+                "flex",
+
+              alignItems:
+                "center",
+
+              gap:
+                8,
+
+              marginBottom:
+                8,
+
+              color:
+                "#2563EB",
+
+              fontSize:
+                10,
+
+              fontWeight:
+                850,
+
+              textTransform:
+                "uppercase",
+
+              letterSpacing:
+                ".7px",
+            }}
+          >
+            <ShieldCheck
+              size={
+                15
+              }
+            />
+
+            Gestão de ocorrências de SST
+          </div>
+
+          <h2
+            style={{
+              margin:
+                0,
+
+              color:
+                "#0F172A",
+
+              fontSize:
+                mobile
+                  ? 18
+                  : 22,
+
+              fontWeight:
+                850,
+
+              lineHeight:
+                1.25,
+            }}
+          >
+            Do registro à ação corretiva
+          </h2>
+
+          <p
+            style={{
+              maxWidth:
+                720,
+
+              margin:
+                "8px 0 0",
+
+              color:
+                "#64748B",
+
+              fontSize:
+                mobile
+                  ? 11
+                  : 12,
+
+              lineHeight:
+                1.65,
+
+              overflowWrap:
+                "anywhere",
+            }}
+          >
+            Centralize acidentes, incidentes e quase acidentes,
+            relacione cada ocorrência aos riscos do PGR e acompanhe
+            gravidade, afastamentos, CAT e ações corretivas em um
+            único fluxo de investigação.
+          </p>
+        </div>
+
+        <div
+          style={{
+            minWidth:
+              0,
+
+            display:
+              "grid",
+
+            gridTemplateColumns:
+              mobilePequeno
+                ? "minmax(0, 1fr)"
+                : "repeat(3, minmax(0, 1fr))",
+
+            gap:
+              8,
+          }}
+        >
+          <ResumoCorporativo
+            titulo="PGR integrado"
+            valor={`${percentualVinculoPgr}%`}
+            detalhe="das ocorrências vinculadas"
+          />
+
+          <ResumoCorporativo
+            titulo="Dias afastados"
+            valor={
+              totalDiasAfastados
+            }
+            detalhe="acumulados nos registros"
+          />
+
+          <ResumoCorporativo
+            titulo="Ação corretiva"
+            valor={
+              semAcaoCorretiva
+            }
+            detalhe="registro(s) sem ação definida"
+            alerta={
+              semAcaoCorretiva >
+              0
+            }
+          />
+        </div>
+      </section>
+
       {/* ERRO */}
 
       {erroBanco && (
@@ -1611,7 +1871,7 @@ export default function Acidentes() {
               ? "minmax(0, 1fr)"
               : telaMedia
                 ? "repeat(2, minmax(0, 1fr))"
-                : "repeat(6, minmax(0, 1fr))",
+                : "repeat(3, minmax(0, 1fr))",
 
           gap:
             mobile
@@ -1715,6 +1975,219 @@ export default function Acidentes() {
         />
       </div>
 
+      {/* PANORAMA EXECUTIVO */}
+
+      <div
+        style={{
+          width:
+            "100%",
+
+          minWidth:
+            0,
+
+          display:
+            "grid",
+
+          gridTemplateColumns:
+            tablet
+              ? "minmax(0, 1fr)"
+              : "repeat(2, minmax(0, 1fr))",
+
+          gap:
+            mobile
+              ? 14
+              : 20,
+
+          marginBottom:
+            mobile
+              ? 18
+              : 24,
+        }}
+      >
+        <PainelExecutivo
+          titulo="Distribuição das ocorrências"
+          subtitulo="Composição atual dos registros de SST."
+        >
+          <LinhaExecutiva
+            titulo="Acidentes"
+            valor={
+              totalAcidentes
+            }
+            cor="#DC2626"
+          />
+
+          <LinhaExecutiva
+            titulo="Incidentes"
+            valor={
+              totalIncidentes
+            }
+            cor="#F97316"
+          />
+
+          <LinhaExecutiva
+            titulo="Quase acidentes"
+            valor={
+              totalQuaseAcidentes
+            }
+            cor="#F59E0B"
+          />
+
+          <div
+            style={{
+              marginTop:
+                14,
+
+              paddingTop:
+                14,
+
+              borderTop:
+                "1px solid #F1F5F9",
+            }}
+          >
+            <div
+              style={{
+                display:
+                  "flex",
+
+                alignItems:
+                  "center",
+
+                justifyContent:
+                  "space-between",
+
+                gap:
+                  12,
+
+                marginBottom:
+                  8,
+
+                color:
+                  "#475569",
+
+                fontSize:
+                  11,
+
+                fontWeight:
+                  700,
+              }}
+            >
+              <span>
+                Integração com o PGR
+              </span>
+
+              <strong
+                style={{
+                  color:
+                    percentualVinculoPgr >=
+                    80
+                      ? "#16A34A"
+                      : "#2563EB",
+                }}
+              >
+                {
+                  percentualVinculoPgr
+                }%
+              </strong>
+            </div>
+
+            <div
+              style={{
+                width:
+                  "100%",
+
+                height:
+                  8,
+
+                overflow:
+                  "hidden",
+
+                borderRadius:
+                  999,
+
+                background:
+                  "#E2E8F0",
+              }}
+            >
+              <div
+                style={{
+                  width:
+                    `${percentualVinculoPgr}%`,
+
+                  height:
+                    "100%",
+
+                  borderRadius:
+                    999,
+
+                  background:
+                    percentualVinculoPgr >=
+                    80
+                      ? "#16A34A"
+                      : "#2563EB",
+                }}
+              />
+            </div>
+          </div>
+        </PainelExecutivo>
+
+        <PainelExecutivo
+          titulo="Prioridades da investigação"
+          subtitulo="Pontos que merecem acompanhamento imediato."
+        >
+          <PrioridadeExecutiva
+            titulo="Graves ou críticos"
+            valor={
+              totalGraves
+            }
+            descricao="Ocorrências com maior severidade."
+            tipo={
+              totalGraves > 0
+                ? "critico"
+                : "ok"
+            }
+          />
+
+          <PrioridadeExecutiva
+            titulo="CAT pendente"
+            valor={
+              catPendentes
+            }
+            descricao="Registros aguardando tratamento da CAT."
+            tipo={
+              catPendentes > 0
+                ? "atencao"
+                : "ok"
+            }
+          />
+
+          <PrioridadeExecutiva
+            titulo="Sem vínculo com PGR"
+            valor={
+              semVinculoPgr
+            }
+            descricao="Ocorrências ainda sem risco relacionado."
+            tipo={
+              semVinculoPgr > 0
+                ? "atencao"
+                : "ok"
+            }
+          />
+
+          <PrioridadeExecutiva
+            titulo="Sem ação corretiva"
+            valor={
+              semAcaoCorretiva
+            }
+            descricao="Investigações sem medida preventiva registrada."
+            tipo={
+              semAcaoCorretiva > 0
+                ? "critico"
+                : "ok"
+            }
+          />
+        </PainelExecutivo>
+      </div>
+
       {/* PAINEL */}
 
       <section
@@ -1760,54 +2233,126 @@ export default function Acidentes() {
               mobile
                 ? 17
                 : 20,
+
+            display:
+              "flex",
+
+            flexDirection:
+              mobilePequeno
+                ? "column"
+                : "row",
+
+            alignItems:
+              mobilePequeno
+                ? "flex-start"
+                : "flex-start",
+
+            justifyContent:
+              "space-between",
+
+            gap:
+              12,
           }}
         >
-          <h2
+          <div
             style={{
-              margin:
+              minWidth:
+                0,
+            }}
+          >
+            <h2
+              style={{
+                margin:
+                  0,
+
+                color:
+                  "#0F172A",
+
+                fontSize:
+                  mobile
+                    ? 16
+                    : 18,
+
+                fontWeight:
+                  800,
+
+                lineHeight:
+                  1.3,
+              }}
+            >
+              Histórico de Ocorrências
+            </h2>
+
+            <p
+              style={{
+                margin:
+                  "5px 0 0",
+
+                color:
+                  "#94A3B8",
+
+                fontSize:
+                  12,
+
+                lineHeight:
+                  1.5,
+
+                overflowWrap:
+                  "anywhere",
+              }}
+            >
+              Consulte acidentes, incidentes, causas, gravidade,
+              afastamentos e riscos relacionados.
+            </p>
+          </div>
+
+          <div
+            style={{
+              flexShrink:
                 0,
 
+              display:
+                "flex",
+
+              alignItems:
+                "center",
+
+              gap:
+                7,
+
+              padding:
+                "8px 10px",
+
+              borderRadius:
+                9,
+
+              background:
+                "#F0FDF4",
+
+              border:
+                "1px solid #DCFCE7",
+
               color:
-                "#0F172A",
+                "#15803D",
 
               fontSize:
-                mobile
-                  ? 16
-                  : 18,
+                10,
 
               fontWeight:
                 800,
 
-              lineHeight:
-                1.3,
+              whiteSpace:
+                "nowrap",
             }}
           >
-            Histórico de Ocorrências
-          </h2>
+            <Link2
+              size={
+                13
+              }
+            />
 
-          <p
-            style={{
-              margin:
-                "5px 0 0",
-
-              color:
-                "#94A3B8",
-
-              fontSize:
-                12,
-
-              lineHeight:
-                1.5,
-
-              overflowWrap:
-                "anywhere",
-            }}
-          >
-            Consulte acidentes,
-            incidentes, causas,
-            gravidade e riscos
-            relacionados.
-          </p>
+            Dados integrados ao PGR
+          </div>
         </div>
 
         {/* FILTROS */}
@@ -2301,6 +2846,7 @@ export default function Acidentes() {
             }}
           >
             <table
+              className="acidentes-tabela"
               style={{
                 width:
                   "100%",
@@ -2949,6 +3495,28 @@ export default function Acidentes() {
             {/* FORMULÁRIO */}
 
             <div className="acidentes-drawer-content">
+              <div className="acidentes-drawer-contexto">
+                <div className="acidentes-drawer-contexto-icon">
+                  <ShieldCheck
+                    size={
+                      18
+                    }
+                  />
+                </div>
+
+                <div>
+                  <strong>
+                    Fluxo de investigação
+                  </strong>
+
+                  <span>
+                    Registre o evento, identifique consequências e
+                    causas, defina a ação corretiva e relacione a
+                    ocorrência ao risco correspondente no PGR.
+                  </span>
+                </div>
+              </div>
+
               <Secao
                 titulo="Ocorrência"
                 descricao="Informe quando ocorreu e qual o tipo e a gravidade."
@@ -3038,6 +3606,30 @@ export default function Acidentes() {
                   />
                 </div>
               </Secao>
+
+              {(formulario.gravidade ===
+                "Grave" ||
+                formulario.gravidade ===
+                  "Crítica") && (
+                <div className="acidentes-alerta-gravidade">
+                  <TriangleAlert
+                    size={
+                      18
+                    }
+                  />
+
+                  <div>
+                    <strong>
+                      Ocorrência de alta severidade
+                    </strong>
+
+                    <span>
+                      Priorize a investigação, o vínculo com o PGR
+                      e o registro das medidas corretivas.
+                    </span>
+                  </div>
+                </div>
+              )}
 
               <Secao
                 titulo="Pessoa e local"
@@ -3656,6 +4248,455 @@ function InfoPgr({
   );
 }
 
+function ResumoCorporativo({
+  titulo,
+  valor,
+  detalhe,
+  alerta = false,
+}: {
+  titulo: string;
+  valor: ReactNode;
+  detalhe: string;
+  alerta?: boolean;
+}) {
+  return (
+    <div
+      style={{
+        minWidth:
+          0,
+
+        padding:
+          "12px 13px",
+
+        boxSizing:
+          "border-box",
+
+        border:
+          alerta
+            ? "1px solid #FECACA"
+            : "1px solid #DBEAFE",
+
+        borderRadius:
+          11,
+
+        background:
+          alerta
+            ? "#FEF2F2"
+            : "rgba(255,255,255,.78)",
+      }}
+    >
+      <div
+        style={{
+          color:
+            alerta
+              ? "#B91C1C"
+              : "#64748B",
+
+          fontSize:
+            9,
+
+          fontWeight:
+            800,
+
+          textTransform:
+            "uppercase",
+
+          letterSpacing:
+            ".45px",
+
+          overflowWrap:
+            "anywhere",
+        }}
+      >
+        {titulo}
+      </div>
+
+      <strong
+        style={{
+          display:
+            "block",
+
+          marginTop:
+            4,
+
+          color:
+            alerta
+              ? "#991B1B"
+              : "#0F172A",
+
+          fontSize:
+            20,
+
+          lineHeight:
+            1.1,
+        }}
+      >
+        {valor}
+      </strong>
+
+      <div
+        style={{
+          marginTop:
+            4,
+
+          color:
+            "#94A3B8",
+
+          fontSize:
+            9,
+
+          lineHeight:
+            1.4,
+
+          overflowWrap:
+            "anywhere",
+        }}
+      >
+        {detalhe}
+      </div>
+    </div>
+  );
+}
+
+function PainelExecutivo({
+  titulo,
+  subtitulo,
+  children,
+}: {
+  titulo: string;
+  subtitulo: string;
+  children: ReactNode;
+}) {
+  return (
+    <section
+      style={{
+        width:
+          "100%",
+
+        minWidth:
+          0,
+
+        padding:
+          20,
+
+        boxSizing:
+          "border-box",
+
+        border:
+          "1px solid #E2E8F0",
+
+        borderRadius:
+          16,
+
+        background:
+          "#FFFFFF",
+
+        boxShadow:
+          "0 6px 20px rgba(15,23,42,.04)",
+      }}
+    >
+      <div
+        style={{
+          marginBottom:
+            16,
+        }}
+      >
+        <h3
+          style={{
+            margin:
+              0,
+
+            color:
+              "#0F172A",
+
+            fontSize:
+              15,
+
+            fontWeight:
+              800,
+
+            lineHeight:
+              1.35,
+          }}
+        >
+          {titulo}
+        </h3>
+
+        <p
+          style={{
+            margin:
+              "4px 0 0",
+
+            color:
+              "#94A3B8",
+
+            fontSize:
+              10,
+
+            lineHeight:
+              1.45,
+
+            overflowWrap:
+              "anywhere",
+          }}
+        >
+          {subtitulo}
+        </p>
+      </div>
+
+      {children}
+    </section>
+  );
+}
+
+function LinhaExecutiva({
+  titulo,
+  valor,
+  cor,
+}: {
+  titulo: string;
+  valor: number;
+  cor: string;
+}) {
+  return (
+    <div
+      style={{
+        display:
+          "flex",
+
+        alignItems:
+          "center",
+
+        justifyContent:
+          "space-between",
+
+        gap:
+          12,
+
+        padding:
+          "10px 0",
+
+        borderBottom:
+          "1px solid #F1F5F9",
+      }}
+    >
+      <div
+        style={{
+          display:
+            "flex",
+
+          alignItems:
+            "center",
+
+          gap:
+            8,
+
+          minWidth:
+            0,
+
+          color:
+            "#475569",
+
+          fontSize:
+            11,
+
+          fontWeight:
+            650,
+        }}
+      >
+        <span
+          style={{
+            width:
+              8,
+
+            height:
+              8,
+
+            flexShrink:
+              0,
+
+            borderRadius:
+              "50%",
+
+            background:
+              cor,
+          }}
+        />
+
+        <span>
+          {titulo}
+        </span>
+      </div>
+
+      <strong
+        style={{
+          flexShrink:
+            0,
+
+          color:
+            "#0F172A",
+
+          fontSize:
+            13,
+        }}
+      >
+        {valor}
+      </strong>
+    </div>
+  );
+}
+
+function PrioridadeExecutiva({
+  titulo,
+  valor,
+  descricao,
+  tipo,
+}: {
+  titulo: string;
+  valor: number;
+  descricao: string;
+  tipo:
+    | "critico"
+    | "atencao"
+    | "ok";
+}) {
+  const configuracao =
+    tipo ===
+    "critico"
+      ? {
+          fundo:
+            "#FEF2F2",
+          borda:
+            "#FECACA",
+          cor:
+            "#DC2626",
+        }
+      : tipo ===
+          "atencao"
+        ? {
+            fundo:
+              "#FFFBEB",
+            borda:
+              "#FDE68A",
+            cor:
+              "#D97706",
+          }
+        : {
+            fundo:
+              "#F0FDF4",
+            borda:
+              "#DCFCE7",
+            cor:
+              "#16A34A",
+          };
+
+  return (
+    <div
+      style={{
+        width:
+          "100%",
+
+        minWidth:
+          0,
+
+        display:
+          "grid",
+
+        gridTemplateColumns:
+          "minmax(0, 1fr) auto",
+
+        gap:
+          12,
+
+        alignItems:
+          "center",
+
+        marginBottom:
+          9,
+
+        padding:
+          "11px 12px",
+
+        boxSizing:
+          "border-box",
+
+        border:
+          `1px solid ${configuracao.borda}`,
+
+        borderRadius:
+          11,
+
+        background:
+          configuracao.fundo,
+      }}
+    >
+      <div
+        style={{
+          minWidth:
+            0,
+        }}
+      >
+        <strong
+          style={{
+            display:
+              "block",
+
+            color:
+              "#0F172A",
+
+            fontSize:
+              11,
+
+            lineHeight:
+              1.35,
+          }}
+        >
+          {titulo}
+        </strong>
+
+        <span
+          style={{
+            display:
+              "block",
+
+            marginTop:
+              3,
+
+            color:
+              "#64748B",
+
+            fontSize:
+              9,
+
+            lineHeight:
+              1.4,
+
+            overflowWrap:
+              "anywhere",
+          }}
+        >
+          {descricao}
+        </span>
+      </div>
+
+      <strong
+        style={{
+          flexShrink:
+            0,
+
+          color:
+            configuracao.cor,
+
+          fontSize:
+            18,
+        }}
+      >
+        {valor}
+      </strong>
+    </div>
+  );
+}
+
 function EstadoVazio({
   mobile = false,
 }: {
@@ -4125,6 +5166,16 @@ const botaoLink = {
 };
 
 const estilosResponsivos = `
+  .acidentes-tabela tbody tr {
+    transition:
+      background .16s ease;
+  }
+
+  .acidentes-tabela tbody tr:hover {
+    background:
+      #f8fafc;
+  }
+
   .acidentes-drawer-overlay {
     position: fixed;
     inset: 0;
@@ -4246,6 +5297,166 @@ const estilosResponsivos = `
       touch;
   }
 
+  .acidentes-drawer-contexto {
+    width: 100%;
+
+    min-width: 0;
+
+    margin-bottom: 18px;
+
+    padding: 14px 15px;
+
+    display: flex;
+
+    align-items:
+      flex-start;
+
+    gap: 11px;
+
+    box-sizing:
+      border-box;
+
+    border:
+      1px solid #dbeafe;
+
+    border-radius:
+      13px;
+
+    background:
+      linear-gradient(
+        135deg,
+        #f8fbff 0%,
+        #eff6ff 100%
+      );
+  }
+
+  .acidentes-drawer-contexto-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    flex-shrink: 0;
+
+    border-radius:
+      10px;
+
+    background:
+      #ffffff;
+
+    border:
+      1px solid #dbeafe;
+
+    color:
+      #2563eb;
+  }
+
+  .acidentes-drawer-contexto strong {
+    display: block;
+
+    color:
+      #0f172a;
+
+    font-size:
+      12px;
+
+    font-weight:
+      800;
+  }
+
+  .acidentes-drawer-contexto span {
+    display: block;
+
+    margin-top:
+      4px;
+
+    color:
+      #64748b;
+
+    font-size:
+      10px;
+
+    line-height:
+      1.5;
+
+    overflow-wrap:
+      anywhere;
+  }
+
+  .acidentes-alerta-gravidade {
+    width: 100%;
+
+    min-width: 0;
+
+    margin:
+      -2px 0 18px;
+
+    padding:
+      13px 14px;
+
+    display: flex;
+
+    align-items:
+      flex-start;
+
+    gap: 10px;
+
+    box-sizing:
+      border-box;
+
+    border:
+      1px solid #fecaca;
+
+    border-radius:
+      12px;
+
+    background:
+      #fef2f2;
+
+    color:
+      #dc2626;
+  }
+
+  .acidentes-alerta-gravidade svg {
+    flex-shrink:
+      0;
+
+    margin-top:
+      1px;
+  }
+
+  .acidentes-alerta-gravidade strong {
+    display: block;
+
+    color:
+      #991b1b;
+
+    font-size:
+      11px;
+  }
+
+  .acidentes-alerta-gravidade span {
+    display: block;
+
+    margin-top:
+      3px;
+
+    color:
+      #b91c1c;
+
+    font-size:
+      10px;
+
+    line-height:
+      1.45;
+  }
+
   .acidentes-grid-2 {
     width: 100%;
 
@@ -4267,7 +5478,25 @@ const estilosResponsivos = `
 
     min-width: 0;
 
-    margin-bottom: 28px;
+    margin-bottom: 18px;
+
+    padding: 18px;
+
+    box-sizing:
+      border-box;
+
+    border:
+      1px solid #e2e8f0;
+
+    border-radius:
+      14px;
+
+    background:
+      #ffffff;
+
+    box-shadow:
+      0 4px 16px
+      rgba(15, 23, 42, .035);
   }
 
   .acidentes-form-secao-header {
@@ -4581,6 +5810,19 @@ const estilosResponsivos = `
         minmax(0, 1fr);
 
       gap: 0;
+    }
+
+    .acidentes-form-secao {
+      padding:
+        15px;
+
+      border-radius:
+        12px;
+    }
+
+    .acidentes-drawer-contexto {
+      padding:
+        13px;
     }
 
     .acidentes-drawer-footer {

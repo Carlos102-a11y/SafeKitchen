@@ -19,6 +19,8 @@ import {
   Menu,
   X,
   LogOut,
+  LifeBuoy,
+  UserRound,
 } from "lucide-react";
 
 import type { LucideIcon } from "lucide-react";
@@ -93,6 +95,28 @@ const grupos: MenuGrupo[] = [
         nome: "Auditorias",
         rota: "/auditorias",
         icon: ClipboardList,
+      },
+    ],
+  },
+
+  {
+    titulo: "CONTA",
+    itens: [
+      {
+        nome: "Meu Perfil",
+        rota: "/perfil",
+        icon: UserRound,
+      },
+    ],
+  },
+
+  {
+    titulo: "SUPORTE",
+    itens: [
+      {
+        nome: "Central de Ajuda",
+        rota: "/suporte",
+        icon: LifeBuoy,
       },
     ],
   },

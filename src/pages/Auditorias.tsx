@@ -7,25 +7,29 @@ import {
 import type { ReactNode } from "react";
 
 import {
+  AlertCircle,
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  CheckCircle2,
   ClipboardList,
+  Clock3,
+  FileSearch,
+  Gauge,
+  Pencil,
   Plus,
   Search,
   ShieldCheck,
-  TriangleAlert,
-  Clock3,
-  CalendarDays,
-  UserRound,
-  Building2,
-  Pencil,
-  Trash2,
-  X,
   SlidersHorizontal,
-  FileSearch,
-  AlertCircle,
+  Target,
+  Trash2,
+  TriangleAlert,
+  UserRound,
+  Wrench,
+  X,
 } from "lucide-react";
 
 import PageHeader from "../components/ui/PageHeader";
-import StatCard from "../components/ui/StatCard";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 
@@ -41,51 +45,37 @@ type StatusAuditoria =
   | "Em andamento"
   | "Concluída";
 
+type ClassificacaoAuditoria =
+  | "Excelente"
+  | "Adequada"
+  | "Atenção"
+  | "Crítica";
+
 interface Auditoria {
   id: number;
-
   data: string;
-
   auditor: string;
-
   setor: string;
-
   tipo: TipoAuditoria;
-
   conformidade: number;
-
   naoConformidades: number;
-
   observacoes: string;
-
   acaoCorretiva: string;
-
   prazo: string;
-
   status: StatusAuditoria;
 }
 
 interface AuditoriaRow {
   id: number;
-
   data: string;
-
   auditor: string;
-
   setor: string;
-
   tipo: TipoAuditoria;
-
   conformidade: number;
-
   nao_conformidades: number;
-
   observacoes: string;
-
   acao_corretiva: string;
-
   prazo: string | null;
-
   status: StatusAuditoria;
 }
 
@@ -106,25 +96,15 @@ const CAMPOS_AUDITORIAS = `
 function criarAuditoriaInicial(): Auditoria {
   return {
     id: 0,
-
     data: dataHoje(),
-
     auditor: "",
-
     setor: "Cozinha Industrial",
-
     tipo: "Inspeção de rotina",
-
     conformidade: 100,
-
     naoConformidades: 0,
-
     observacoes: "",
-
     acaoCorretiva: "",
-
     prazo: "",
-
     status: "Pendente",
   };
 }
@@ -133,51 +113,26 @@ function converterAuditoria(
   linha: AuditoriaRow
 ): Auditoria {
   return {
-    id:
-      linha.id,
-
-    data:
-      linha.data,
-
-    auditor:
-      linha.auditor,
-
-    setor:
-      linha.setor,
-
-    tipo:
-      linha.tipo,
-
-    conformidade:
-      limitarPercentual(
-        Number(
-          linha.conformidade
-        )
-      ),
-
-    naoConformidades:
-      Math.max(
-        0,
-        Number(
-          linha.nao_conformidades ??
-            0
-        )
-      ),
-
+    id: linha.id,
+    data: linha.data,
+    auditor: linha.auditor,
+    setor: linha.setor,
+    tipo: linha.tipo,
+    conformidade: limitarPercentual(
+      Number(linha.conformidade)
+    ),
+    naoConformidades: Math.max(
+      0,
+      Number(
+        linha.nao_conformidades ?? 0
+      )
+    ),
     observacoes:
-      linha.observacoes ??
-      "",
-
+      linha.observacoes ?? "",
     acaoCorretiva:
-      linha.acao_corretiva ??
-      "",
-
-    prazo:
-      linha.prazo ??
-      "",
-
-    status:
-      linha.status,
+      linha.acao_corretiva ?? "",
+    prazo: linha.prazo ?? "",
+    status: linha.status,
   };
 }
 
@@ -185,39 +140,27 @@ function criarPayloadAuditoria(
   auditoria: Auditoria
 ) {
   return {
-    data:
-      auditoria.data,
-
+    data: auditoria.data,
     auditor:
       auditoria.auditor.trim(),
-
     setor:
       auditoria.setor.trim(),
-
-    tipo:
-      auditoria.tipo,
-
+    tipo: auditoria.tipo,
     conformidade:
       limitarPercentual(
         auditoria.conformidade
       ),
-
     nao_conformidades:
       Math.max(
         0,
         auditoria.naoConformidades
       ),
-
     observacoes:
       auditoria.observacoes.trim(),
-
     acao_corretiva:
       auditoria.acaoCorretiva.trim(),
-
     prazo:
-      auditoria.prazo ||
-      null,
-
+      auditoria.prazo || null,
     status:
       auditoria.status,
   };
@@ -262,24 +205,19 @@ export default function Auditorias() {
     useViewportWidth();
 
   const mobile =
-    largura <= 650;
-
-  const mobilePequeno =
-    largura <= 430;
+    largura <= 720;
 
   const tablet =
-    largura <= 900;
+    largura <= 980;
 
   const telaMedia =
-    largura <= 1150;
+    largura <= 1180;
 
   const [
     auditorias,
     setAuditorias,
   ] =
-    useState<Auditoria[]>(
-      []
-    );
+    useState<Auditoria[]>([]);
 
   const [
     carregando,
@@ -338,105 +276,70 @@ export default function Auditorias() {
       criarAuditoriaInicial()
     );
 
-  /*
-   * CARREGAR AUDITORIAS DO SUPABASE
-   */
-
   useEffect(() => {
-    let componenteAtivo =
-      true;
+    let componenteAtivo = true;
 
     async function carregarAuditorias() {
-      setCarregando(
-        true
-      );
-
-      setErroBanco(
-        ""
-      );
+      setCarregando(true);
+      setErroBanco("");
 
       const {
         data,
         error,
       } =
         await supabase
-          .from(
-            "auditorias"
-          )
+          .from("auditorias")
           .select(
             CAMPOS_AUDITORIAS
           )
           .order(
             "data",
-            {
-              ascending:
-                false,
-            }
+            { ascending: false }
           )
           .order(
             "id",
-            {
-              ascending:
-                false,
-            }
+            { ascending: false }
           );
 
-      if (
-        !componenteAtivo
-      ) {
+      if (!componenteAtivo) {
         return;
       }
 
-      if (
-        error
-      ) {
+      if (error) {
         console.error(
           "Erro ao carregar auditorias:",
           error
         );
 
-        setAuditorias(
-          []
-        );
+        setAuditorias([]);
 
         setErroBanco(
           "Não foi possível carregar as auditorias."
         );
 
-        setCarregando(
-          false
-        );
+        setCarregando(false);
 
         return;
       }
 
       setAuditorias(
         (
-          (
-            data ??
-            []
-          ) as AuditoriaRow[]
+          (data ?? []) as
+            AuditoriaRow[]
         ).map(
           converterAuditoria
         )
       );
 
-      setCarregando(
-        false
-      );
+      setCarregando(false);
     }
 
     void carregarAuditorias();
 
     return () => {
-      componenteAtivo =
-        false;
+      componenteAtivo = false;
     };
   }, []);
-
-  /*
-   * DRAWER
-   */
 
   useEffect(() => {
     if (!drawerAberto) {
@@ -457,12 +360,8 @@ export default function Auditorias() {
         evento.key ===
         "Escape"
       ) {
-        setDrawerAberto(
-          false
-        );
-
+        setDrawerAberto(false);
         setEditando(null);
-
         setFormulario(
           criarAuditoriaInicial()
         );
@@ -484,10 +383,6 @@ export default function Auditorias() {
       );
     };
   }, [drawerAberto]);
-
-  /*
-   * INDICADORES
-   */
 
   const conformidadeMedia =
     auditorias.length > 0
@@ -525,6 +420,13 @@ export default function Auditorias() {
           "Em andamento"
     ).length;
 
+  const concluidas =
+    auditorias.filter(
+      (auditoria) =>
+        auditoria.status ===
+        "Concluída"
+    ).length;
+
   const vencidas =
     auditorias.filter(
       (auditoria) =>
@@ -533,9 +435,54 @@ export default function Auditorias() {
         )
     ).length;
 
-  /*
-   * FILTROS
-   */
+  const semAcaoCorretiva =
+    auditorias.filter(
+      (auditoria) =>
+        auditoria.naoConformidades >
+          0 &&
+        !auditoria.acaoCorretiva.trim()
+    ).length;
+
+  const criticas =
+    auditorias.filter(
+      (auditoria) =>
+        obterClassificacao(
+          auditoria.conformidade
+        ) === "Crítica"
+    ).length;
+
+  const excelentes =
+    auditorias.filter(
+      (auditoria) =>
+        obterClassificacao(
+          auditoria.conformidade
+        ) === "Excelente"
+    ).length;
+
+  const adequadas =
+    auditorias.filter(
+      (auditoria) =>
+        obterClassificacao(
+          auditoria.conformidade
+        ) === "Adequada"
+    ).length;
+
+  const emAtencao =
+    auditorias.filter(
+      (auditoria) =>
+        obterClassificacao(
+          auditoria.conformidade
+        ) === "Atenção"
+    ).length;
+
+  const taxaConclusao =
+    auditorias.length > 0
+      ? Math.round(
+          (concluidas /
+            auditorias.length) *
+            100
+        )
+      : 0;
 
   const auditoriasFiltradas =
     useMemo(() => {
@@ -598,29 +545,19 @@ export default function Auditorias() {
     filtroTipo !== "" ||
     filtroStatus !== "";
 
-  /*
-   * CRUD
-   */
-
   function abrirNovaAuditoria() {
     setEditando(null);
-
     setErroBanco("");
-
     setFormulario(
       criarAuditoriaInicial()
     );
-
     setDrawerAberto(true);
   }
 
   function editarAuditoria(
     auditoria: Auditoria
   ) {
-    setEditando(
-      auditoria
-    );
-
+    setEditando(auditoria);
     setErroBanco("");
 
     setFormulario({
@@ -632,18 +569,14 @@ export default function Auditorias() {
 
   function fecharDrawer() {
     setDrawerAberto(false);
-
     setEditando(null);
-
     setFormulario(
       criarAuditoriaInicial()
     );
   }
 
   async function salvarAuditoria() {
-    if (
-      salvando
-    ) {
+    if (salvando) {
       return;
     }
 
@@ -651,7 +584,6 @@ export default function Auditorias() {
       window.alert(
         "Informe a data da auditoria."
       );
-
       return;
     }
 
@@ -661,7 +593,6 @@ export default function Auditorias() {
       window.alert(
         "Informe o responsável pela auditoria."
       );
-
       return;
     }
 
@@ -671,7 +602,6 @@ export default function Auditorias() {
       window.alert(
         "Informe o setor auditado."
       );
-
       return;
     }
 
@@ -681,7 +611,6 @@ export default function Auditorias() {
       );
 
     setSalvando(true);
-
     setErroBanco("");
 
     try {
@@ -822,9 +751,7 @@ export default function Auditorias() {
           id
         );
 
-    if (
-      error
-    ) {
+    if (error) {
       console.error(
         "Erro ao excluir auditoria:",
         error
@@ -853,9 +780,7 @@ export default function Auditorias() {
 
   function limparFiltros() {
     setPesquisa("");
-
     setFiltroTipo("");
-
     setFiltroStatus("");
   }
 
@@ -866,29 +791,11 @@ export default function Auditorias() {
 
   return (
     <main
-      style={{
-        width: "100%",
-
-        minWidth: 0,
-
-        padding: mobile
-          ? "18px 14px 28px"
-          : tablet
-            ? "24px 20px 32px"
-            : "32px",
-
-        boxSizing:
-          "border-box",
-
-        overflowX:
-          "hidden",
-      }}
+      className="auditoria-page"
     >
-      {/* CABEÇALHO */}
-
       <PageHeader
         title="Auditorias de SST"
-        subtitle="Inspeções, conformidade e acompanhamento das ações corretivas."
+        subtitle="Inspeções, conformidade e acompanhamento estruturado das ações corretivas."
         icon={ClipboardList}
       >
         <Button
@@ -896,21 +803,8 @@ export default function Auditorias() {
             abrirNovaAuditoria
           }
         >
-          <span
-            style={{
-              display: "flex",
-
-              alignItems:
-                "center",
-
-              justifyContent:
-                "center",
-
-              gap: 8,
-            }}
-          >
+          <span className="auditoria-btn-content">
             <Plus size={18} />
-
             Nova Auditoria
           </span>
         </Button>
@@ -919,400 +813,342 @@ export default function Auditorias() {
       {erroBanco && (
         <div
           role="alert"
-          style={{
-            width:
-              "100%",
-
-            display:
-              "flex",
-
-            alignItems:
-              "flex-start",
-
-            justifyContent:
-              "space-between",
-
-            gap:
-              14,
-
-            marginBottom:
-              20,
-
-            padding:
-              "13px 15px",
-
-            boxSizing:
-              "border-box",
-
-            border:
-              "1px solid #FECACA",
-
-            borderRadius:
-              12,
-
-            background:
-              "#FEF2F2",
-
-            color:
-              "#B91C1C",
-
-            fontSize:
-              12,
-
-            fontWeight:
-              650,
-
-            lineHeight:
-              1.5,
-          }}
+          className="auditoria-error"
         >
-          <div
-            style={{
-              display:
-                "flex",
-
-              alignItems:
-                "flex-start",
-
-              gap:
-                9,
-            }}
-          >
+          <div className="auditoria-error-main">
             <TriangleAlert
-              size={
-                17
-              }
-              style={{
-                flexShrink:
-                  0,
-
-                marginTop:
-                  1,
-              }}
+              size={17}
             />
-
             <span>
-              {
-                erroBanco
-              }
+              {erroBanco}
             </span>
           </div>
 
           <button
             type="button"
             onClick={() =>
-              setErroBanco(
-                ""
-              )
+              setErroBanco("")
             }
             aria-label="Fechar aviso"
-            style={{
-              display:
-                "flex",
-
-              alignItems:
-                "center",
-
-              justifyContent:
-                "center",
-
-              flexShrink:
-                0,
-
-              padding:
-                2,
-
-              border:
-                "none",
-
-              background:
-                "transparent",
-
-              color:
-                "#B91C1C",
-
-              cursor:
-                "pointer",
-            }}
           >
-            <X
-              size={
-                16
-              }
-            />
+            <X size={16} />
           </button>
         </div>
       )}
 
-      {/* INDICADORES */}
+      <section className="auditoria-hero">
+        <div className="auditoria-hero-copy">
+          <div className="auditoria-eyebrow">
+            CONTROLE DE CONFORMIDADE E AÇÕES CORRETIVAS
+          </div>
+
+          <h2>
+            Auditoria como ciclo de
+            verificação, correção e
+            melhoria contínua.
+          </h2>
+
+          <p>
+            Consolide desvios, acompanhe
+            prazos e mantenha o status das
+            ações corretivas visível para
+            apoiar a gestão preventiva.
+          </p>
+
+          <div className="auditoria-flow">
+            <FluxoEtapa
+              numero="01"
+              titulo="Auditar"
+              texto="Verificar condições"
+            />
+
+            <ArrowRight
+              className="auditoria-flow-arrow"
+              size={17}
+            />
+
+            <FluxoEtapa
+              numero="02"
+              titulo="Classificar"
+              texto="Medir conformidade"
+            />
+
+            <ArrowRight
+              className="auditoria-flow-arrow"
+              size={17}
+            />
+
+            <FluxoEtapa
+              numero="03"
+              titulo="Corrigir"
+              texto="Definir ações"
+            />
+
+            <ArrowRight
+              className="auditoria-flow-arrow"
+              size={17}
+            />
+
+            <FluxoEtapa
+              numero="04"
+              titulo="Monitorar"
+              texto="Controlar prazos"
+            />
+          </div>
+        </div>
+
+        <div className="auditoria-hero-side">
+          <div className="auditoria-hero-side-label">
+            Efetividade das ações
+          </div>
+
+          <div className="auditoria-hero-percent">
+            {taxaConclusao}%
+          </div>
+
+          <div className="auditoria-hero-side-text">
+            {concluidas} de{" "}
+            {auditorias.length} auditoria(s)
+            concluída(s)
+          </div>
+
+          <div className="auditoria-hero-progress">
+            <div
+              style={{
+                width: `${taxaConclusao}%`,
+              }}
+            />
+          </div>
+
+          <div className="auditoria-hero-mini">
+            <span>
+              Pendentes
+            </span>
+            <strong>
+              {pendentes}
+            </strong>
+          </div>
+        </div>
+      </section>
 
       <div
-        style={{
-          width: "100%",
-
-          minWidth: 0,
-
-          display: "grid",
-
-          gridTemplateColumns:
-            mobile
-              ? "minmax(0, 1fr)"
-              : telaMedia
-                ? "repeat(2, minmax(0, 1fr))"
-                : "repeat(5, minmax(0, 1fr))",
-
-          gap: mobile
-            ? 12
-            : 20,
-
-          marginBottom:
-            mobile
-              ? 18
-              : 28,
-        }}
+        className={
+          telaMedia
+            ? "auditoria-metrics auditoria-metrics-medium"
+            : "auditoria-metrics"
+        }
       >
-        <StatCard
-          title="Auditorias Realizadas"
-          value={
-            auditorias.length
-          }
+        <MetricCard
+          titulo="Auditorias realizadas"
+          valor={auditorias.length}
+          detalhe="Registros acumulados"
           icon={
             <FileSearch
-              size={22}
+              size={20}
             />
           }
-          color="#2563EB"
+          cor="#2563EB"
         />
 
-        <StatCard
-          title="Conformidade Média"
-          value={`${conformidadeMedia}%`}
+        <MetricCard
+          titulo="Conformidade média"
+          valor={`${conformidadeMedia}%`}
+          detalhe="Média das avaliações"
           icon={
             <ShieldCheck
-              size={22}
+              size={20}
             />
           }
-          color="#16A34A"
+          cor="#16A34A"
         />
 
-        <StatCard
-          title="Não Conformidades"
-          value={
-            totalNaoConformidades
-          }
+        <MetricCard
+          titulo="Não conformidades"
+          valor={totalNaoConformidades}
+          detalhe="Desvios registrados"
           icon={
             <TriangleAlert
-              size={22}
+              size={20}
             />
           }
-          color="#F59E0B"
+          cor="#F59E0B"
         />
 
-        <StatCard
-          title="Ações Pendentes"
-          value={
-            pendentes
-          }
+        <MetricCard
+          titulo="Ações pendentes"
+          valor={pendentes}
+          detalhe="Pendentes ou em andamento"
           icon={
             <Clock3
-              size={22}
+              size={20}
             />
           }
-          color="#7C3AED"
+          cor="#7C3AED"
         />
 
-        <StatCard
-          title="Prazos Vencidos"
-          value={
-            vencidas
-          }
+        <MetricCard
+          titulo="Prazos vencidos"
+          valor={vencidas}
+          detalhe="Exigem acompanhamento"
           icon={
             <AlertCircle
-              size={22}
+              size={20}
             />
           }
-          color="#DC2626"
+          cor="#DC2626"
         />
       </div>
 
-      {/* PAINEL */}
-
-      <section
-        style={{
-          width: "100%",
-
-          minWidth: 0,
-
-          padding: mobile
-            ? 16
-            : 24,
-
-          boxSizing:
-            "border-box",
-
-          background:
-            "#FFFFFF",
-
-          border:
-            "1px solid #E2E8F0",
-
-          borderRadius:
-            mobile
-              ? 14
-              : 18,
-
-          boxShadow:
-            "0 6px 20px rgba(15, 23, 42, .04)",
-
-          overflow:
-            "hidden",
-        }}
+      <div
+        className={
+          tablet
+            ? "auditoria-insights auditoria-insights-stack"
+            : "auditoria-insights"
+        }
       >
-        {/* TÍTULO */}
+        <section className="auditoria-panel">
+          <div className="auditoria-panel-header">
+            <div>
+              <div className="auditoria-panel-kicker">
+                PERFIL DE CONFORMIDADE
+              </div>
 
-        <div
-          style={{
-            minWidth: 0,
+              <h3>
+                Distribuição das auditorias
+              </h3>
 
-            marginBottom:
-              mobile
-                ? 17
-                : 20,
-          }}
-        >
-          <h2
-            style={{
-              margin: 0,
+              <p>
+                Leitura consolidada dos
+                resultados por faixa de
+                conformidade.
+              </p>
+            </div>
 
-              color:
-                "#0F172A",
+            <div className="auditoria-panel-icon auditoria-panel-icon-green">
+              <Gauge size={20} />
+            </div>
+          </div>
 
-              fontSize:
-                mobile
-                  ? 16
-                  : 18,
+          <div className="auditoria-distribution">
+            <DistribuicaoItem
+              titulo="Excelente"
+              valor={excelentes}
+              total={auditorias.length}
+              cor="#16A34A"
+            />
 
-              fontWeight:
-                800,
+            <DistribuicaoItem
+              titulo="Adequada"
+              valor={adequadas}
+              total={auditorias.length}
+              cor="#2563EB"
+            />
 
-              lineHeight:
-                1.3,
-            }}
-          >
-            Histórico de Auditorias
-          </h2>
+            <DistribuicaoItem
+              titulo="Atenção"
+              valor={emAtencao}
+              total={auditorias.length}
+              cor="#F59E0B"
+            />
 
-          <p
-            style={{
-              margin:
-                "5px 0 0",
+            <DistribuicaoItem
+              titulo="Crítica"
+              valor={criticas}
+              total={auditorias.length}
+              cor="#DC2626"
+            />
+          </div>
+        </section>
 
-              color:
-                "#94A3B8",
+        <section className="auditoria-panel">
+          <div className="auditoria-panel-header">
+            <div>
+              <div className="auditoria-panel-kicker">
+                PRIORIDADES DO PLANO DE AÇÃO
+              </div>
 
-              fontSize:
-                12,
+              <h3>
+                Pontos que exigem atenção
+              </h3>
 
-              lineHeight:
-                1.5,
+              <p>
+                Indicadores para priorizar
+                correções e acompanhamento.
+              </p>
+            </div>
 
-              overflowWrap:
-                "anywhere",
-            }}
-          >
-            Acompanhe resultados, não
-            conformidades e planos de
-            correção identificados nas
-            inspeções.
-          </p>
+            <div className="auditoria-panel-icon auditoria-panel-icon-red">
+              <Target size={20} />
+            </div>
+          </div>
+
+          <div className="auditoria-priority-grid">
+            <Prioridade
+              titulo="Prazos vencidos"
+              valor={vencidas}
+              texto="Ações com prazo expirado"
+              cor="#DC2626"
+            />
+
+            <Prioridade
+              titulo="Sem ação corretiva"
+              valor={semAcaoCorretiva}
+              texto="Há desvio, mas falta ação"
+              cor="#EA580C"
+            />
+
+            <Prioridade
+              titulo="Classificação crítica"
+              valor={criticas}
+              texto="Conformidade abaixo de 50%"
+              cor="#B91C1C"
+            />
+
+            <Prioridade
+              titulo="Em acompanhamento"
+              valor={pendentes}
+              texto="Pendentes ou em andamento"
+              cor="#7C3AED"
+            />
+          </div>
+        </section>
+      </div>
+
+      <section className="auditoria-history">
+        <div className="auditoria-history-head">
+          <div>
+            <div className="auditoria-panel-kicker">
+              HISTÓRICO E ACOMPANHAMENTO
+            </div>
+
+            <h2>
+              Auditorias registradas
+            </h2>
+
+            <p>
+              Consulte conformidade, não
+              conformidades, plano de ação,
+              prazo e situação de cada
+              auditoria.
+            </p>
+          </div>
+
+          <div className="auditoria-history-summary">
+            <CheckCircle2
+              size={17}
+            />
+            <span>
+              {concluidas} concluída(s)
+            </span>
+          </div>
         </div>
 
-        {/* FILTROS */}
-
-        <div
-          style={{
-            width: "100%",
-
-            minWidth: 0,
-
-            marginBottom:
-              mobile
-                ? 16
-                : 22,
-
-            padding: mobile
-              ? 14
-              : 18,
-
-            boxSizing:
-              "border-box",
-
-            background:
-              "#F8FAFC",
-
-            border:
-              "1px solid #E2E8F0",
-
-            borderRadius:
-              mobile
-                ? 12
-                : 14,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-
-              flexDirection:
-                mobilePequeno
-                  ? "column"
-                  : "row",
-
-              alignItems:
-                mobilePequeno
-                  ? "flex-start"
-                  : "center",
-
-              justifyContent:
-                "space-between",
-
-              gap: 10,
-
-              marginBottom:
-                14,
-
-              minWidth: 0,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-
-                alignItems:
-                  "center",
-
-                gap: 8,
-
-                minWidth: 0,
-
-                color:
-                  "#475569",
-
-                fontSize:
-                  12,
-
-                fontWeight:
-                  700,
-              }}
-            >
+        <div className="auditoria-filter-box">
+          <div className="auditoria-filter-head">
+            <div className="auditoria-filter-title">
               <SlidersHorizontal
                 size={16}
-                style={{
-                  flexShrink:
-                    0,
-                }}
               />
-
               Filtros de auditorias
             </div>
 
@@ -1322,112 +1158,18 @@ export default function Auditorias() {
                 onClick={
                   limparFiltros
                 }
-                style={{
-                  display:
-                    "flex",
-
-                  alignItems:
-                    "center",
-
-                  gap: 5,
-
-                  padding: 0,
-
-                  border:
-                    "none",
-
-                  background:
-                    "transparent",
-
-                  color:
-                    "#2563EB",
-
-                  fontSize:
-                    11,
-
-                  fontWeight:
-                    700,
-
-                  whiteSpace:
-                    "nowrap",
-
-                  cursor:
-                    "pointer",
-                }}
+                className="auditoria-clear-filter"
               >
                 <X size={13} />
-
                 Limpar filtros
               </button>
             )}
           </div>
 
-          <div
-            style={{
-              width: "100%",
-
-              minWidth: 0,
-
-              display: "grid",
-
-              gridTemplateColumns:
-                mobile
-                  ? "minmax(0, 1fr)"
-                  : tablet
-                    ? "repeat(2, minmax(0, 1fr))"
-                    : "minmax(280px, 2fr) repeat(2, minmax(190px, 1fr))",
-
-              gap: mobile
-                ? 10
-                : 12,
-            }}
-          >
-            {/* PESQUISA */}
-
-            <div
-              style={{
-                width: "100%",
-
-                minWidth: 0,
-
-                height: 44,
-
-                display: "flex",
-
-                alignItems:
-                  "center",
-
-                gap: 10,
-
-                padding:
-                  "0 13px",
-
-                boxSizing:
-                  "border-box",
-
-                background:
-                  "#FFFFFF",
-
-                border:
-                  "1px solid #CBD5E1",
-
-                borderRadius:
-                  10,
-
-                gridColumn:
-                  tablet &&
-                  !mobile
-                    ? "1 / -1"
-                    : undefined,
-              }}
-            >
+          <div className="auditoria-filter-grid">
+            <div className="auditoria-search">
               <Search
                 size={17}
-                color="#94A3B8"
-                style={{
-                  flexShrink:
-                    0,
-                }}
               />
 
               <input
@@ -1435,7 +1177,7 @@ export default function Auditorias() {
                 placeholder={
                   mobile
                     ? "Pesquisar auditorias..."
-                    : "Pesquisar auditor, setor ou observação..."
+                    : "Pesquisar auditor, setor, observação ou ação corretiva..."
                 }
                 value={
                   pesquisa
@@ -1445,35 +1187,8 @@ export default function Auditorias() {
                     e.target.value
                   )
                 }
-                style={{
-                  width: "100%",
-
-                  minWidth: 0,
-
-                  flex: 1,
-
-                  border:
-                    "none",
-
-                  outline:
-                    "none",
-
-                  background:
-                    "transparent",
-
-                  color:
-                    "#0F172A",
-
-                  fontFamily:
-                    "inherit",
-
-                  fontSize:
-                    12,
-                }}
               />
             </div>
-
-            {/* TIPO */}
 
             <select
               value={
@@ -1487,9 +1202,7 @@ export default function Auditorias() {
                     | ""
                 )
               }
-              style={
-                estiloSelect
-              }
+              className="auditoria-select"
             >
               <option value="">
                 Todos os tipos
@@ -1508,8 +1221,6 @@ export default function Auditorias() {
               </option>
             </select>
 
-            {/* STATUS */}
-
             <select
               value={
                 filtroStatus
@@ -1522,9 +1233,7 @@ export default function Auditorias() {
                     | ""
                 )
               }
-              style={
-                estiloSelect
-              }
+              className="auditoria-select"
             >
               <option value="">
                 Todos os status
@@ -1544,39 +1253,15 @@ export default function Auditorias() {
             </select>
           </div>
 
-          <div
-            style={{
-              marginTop:
-                11,
-
-              color:
-                "#64748B",
-
-              fontSize:
-                11,
-
-              lineHeight:
-                1.5,
-            }}
-          >
+          <div className="auditoria-filter-count">
             Exibindo{" "}
-            <strong
-              style={{
-                color:
-                  "#0F172A",
-              }}
-            >
+            <strong>
               {
                 auditoriasFiltradas.length
               }
             </strong>{" "}
             de{" "}
-            <strong
-              style={{
-                color:
-                  "#0F172A",
-              }}
-            >
+            <strong>
               {
                 auditorias.length
               }
@@ -1585,101 +1270,37 @@ export default function Auditorias() {
           </div>
         </div>
 
-        {/* TABELA */}
-
         {carregando ? (
-          <div
-            style={{
-              width:
-                "100%",
-
-              padding:
-                mobile
-                  ? "34px 16px"
-                  : "46px 20px",
-
-              boxSizing:
-                "border-box",
-
-              border:
-                "1px solid #E2E8F0",
-
-              borderRadius:
-                14,
-
-              background:
-                "#FFFFFF",
-
-              color:
-                "#64748B",
-
-              fontSize:
-                12,
-
-              fontWeight:
-                600,
-
-              textAlign:
-                "center",
-            }}
-          >
-            Carregando auditorias...
-          </div>
+          <EstadoCarregando />
         ) : auditoriasFiltradas.length ===
-        0 ? (
-          <EstadoVazio
-            mobile={
-              mobile
-            }
-          />
+          0 ? (
+          <EstadoVazio />
+        ) : mobile ? (
+          <div className="auditoria-mobile-list">
+            {auditoriasFiltradas.map(
+              (auditoria) => (
+                <AuditoriaCard
+                  key={
+                    auditoria.id
+                  }
+                  auditoria={
+                    auditoria
+                  }
+                  onEditar={
+                    editarAuditoria
+                  }
+                  onExcluir={
+                    excluirAuditoria
+                  }
+                />
+              )
+            )}
+          </div>
         ) : (
-          <div
-            style={{
-              width: "100%",
-
-              maxWidth:
-                "100%",
-
-              minWidth: 0,
-
-              overflowX:
-                "auto",
-
-              overflowY:
-                "hidden",
-
-              border:
-                "1px solid #E2E8F0",
-
-              borderRadius:
-                mobile
-                  ? 12
-                  : 14,
-
-              WebkitOverflowScrolling:
-                "touch",
-            }}
-          >
-            <table
-              style={{
-                width: "100%",
-
-                minWidth:
-                  mobile
-                    ? 1050
-                    : 1180,
-
-                borderCollapse:
-                  "collapse",
-              }}
-            >
+          <div className="auditoria-table-wrap">
+            <table className="auditoria-table">
               <thead>
-                <tr
-                  style={{
-                    background:
-                      "#F8FAFC",
-                  }}
-                >
+                <tr>
                   <Th>
                     Auditoria
                   </Th>
@@ -1693,11 +1314,11 @@ export default function Auditorias() {
                   </Th>
 
                   <Th>
-                    Não Conformidades
+                    Não conformidades
                   </Th>
 
                   <Th>
-                    Ação Corretiva
+                    Ação corretiva
                   </Th>
 
                   <Th>
@@ -1716,582 +1337,28 @@ export default function Auditorias() {
 
               <tbody>
                 {auditoriasFiltradas.map(
-                  (auditoria) => {
-                    const classificacao =
-                      obterClassificacao(
-                        auditoria.conformidade
-                      );
-
-                    return (
-                      <tr
-                        key={
-                          auditoria.id
-                        }
-                        style={{
-                          borderTop:
-                            "1px solid #E2E8F0",
-                        }}
-                      >
-                        {/* AUDITORIA */}
-
-                        <Td>
-                          <div
-                            style={{
-                              display:
-                                "flex",
-
-                              alignItems:
-                                "flex-start",
-
-                              gap: 11,
-
-                              width:
-                                210,
-
-                              minWidth:
-                                210,
-                            }}
-                          >
-                            <div
-                              style={{
-                                width:
-                                  39,
-
-                                height:
-                                  39,
-
-                                display:
-                                  "flex",
-
-                                alignItems:
-                                  "center",
-
-                                justifyContent:
-                                  "center",
-
-                                flexShrink:
-                                  0,
-
-                                borderRadius:
-                                  10,
-
-                                background:
-                                  "#EFF6FF",
-
-                                color:
-                                  "#2563EB",
-                              }}
-                            >
-                              <ClipboardList
-                                size={
-                                  18
-                                }
-                              />
-                            </div>
-
-                            <div
-                              style={{
-                                minWidth:
-                                  0,
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display:
-                                    "flex",
-
-                                  alignItems:
-                                    "flex-start",
-
-                                  gap: 6,
-
-                                  color:
-                                    "#0F172A",
-
-                                  fontSize:
-                                    13,
-
-                                  fontWeight:
-                                    750,
-                                }}
-                              >
-                                <Building2
-                                  size={
-                                    14
-                                  }
-                                  style={{
-                                    flexShrink:
-                                      0,
-
-                                    marginTop:
-                                      2,
-                                  }}
-                                />
-
-                                <span
-                                  style={{
-                                    minWidth:
-                                      0,
-
-                                    overflowWrap:
-                                      "anywhere",
-                                  }}
-                                >
-                                  {
-                                    auditoria.setor
-                                  }
-                                </span>
-                              </div>
-
-                              <div
-                                style={{
-                                  display:
-                                    "flex",
-
-                                  alignItems:
-                                    "center",
-
-                                  gap: 5,
-
-                                  marginTop:
-                                    6,
-
-                                  color:
-                                    "#64748B",
-
-                                  fontSize:
-                                    10,
-
-                                  whiteSpace:
-                                    "nowrap",
-                                }}
-                              >
-                                <CalendarDays
-                                  size={
-                                    13
-                                  }
-                                  style={{
-                                    flexShrink:
-                                      0,
-                                  }}
-                                />
-
-                                {formatarData(
-                                  auditoria.data
-                                )}
-                              </div>
-
-                              <div
-                                style={{
-                                  marginTop:
-                                    7,
-                                }}
-                              >
-                                <Badge color="blue">
-                                  {
-                                    auditoria.tipo
-                                  }
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                        </Td>
-
-                        {/* AUDITOR */}
-
-                        <Td>
-                          <div
-                            style={{
-                              display:
-                                "flex",
-
-                              alignItems:
-                                "flex-start",
-
-                              gap: 7,
-
-                              width:
-                                145,
-
-                              minWidth:
-                                145,
-
-                              color:
-                                "#475569",
-
-                              fontSize:
-                                12,
-                            }}
-                          >
-                            <UserRound
-                              size={
-                                15
-                              }
-                              color="#94A3B8"
-                              style={{
-                                flexShrink:
-                                  0,
-
-                                marginTop:
-                                  1,
-                              }}
-                            />
-
-                            <span
-                              style={{
-                                minWidth:
-                                  0,
-
-                                overflowWrap:
-                                  "anywhere",
-                              }}
-                            >
-                              {
-                                auditoria.auditor
-                              }
-                            </span>
-                          </div>
-                        </Td>
-
-                        {/* CONFORMIDADE */}
-
-                        <Td>
-                          <div
-                            style={{
-                              width:
-                                150,
-
-                              minWidth:
-                                150,
-                            }}
-                          >
-                            <div
-                              style={{
-                                display:
-                                  "flex",
-
-                                alignItems:
-                                  "center",
-
-                                justifyContent:
-                                  "space-between",
-
-                                gap: 8,
-
-                                marginBottom:
-                                  7,
-                              }}
-                            >
-                              <Badge
-                                color={
-                                  classificacao ===
-                                  "Excelente"
-                                    ? "green"
-                                    : classificacao ===
-                                        "Adequada"
-                                      ? "blue"
-                                      : classificacao ===
-                                          "Atenção"
-                                        ? "yellow"
-                                        : "red"
-                                }
-                              >
-                                {
-                                  classificacao
-                                }
-                              </Badge>
-
-                              <strong
-                                style={{
-                                  color:
-                                    corConformidade(
-                                      auditoria.conformidade
-                                    ),
-
-                                  fontSize:
-                                    12,
-
-                                  whiteSpace:
-                                    "nowrap",
-                                }}
-                              >
-                                {
-                                  auditoria.conformidade
-                                }
-                                %
-                              </strong>
-                            </div>
-
-                            <div
-                              style={{
-                                width:
-                                  "100%",
-
-                                height:
-                                  7,
-
-                                overflow:
-                                  "hidden",
-
-                                background:
-                                  "#E2E8F0",
-
-                                borderRadius:
-                                  999,
-                              }}
-                            >
-                              <div
-                                style={{
-                                  width: `${auditoria.conformidade}%`,
-
-                                  height:
-                                    "100%",
-
-                                  background:
-                                    corConformidade(
-                                      auditoria.conformidade
-                                    ),
-
-                                  borderRadius:
-                                    999,
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </Td>
-
-                        {/* NÃO CONFORMIDADES */}
-
-                        <Td>
-                          <Badge
-                            color={
-                              auditoria.naoConformidades ===
-                              0
-                                ? "green"
-                                : auditoria.naoConformidades <=
-                                    2
-                                  ? "yellow"
-                                  : "red"
-                            }
-                          >
-                            {
-                              auditoria.naoConformidades
-                            }{" "}
-                            ocorrência(s)
-                          </Badge>
-                        </Td>
-
-                        {/* AÇÃO */}
-
-                        <Td>
-                          <div
-                            style={{
-                              width:
-                                220,
-
-                              maxWidth:
-                                220,
-
-                              color:
-                                "#475569",
-
-                              fontSize:
-                                11,
-
-                              lineHeight:
-                                1.5,
-
-                              overflowWrap:
-                                "anywhere",
-                            }}
-                          >
-                            {auditoria.acaoCorretiva ||
-                              "Nenhuma ação cadastrada"}
-                          </div>
-                        </Td>
-
-                        {/* PRAZO */}
-
-                        <Td>
-                          <div
-                            style={{
-                              display:
-                                "flex",
-
-                              alignItems:
-                                "center",
-
-                              gap: 7,
-
-                              minWidth:
-                                120,
-
-                              color:
-                                prazoVencido(
-                                  auditoria
-                                )
-                                  ? "#DC2626"
-                                  : "#475569",
-
-                              fontSize:
-                                11,
-
-                              fontWeight:
-                                prazoVencido(
-                                  auditoria
-                                )
-                                  ? 700
-                                  : 500,
-
-                              whiteSpace:
-                                "nowrap",
-                            }}
-                          >
-                            <CalendarDays
-                              size={
-                                14
-                              }
-                              style={{
-                                flexShrink:
-                                  0,
-                              }}
-                            />
-
-                            {formatarData(
-                              auditoria.prazo
-                            )}
-                          </div>
-
-                          {prazoVencido(
-                            auditoria
-                          ) && (
-                            <div
-                              style={{
-                                marginTop:
-                                  5,
-
-                                color:
-                                  "#DC2626",
-
-                                fontSize:
-                                  9,
-
-                                fontWeight:
-                                  800,
-
-                                textTransform:
-                                  "uppercase",
-
-                                whiteSpace:
-                                  "nowrap",
-                              }}
-                            >
-                              Prazo vencido
-                            </div>
-                          )}
-                        </Td>
-
-                        {/* STATUS */}
-
-                        <Td>
-                          <Badge
-                            color={
-                              auditoria.status ===
-                              "Concluída"
-                                ? "green"
-                                : auditoria.status ===
-                                    "Em andamento"
-                                  ? "yellow"
-                                  : "gray"
-                            }
-                          >
-                            {
-                              auditoria.status
-                            }
-                          </Badge>
-                        </Td>
-
-                        {/* AÇÕES */}
-
-                        <Td align="center">
-                          <div
-                            style={{
-                              display:
-                                "flex",
-
-                              justifyContent:
-                                "center",
-
-                              gap: 7,
-
-                              minWidth:
-                                80,
-                            }}
-                          >
-                            <button
-                              type="button"
-                              title="Editar auditoria"
-                              aria-label="Editar auditoria"
-                              onClick={() =>
-                                editarAuditoria(
-                                  auditoria
-                                )
-                              }
-                              style={{
-                                ...botaoAcao,
-
-                                background:
-                                  "#EFF6FF",
-
-                                color:
-                                  "#2563EB",
-                              }}
-                            >
-                              <Pencil
-                                size={
-                                  17
-                                }
-                              />
-                            </button>
-
-                            <button
-                              type="button"
-                              title="Excluir auditoria"
-                              aria-label="Excluir auditoria"
-                              onClick={() =>
-                                excluirAuditoria(
-                                  auditoria.id
-                                )
-                              }
-                              style={{
-                                ...botaoAcao,
-
-                                background:
-                                  "#FEF2F2",
-
-                                color:
-                                  "#DC2626",
-                              }}
-                            >
-                              <Trash2
-                                size={
-                                  17
-                                }
-                              />
-                            </button>
-                          </div>
-                        </Td>
-                      </tr>
-                    );
-                  }
+                  (auditoria) => (
+                    <AuditoriaRowItem
+                      key={
+                        auditoria.id
+                      }
+                      auditoria={
+                        auditoria
+                      }
+                      onEditar={
+                        editarAuditoria
+                      }
+                      onExcluir={
+                        excluirAuditoria
+                      }
+                    />
+                  )
                 )}
               </tbody>
             </table>
           </div>
         )}
       </section>
-
-      {/* DRAWER */}
 
       {drawerAberto && (
         <div
@@ -2306,8 +1373,6 @@ export default function Auditorias() {
           }}
         >
           <aside className="auditoria-drawer">
-            {/* HEADER */}
-
             <header className="auditoria-drawer-header">
               <div className="auditoria-drawer-header-main">
                 <div className="auditoria-drawer-icon">
@@ -2317,6 +1382,10 @@ export default function Auditorias() {
                 </div>
 
                 <div className="auditoria-drawer-title">
+                  <div className="auditoria-drawer-kicker">
+                    CONTROLE DE AUDITORIA
+                  </div>
+
                   <h2>
                     {editando
                       ? "Editar auditoria"
@@ -2324,9 +1393,9 @@ export default function Auditorias() {
                   </h2>
 
                   <p>
-                    Registre a inspeção,
-                    conformidade e ações
-                    corretivas.
+                    Registre resultado,
+                    desvios, ações corretivas
+                    e acompanhamento.
                   </p>
                 </div>
               </div>
@@ -2337,20 +1406,15 @@ export default function Auditorias() {
                   fecharDrawer
                 }
                 aria-label="Fechar formulário"
-                style={
-                  botaoFechar
-                }
+                className="auditoria-drawer-close"
               >
                 <X size={19} />
               </button>
             </header>
 
-            {/* FORMULÁRIO */}
-
             <div className="auditoria-drawer-content">
-              {/* IDENTIFICAÇÃO */}
-
               <Secao
+                numero="01"
                 titulo="Identificação"
                 descricao="Informe os dados da auditoria realizada."
               >
@@ -2364,7 +1428,6 @@ export default function Auditorias() {
                     onChange={(valor) =>
                       setFormulario({
                         ...formulario,
-
                         data:
                           valor,
                       })
@@ -2380,7 +1443,6 @@ export default function Auditorias() {
                     onChange={(valor) =>
                       setFormulario({
                         ...formulario,
-
                         setor:
                           valor,
                       })
@@ -2397,7 +1459,6 @@ export default function Auditorias() {
                   onChange={(valor) =>
                     setFormulario({
                       ...formulario,
-
                       auditor:
                         valor,
                     })
@@ -2417,7 +1478,6 @@ export default function Auditorias() {
                   onChange={(valor) =>
                     setFormulario({
                       ...formulario,
-
                       tipo:
                         valor as TipoAuditoria,
                     })
@@ -2425,11 +1485,10 @@ export default function Auditorias() {
                 />
               </Secao>
 
-              {/* RESULTADO */}
-
               <Secao
+                numero="02"
                 titulo="Resultado"
-                descricao="Registre o percentual de conformidade e as não conformidades encontradas."
+                descricao="Registre o percentual de conformidade e os desvios identificados."
               >
                 <div className="auditoria-grid-2">
                   <Campo
@@ -2441,7 +1500,6 @@ export default function Auditorias() {
                     onChange={(valor) =>
                       setFormulario({
                         ...formulario,
-
                         conformidade:
                           limitarPercentual(
                             Number(
@@ -2461,7 +1519,6 @@ export default function Auditorias() {
                     onChange={(valor) =>
                       setFormulario({
                         ...formulario,
-
                         naoConformidades:
                           Math.max(
                             0,
@@ -2474,14 +1531,14 @@ export default function Auditorias() {
                   />
                 </div>
 
-                <div className="auditoria-resultado">
-                  <div className="auditoria-resultado-topo">
+                <div className="auditoria-result-box">
+                  <div className="auditoria-result-top">
                     <div>
-                      <div className="auditoria-resultado-label">
-                        Conformidade
+                      <div className="auditoria-result-label">
+                        Nível de conformidade
                       </div>
 
-                      <div className="auditoria-resultado-numero">
+                      <div className="auditoria-result-number">
                         {
                           formulario.conformidade
                         }
@@ -2489,55 +1546,35 @@ export default function Auditorias() {
                       </div>
                     </div>
 
-                    <Badge
-                      color={
-                        classificacaoFormulario ===
-                        "Excelente"
-                          ? "green"
-                          : classificacaoFormulario ===
-                              "Adequada"
-                            ? "blue"
-                            : classificacaoFormulario ===
-                                "Atenção"
-                              ? "yellow"
-                              : "red"
-                      }
-                    >
-                      {
+                    <BadgeClassificacao
+                      classificacao={
                         classificacaoFormulario
                       }
-                    </Badge>
+                    />
                   </div>
 
-                  <div className="auditoria-progress">
+                  <div className="auditoria-result-track">
                     <div
                       style={{
                         width: `${formulario.conformidade}%`,
-
-                        height:
-                          "100%",
-
                         background:
                           corConformidade(
                             formulario.conformidade
                           ),
-
-                        borderRadius:
-                          999,
-
-                        transition:
-                          "width .2s ease",
                       }}
                     />
+                  </div>
+
+                  <div className="auditoria-result-rule">
+                    ≥90 Excelente • ≥75 Adequada • ≥50 Atenção • &lt;50 Crítica
                   </div>
                 </div>
               </Secao>
 
-              {/* ANÁLISE */}
-
               <Secao
+                numero="03"
                 titulo="Análise da auditoria"
-                descricao="Registre observações e desvios identificados."
+                descricao="Registre observações e detalhes dos desvios encontrados."
               >
                 <CampoTexto
                   label="Observações"
@@ -2548,7 +1585,6 @@ export default function Auditorias() {
                   onChange={(valor) =>
                     setFormulario({
                       ...formulario,
-
                       observacoes:
                         valor,
                     })
@@ -2556,11 +1592,10 @@ export default function Auditorias() {
                 />
               </Secao>
 
-              {/* PLANO DE AÇÃO */}
-
               <Secao
+                numero="04"
                 titulo="Plano de ação"
-                descricao="Defina as correções necessárias, prazo e situação."
+                descricao="Defina correções, prazo e situação do acompanhamento."
               >
                 <CampoTexto
                   label="Ação corretiva"
@@ -2571,12 +1606,34 @@ export default function Auditorias() {
                   onChange={(valor) =>
                     setFormulario({
                       ...formulario,
-
                       acaoCorretiva:
                         valor,
                     })
                   }
                 />
+
+                {formulario.naoConformidades >
+                  0 &&
+                  !formulario.acaoCorretiva.trim() && (
+                    <div className="auditoria-form-warning">
+                      <TriangleAlert
+                        size={17}
+                      />
+
+                      <div>
+                        <strong>
+                          Ação corretiva ainda não definida
+                        </strong>
+
+                        <span>
+                          Foram registradas não
+                          conformidades. Descrever
+                          uma ação facilita o
+                          acompanhamento do desvio.
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
                 <div className="auditoria-grid-2">
                   <Campo
@@ -2588,7 +1645,6 @@ export default function Auditorias() {
                     onChange={(valor) =>
                       setFormulario({
                         ...formulario,
-
                         prazo:
                           valor,
                       })
@@ -2608,17 +1664,35 @@ export default function Auditorias() {
                     onChange={(valor) =>
                       setFormulario({
                         ...formulario,
-
                         status:
                           valor as StatusAuditoria,
                       })
                     }
                   />
                 </div>
+
+                <div className="auditoria-action-summary">
+                  <Wrench
+                    size={18}
+                  />
+
+                  <div>
+                    <strong>
+                      Situação do acompanhamento
+                    </strong>
+
+                    <span>
+                      {formulario.status}
+                      {formulario.prazo
+                        ? ` • prazo ${formatarData(
+                            formulario.prazo
+                          )}`
+                        : " • sem prazo definido"}
+                    </span>
+                  </div>
+                </div>
               </Secao>
             </div>
-
-            {/* RODAPÉ */}
 
             <footer className="auditoria-drawer-footer">
               <Button
@@ -2647,38 +1721,727 @@ export default function Auditorias() {
       )}
 
       <style>
-        {estilosResponsivos}
+        {estilos}
       </style>
     </main>
   );
 }
 
-/*
- * COMPONENTES AUXILIARES
- */
+function FluxoEtapa({
+  numero,
+  titulo,
+  texto,
+}: {
+  numero: string;
+  titulo: string;
+  texto: string;
+}) {
+  return (
+    <div className="auditoria-flow-step">
+      <span>
+        {numero}
+      </span>
+
+      <div>
+        <strong>
+          {titulo}
+        </strong>
+
+        <small>
+          {texto}
+        </small>
+      </div>
+    </div>
+  );
+}
+
+function MetricCard({
+  titulo,
+  valor,
+  detalhe,
+  icon,
+  cor,
+}: {
+  titulo: string;
+  valor: ReactNode;
+  detalhe: string;
+  icon: ReactNode;
+  cor: string;
+}) {
+  return (
+    <div className="auditoria-metric-card">
+      <div
+        className="auditoria-metric-icon"
+        style={{
+          color: cor,
+          background:
+            `${cor}12`,
+        }}
+      >
+        {icon}
+      </div>
+
+      <div className="auditoria-metric-main">
+        <span>
+          {titulo}
+        </span>
+
+        <strong>
+          {valor}
+        </strong>
+
+        <small>
+          {detalhe}
+        </small>
+      </div>
+
+      <div
+        className="auditoria-metric-line"
+        style={{
+          background:
+            cor,
+        }}
+      />
+    </div>
+  );
+}
+
+function DistribuicaoItem({
+  titulo,
+  valor,
+  total,
+  cor,
+}: {
+  titulo: string;
+  valor: number;
+  total: number;
+  cor: string;
+}) {
+  const percentual =
+    total > 0
+      ? Math.round(
+          (valor / total) *
+            100
+        )
+      : 0;
+
+  return (
+    <div className="auditoria-distribution-item">
+      <div className="auditoria-distribution-head">
+        <div>
+          <span
+            className="auditoria-dot"
+            style={{
+              background: cor,
+            }}
+          />
+
+          <strong>
+            {titulo}
+          </strong>
+        </div>
+
+        <b>
+          {valor}
+        </b>
+      </div>
+
+      <div className="auditoria-distribution-track">
+        <div
+          style={{
+            width: `${percentual}%`,
+            background: cor,
+          }}
+        />
+      </div>
+
+      <small>
+        {percentual}% do total
+      </small>
+    </div>
+  );
+}
+
+function Prioridade({
+  titulo,
+  valor,
+  texto,
+  cor,
+}: {
+  titulo: string;
+  valor: number;
+  texto: string;
+  cor: string;
+}) {
+  return (
+    <div className="auditoria-priority">
+      <div
+        className="auditoria-priority-number"
+        style={{
+          color: cor,
+        }}
+      >
+        {valor}
+      </div>
+
+      <div>
+        <strong>
+          {titulo}
+        </strong>
+
+        <span>
+          {texto}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function AuditoriaRowItem({
+  auditoria,
+  onEditar,
+  onExcluir,
+}: {
+  auditoria: Auditoria;
+  onEditar: (
+    auditoria: Auditoria
+  ) => void;
+  onExcluir: (
+    id: number
+  ) => void;
+}) {
+  const classificacao =
+    obterClassificacao(
+      auditoria.conformidade
+    );
+
+  return (
+    <tr className="auditoria-table-row">
+      <Td>
+        <div className="auditoria-identification">
+          <div className="auditoria-identification-icon">
+            <ClipboardList
+              size={18}
+            />
+          </div>
+
+          <div>
+            <div className="auditoria-setor">
+              <Building2
+                size={14}
+              />
+
+              <span>
+                {
+                  auditoria.setor
+                }
+              </span>
+            </div>
+
+            <div className="auditoria-date">
+              <CalendarDays
+                size={13}
+              />
+
+              {formatarData(
+                auditoria.data
+              )}
+            </div>
+
+            <div className="auditoria-type-badge">
+              <Badge color="blue">
+                {
+                  auditoria.tipo
+                }
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </Td>
+
+      <Td>
+        <div className="auditoria-person">
+          <UserRound
+            size={15}
+          />
+
+          <span>
+            {
+              auditoria.auditor
+            }
+          </span>
+        </div>
+      </Td>
+
+      <Td>
+        <div className="auditoria-conformidade-cell">
+          <div className="auditoria-conformidade-top">
+            <BadgeClassificacao
+              classificacao={
+                classificacao
+              }
+            />
+
+            <strong
+              style={{
+                color:
+                  corConformidade(
+                    auditoria.conformidade
+                  ),
+              }}
+            >
+              {
+                auditoria.conformidade
+              }
+              %
+            </strong>
+          </div>
+
+          <div className="auditoria-mini-track">
+            <div
+              style={{
+                width: `${auditoria.conformidade}%`,
+                background:
+                  corConformidade(
+                    auditoria.conformidade
+                  ),
+              }}
+            />
+          </div>
+        </div>
+      </Td>
+
+      <Td>
+        <Badge
+          color={
+            auditoria.naoConformidades ===
+            0
+              ? "green"
+              : auditoria.naoConformidades <=
+                  2
+                ? "yellow"
+                : "red"
+          }
+        >
+          {
+            auditoria.naoConformidades
+          }{" "}
+          ocorrência(s)
+        </Badge>
+      </Td>
+
+      <Td>
+        <div className="auditoria-action-text">
+          {auditoria.acaoCorretiva ||
+            "Nenhuma ação cadastrada"}
+        </div>
+      </Td>
+
+      <Td>
+        <PrazoAuditoria
+          auditoria={
+            auditoria
+          }
+        />
+      </Td>
+
+      <Td>
+        <StatusBadge
+          status={
+            auditoria.status
+          }
+        />
+      </Td>
+
+      <Td align="center">
+        <Acoes
+          auditoria={
+            auditoria
+          }
+          onEditar={
+            onEditar
+          }
+          onExcluir={
+            onExcluir
+          }
+        />
+      </Td>
+    </tr>
+  );
+}
+
+function AuditoriaCard({
+  auditoria,
+  onEditar,
+  onExcluir,
+}: {
+  auditoria: Auditoria;
+  onEditar: (
+    auditoria: Auditoria
+  ) => void;
+  onExcluir: (
+    id: number
+  ) => void;
+}) {
+  const classificacao =
+    obterClassificacao(
+      auditoria.conformidade
+    );
+
+  return (
+    <article className="auditoria-mobile-card">
+      <div className="auditoria-mobile-card-head">
+        <div>
+          <div className="auditoria-mobile-card-setor">
+            {
+              auditoria.setor
+            }
+          </div>
+
+          <div className="auditoria-mobile-card-date">
+            <CalendarDays
+              size={13}
+            />
+
+            {formatarData(
+              auditoria.data
+            )}
+          </div>
+        </div>
+
+        <StatusBadge
+          status={
+            auditoria.status
+          }
+        />
+      </div>
+
+      <div className="auditoria-mobile-meta">
+        <Badge color="blue">
+          {auditoria.tipo}
+        </Badge>
+
+        <div className="auditoria-mobile-auditor">
+          <UserRound
+            size={14}
+          />
+          {
+            auditoria.auditor
+          }
+        </div>
+      </div>
+
+      <div className="auditoria-mobile-score">
+        <div>
+          <span>
+            Conformidade
+          </span>
+
+          <strong
+            style={{
+              color:
+                corConformidade(
+                  auditoria.conformidade
+                ),
+            }}
+          >
+            {
+              auditoria.conformidade
+            }
+            %
+          </strong>
+        </div>
+
+        <BadgeClassificacao
+          classificacao={
+            classificacao
+          }
+        />
+      </div>
+
+      <div className="auditoria-mobile-track">
+        <div
+          style={{
+            width: `${auditoria.conformidade}%`,
+            background:
+              corConformidade(
+                auditoria.conformidade
+              ),
+          }}
+        />
+      </div>
+
+      <div className="auditoria-mobile-grid">
+        <InfoMobile
+          label="Não conformidades"
+          value={`${auditoria.naoConformidades}`}
+        />
+
+        <InfoMobile
+          label="Prazo"
+          value={
+            auditoria.prazo
+              ? formatarData(
+                  auditoria.prazo
+                )
+              : "Não definido"
+          }
+          danger={
+            prazoVencido(
+              auditoria
+            )
+          }
+        />
+      </div>
+
+      <div className="auditoria-mobile-action">
+        <span>
+          Ação corretiva
+        </span>
+
+        <p>
+          {auditoria.acaoCorretiva ||
+            "Nenhuma ação cadastrada"}
+        </p>
+      </div>
+
+      {prazoVencido(
+        auditoria
+      ) && (
+        <div className="auditoria-mobile-overdue">
+          <AlertCircle
+            size={15}
+          />
+          Prazo da ação corretiva vencido
+        </div>
+      )}
+
+      <div className="auditoria-mobile-card-actions">
+        <button
+          type="button"
+          onClick={() =>
+            onEditar(
+              auditoria
+            )
+          }
+          className="auditoria-action-btn auditoria-edit-btn"
+        >
+          <Pencil
+            size={16}
+          />
+          Editar
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+            onExcluir(
+              auditoria.id
+            )
+          }
+          className="auditoria-action-btn auditoria-delete-btn"
+        >
+          <Trash2
+            size={16}
+          />
+          Excluir
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function InfoMobile({
+  label,
+  value,
+  danger = false,
+}: {
+  label: string;
+  value: string;
+  danger?: boolean;
+}) {
+  return (
+    <div className="auditoria-mobile-info">
+      <span>
+        {label}
+      </span>
+
+      <strong
+        style={{
+          color: danger
+            ? "#DC2626"
+            : "#0F172A",
+        }}
+      >
+        {value}
+      </strong>
+    </div>
+  );
+}
+
+function PrazoAuditoria({
+  auditoria,
+}: {
+  auditoria: Auditoria;
+}) {
+  const vencido =
+    prazoVencido(
+      auditoria
+    );
+
+  return (
+    <div
+      className={
+        vencido
+          ? "auditoria-deadline auditoria-deadline-overdue"
+          : "auditoria-deadline"
+      }
+    >
+      <div>
+        <CalendarDays
+          size={14}
+        />
+
+        {formatarData(
+          auditoria.prazo
+        )}
+      </div>
+
+      {vencido && (
+        <small>
+          Prazo vencido
+        </small>
+      )}
+    </div>
+  );
+}
+
+function StatusBadge({
+  status,
+}: {
+  status: StatusAuditoria;
+}) {
+  return (
+    <Badge
+      color={
+        status ===
+        "Concluída"
+          ? "green"
+          : status ===
+              "Em andamento"
+            ? "yellow"
+            : "gray"
+      }
+    >
+      {status}
+    </Badge>
+  );
+}
+
+function BadgeClassificacao({
+  classificacao,
+}: {
+  classificacao:
+    ClassificacaoAuditoria;
+}) {
+  return (
+    <Badge
+      color={
+        classificacao ===
+        "Excelente"
+          ? "green"
+          : classificacao ===
+              "Adequada"
+            ? "blue"
+            : classificacao ===
+                "Atenção"
+              ? "yellow"
+              : "red"
+      }
+    >
+      {classificacao}
+    </Badge>
+  );
+}
+
+function Acoes({
+  auditoria,
+  onEditar,
+  onExcluir,
+}: {
+  auditoria: Auditoria;
+  onEditar: (
+    auditoria: Auditoria
+  ) => void;
+  onExcluir: (
+    id: number
+  ) => void;
+}) {
+  return (
+    <div className="auditoria-actions">
+      <button
+        type="button"
+        title="Editar auditoria"
+        aria-label="Editar auditoria"
+        onClick={() =>
+          onEditar(
+            auditoria
+          )
+        }
+        className="auditoria-icon-btn auditoria-icon-edit"
+      >
+        <Pencil size={17} />
+      </button>
+
+      <button
+        type="button"
+        title="Excluir auditoria"
+        aria-label="Excluir auditoria"
+        onClick={() =>
+          onExcluir(
+            auditoria.id
+          )
+        }
+        className="auditoria-icon-btn auditoria-icon-delete"
+      >
+        <Trash2 size={17} />
+      </button>
+    </div>
+  );
+}
 
 function Secao({
+  numero,
   titulo,
   descricao,
   children,
 }: {
+  numero: string;
   titulo: string;
   descricao: string;
   children: ReactNode;
 }) {
   return (
-    <section className="auditoria-form-secao">
-      <div className="auditoria-form-secao-header">
-        <h3>
-          {titulo}
-        </h3>
+    <section className="auditoria-form-section">
+      <div className="auditoria-form-section-head">
+        <span>
+          {numero}
+        </span>
 
-        <p>
-          {descricao}
-        </p>
+        <div>
+          <h3>
+            {titulo}
+          </h3>
+
+          <p>
+            {descricao}
+          </p>
+        </div>
       </div>
 
-      {children}
+      <div className="auditoria-form-section-content">
+        {children}
+      </div>
     </section>
   );
 }
@@ -2692,25 +2455,21 @@ function Campo({
 }: {
   label: string;
   value: string;
-  onChange: (valor: string) => void;
+  onChange: (
+    valor: string
+  ) => void;
   placeholder?: string;
   type?: string;
 }) {
   return (
-    <div className="auditoria-grupo-campo">
-      <label
-        style={
-          estiloLabel
-        }
-      >
+    <div className="auditoria-field">
+      <label>
         {label}
       </label>
 
       <input
         type={type}
-        value={
-          value
-        }
+        value={value}
         placeholder={
           placeholder
         }
@@ -2718,9 +2477,6 @@ function Campo({
           onChange(
             e.target.value
           )
-        }
-        style={
-          estiloInput
         }
       />
     </div>
@@ -2736,43 +2492,29 @@ function SelectCampo({
   label: string;
   value: string;
   options: string[];
-  onChange: (valor: string) => void;
+  onChange: (
+    valor: string
+  ) => void;
 }) {
   return (
-    <div className="auditoria-grupo-campo">
-      <label
-        style={
-          estiloLabel
-        }
-      >
+    <div className="auditoria-field">
+      <label>
         {label}
       </label>
 
       <select
-        value={
-          value
-        }
+        value={value}
         onChange={(e) =>
           onChange(
             e.target.value
           )
         }
-        style={{
-          ...estiloInput,
-
-          cursor:
-            "pointer",
-        }}
       >
         {options.map(
           (option) => (
             <option
-              key={
-                option
-              }
-              value={
-                option
-              }
+              key={option}
+              value={option}
             >
               {option}
             </option>
@@ -2792,23 +2534,19 @@ function CampoTexto({
   label: string;
   placeholder: string;
   value: string;
-  onChange: (valor: string) => void;
+  onChange: (
+    valor: string
+  ) => void;
 }) {
   return (
-    <div className="auditoria-grupo-campo">
-      <label
-        style={
-          estiloLabel
-        }
-      >
+    <div className="auditoria-field">
+      <label>
         {label}
       </label>
 
       <textarea
         rows={4}
-        value={
-          value
-        }
+        value={value}
         placeholder={
           placeholder
         }
@@ -2817,141 +2555,48 @@ function CampoTexto({
             e.target.value
           )
         }
-        style={{
-          ...estiloInput,
-
-          height:
-            "auto",
-
-          minHeight:
-            100,
-
-          padding:
-            "12px 13px",
-
-          resize:
-            "vertical",
-
-          lineHeight:
-            1.5,
-        }}
       />
     </div>
   );
 }
 
-function EstadoVazio({
-  mobile = false,
-}: {
-  mobile?: boolean;
-}) {
+function EstadoCarregando() {
   return (
-    <div
-      style={{
-        width: "100%",
+    <div className="auditoria-empty">
+      <div className="auditoria-loading-icon">
+        <ClipboardList
+          size={24}
+        />
+      </div>
 
-        minWidth: 0,
+      <strong>
+        Carregando auditorias...
+      </strong>
 
-        minHeight:
-          mobile
-            ? 210
-            : 250,
+      <span>
+        Aguarde enquanto os registros
+        são consultados.
+      </span>
+    </div>
+  );
+}
 
-        display: "flex",
-
-        flexDirection:
-          "column",
-
-        alignItems:
-          "center",
-
-        justifyContent:
-          "center",
-
-        padding: mobile
-          ? "26px 16px"
-          : 30,
-
-        boxSizing:
-          "border-box",
-
-        border:
-          "1px dashed #CBD5E1",
-
-        borderRadius:
-          14,
-
-        textAlign:
-          "center",
-      }}
-    >
-      <div
-        style={{
-          width: 53,
-
-          height: 53,
-
-          display: "flex",
-
-          alignItems:
-            "center",
-
-          justifyContent:
-            "center",
-
-          marginBottom:
-            13,
-
-          borderRadius:
-            14,
-
-          background:
-            "#EFF6FF",
-
-          color:
-            "#2563EB",
-        }}
-      >
+function EstadoVazio() {
+  return (
+    <div className="auditoria-empty">
+      <div className="auditoria-empty-icon">
         <ClipboardList
           size={25}
         />
       </div>
 
-      <strong
-        style={{
-          color:
-            "#0F172A",
-
-          fontSize:
-            14,
-
-          lineHeight:
-            1.4,
-        }}
-      >
+      <strong>
         Nenhuma auditoria encontrada
       </strong>
 
-      <span
-        style={{
-          marginTop:
-            5,
-
-          maxWidth:
-            340,
-
-          color:
-            "#94A3B8",
-
-          fontSize:
-            12,
-
-          lineHeight:
-            1.5,
-        }}
-      >
+      <span>
         Registre uma nova auditoria ou
-        altere os filtros.
+        altere os filtros aplicados.
       </span>
     </div>
   );
@@ -2970,29 +2615,8 @@ function Th({
   return (
     <th
       style={{
-        padding:
-          "15px 18px",
-
         textAlign:
           align,
-
-        color:
-          "#64748B",
-
-        fontSize:
-          10,
-
-        fontWeight:
-          800,
-
-        textTransform:
-          "uppercase",
-
-        letterSpacing:
-          ".5px",
-
-        whiteSpace:
-          "nowrap",
       }}
     >
       {children}
@@ -3013,30 +2637,14 @@ function Td({
   return (
     <td
       style={{
-        padding:
-          18,
-
         textAlign:
           align,
-
-        verticalAlign:
-          "middle",
-
-        color:
-          "#475569",
-
-        fontSize:
-          12,
       }}
     >
       {children}
     </td>
   );
 }
-
-/*
- * REGRAS
- */
 
 function limitarPercentual(
   valor: number
@@ -3060,7 +2668,7 @@ function limitarPercentual(
 
 function obterClassificacao(
   conformidade: number
-) {
+): ClassificacaoAuditoria {
   if (
     conformidade >=
     90
@@ -3185,607 +2793,1570 @@ function dataHoje() {
   return `${ano}-${mes}-${dia}`;
 }
 
-/*
- * ESTILOS
- */
+const estilos = `
+  .auditoria-page {
+    width: 100%;
+    min-width: 0;
+    padding: 32px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
 
-const estiloLabel = {
-  color:
-    "#334155",
+  .auditoria-btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
 
-  fontSize:
-    13,
+  .auditoria-error {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding: 13px 15px;
+    box-sizing: border-box;
+    border: 1px solid #FECACA;
+    border-radius: 12px;
+    background: #FEF2F2;
+    color: #B91C1C;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.5;
+  }
 
-  fontWeight:
-    650,
-};
+  .auditoria-error-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+  }
 
-const estiloInput = {
-  width: "100%",
+  .auditoria-error-main svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
 
-  minWidth: 0,
+  .auditoria-error > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 2px;
+    border: none;
+    background: transparent;
+    color: #B91C1C;
+    cursor: pointer;
+  }
 
-  height: 46,
+  .auditoria-hero {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 28px;
+    margin-bottom: 22px;
+    padding: 28px 30px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0F172A 0%, #172554 100%);
+    color: #FFFFFF;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, .14);
+    overflow: hidden;
+  }
 
-  padding:
-    "0 13px",
+  .auditoria-hero-copy {
+    min-width: 0;
+  }
 
-  boxSizing:
-    "border-box" as const,
+  .auditoria-eyebrow,
+  .auditoria-panel-kicker,
+  .auditoria-drawer-kicker {
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+  }
 
-  border:
-    "1px solid #CBD5E1",
+  .auditoria-eyebrow {
+    color: #93C5FD;
+  }
 
-  borderRadius:
-    11,
+  .auditoria-hero h2 {
+    max-width: 760px;
+    margin: 8px 0 0;
+    color: #FFFFFF;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 850;
+    letter-spacing: -.3px;
+  }
 
-  background:
-    "#FFFFFF",
+  .auditoria-hero-copy > p {
+    max-width: 800px;
+    margin: 10px 0 0;
+    color: #CBD5E1;
+    font-size: 12px;
+    line-height: 1.65;
+  }
 
-  color:
-    "#0F172A",
+  .auditoria-flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    min-width: 0;
+  }
 
-  fontFamily:
-    "inherit",
+  .auditoria-flow-step {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
 
-  fontSize:
-    13,
+  .auditoria-flow-step > span {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(147, 197, 253, .28);
+    border-radius: 8px;
+    background: rgba(37, 99, 235, .15);
+    color: #BFDBFE;
+    font-size: 9px;
+    font-weight: 850;
+  }
 
-  outline:
-    "none",
-};
+  .auditoria-flow-step div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
 
-const estiloSelect = {
-  width: "100%",
+  .auditoria-flow-step strong {
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 750;
+  }
 
-  minWidth: 0,
+  .auditoria-flow-step small {
+    color: #94A3B8;
+    font-size: 9px;
+    white-space: nowrap;
+  }
 
-  height: 44,
+  .auditoria-flow-arrow {
+    color: #475569;
+    flex-shrink: 0;
+  }
 
-  padding:
-    "0 12px",
+  .auditoria-hero-side {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid rgba(148, 163, 184, .18);
+    border-radius: 15px;
+    background: rgba(15, 23, 42, .36);
+  }
 
-  boxSizing:
-    "border-box" as const,
+  .auditoria-hero-side-label {
+    color: #94A3B8;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
 
-  border:
-    "1px solid #CBD5E1",
+  .auditoria-hero-percent {
+    margin-top: 8px;
+    font-size: 38px;
+    line-height: 1;
+    font-weight: 900;
+  }
 
-  borderRadius:
-    10,
+  .auditoria-hero-side-text {
+    margin-top: 6px;
+    color: #CBD5E1;
+    font-size: 10px;
+    line-height: 1.5;
+  }
 
-  background:
-    "#FFFFFF",
+  .auditoria-hero-progress,
+  .auditoria-mini-track,
+  .auditoria-mobile-track,
+  .auditoria-result-track {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #E2E8F0;
+  }
 
-  color:
-    "#475569",
+  .auditoria-hero-progress {
+    height: 7px;
+    margin-top: 15px;
+    background: rgba(148, 163, 184, .2);
+  }
 
-  fontFamily:
-    "inherit",
+  .auditoria-hero-progress > div {
+    height: 100%;
+    border-radius: inherit;
+    background: #60A5FA;
+  }
 
-  fontSize:
-    11,
+  .auditoria-hero-mini {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(148, 163, 184, .15);
+  }
 
-  fontWeight:
-    600,
+  .auditoria-hero-mini span {
+    color: #94A3B8;
+    font-size: 10px;
+  }
 
-  outline:
-    "none",
+  .auditoria-hero-mini strong {
+    font-size: 15px;
+    font-weight: 850;
+  }
 
-  cursor:
-    "pointer",
-};
+  .auditoria-metrics {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+  }
 
-const botaoAcao = {
-  width: 36,
+  .auditoria-metrics-medium {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-  height: 36,
+  .auditoria-metric-card {
+    position: relative;
+    min-width: 0;
+    min-height: 126px;
+    display: flex;
+    gap: 12px;
+    padding: 18px;
+    box-sizing: border-box;
+    border: 1px solid #E2E8F0;
+    border-radius: 15px;
+    background: #FFFFFF;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, .035);
+    overflow: hidden;
+  }
 
-  display:
-    "flex",
+  .auditoria-metric-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+  }
 
-  alignItems:
-    "center",
+  .auditoria-metric-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
 
-  justifyContent:
-    "center",
+  .auditoria-metric-main > span {
+    color: #64748B;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
 
-  flexShrink:
-    0,
+  .auditoria-metric-main > strong {
+    margin-top: 4px;
+    color: #0F172A;
+    font-size: 23px;
+    line-height: 1.1;
+    font-weight: 850;
+  }
 
-  padding: 0,
+  .auditoria-metric-main > small {
+    margin-top: 6px;
+    color: #94A3B8;
+    font-size: 9px;
+    line-height: 1.4;
+  }
 
-  border:
-    "none",
+  .auditoria-metric-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    opacity: .85;
+  }
 
-  borderRadius:
-    9,
+  .auditoria-insights {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 18px;
+  }
 
-  cursor:
-    "pointer",
-};
+  .auditoria-insights-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
-const botaoFechar = {
-  width: 38,
+  .auditoria-panel {
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid #E2E8F0;
+    border-radius: 17px;
+    background: #FFFFFF;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, .035);
+  }
 
-  height: 38,
+  .auditoria-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
 
-  display:
-    "flex",
+  .auditoria-panel-kicker {
+    color: #64748B;
+  }
 
-  alignItems:
-    "center",
+  .auditoria-panel-header h3,
+  .auditoria-history-head h2 {
+    margin: 5px 0 0;
+    color: #0F172A;
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 820;
+  }
 
-  justifyContent:
-    "center",
+  .auditoria-panel-header p,
+  .auditoria-history-head p {
+    margin: 5px 0 0;
+    color: #94A3B8;
+    font-size: 10px;
+    line-height: 1.5;
+  }
 
-  flexShrink:
-    0,
+  .auditoria-panel-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+  }
 
-  padding: 0,
+  .auditoria-panel-icon-green {
+    background: #F0FDF4;
+    color: #16A34A;
+  }
 
-  border:
-    "1px solid #E2E8F0",
+  .auditoria-panel-icon-red {
+    background: #FEF2F2;
+    color: #DC2626;
+  }
 
-  borderRadius:
-    10,
+  .auditoria-distribution {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
 
-  background:
-    "#FFFFFF",
+  .auditoria-distribution-item {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #F8FAFC;
+  }
 
-  color:
-    "#64748B",
+  .auditoria-distribution-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
 
-  cursor:
-    "pointer",
-};
+  .auditoria-distribution-head > div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
 
-const estilosResponsivos = `
+  .auditoria-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    border-radius: 999px;
+  }
+
+  .auditoria-distribution-head strong {
+    color: #334155;
+    font-size: 10px;
+    font-weight: 750;
+  }
+
+  .auditoria-distribution-head b {
+    color: #0F172A;
+    font-size: 15px;
+    font-weight: 850;
+  }
+
+  .auditoria-distribution-track {
+    width: 100%;
+    height: 6px;
+    margin-top: 12px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #E2E8F0;
+  }
+
+  .auditoria-distribution-track > div {
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  .auditoria-distribution-item small {
+    display: block;
+    margin-top: 7px;
+    color: #94A3B8;
+    font-size: 9px;
+  }
+
+  .auditoria-priority-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .auditoria-priority {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #F8FAFC;
+  }
+
+  .auditoria-priority-number {
+    min-width: 34px;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 900;
+  }
+
+  .auditoria-priority > div:last-child {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .auditoria-priority strong {
+    color: #334155;
+    font-size: 10px;
+    font-weight: 750;
+  }
+
+  .auditoria-priority span {
+    color: #94A3B8;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+
+  .auditoria-history {
+    width: 100%;
+    min-width: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    border: 1px solid #E2E8F0;
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, .04);
+    overflow: hidden;
+  }
+
+  .auditoria-history-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .auditoria-history-summary {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 10px;
+    border: 1px solid #BBF7D0;
+    border-radius: 9px;
+    background: #F0FDF4;
+    color: #15803D;
+    font-size: 10px;
+    font-weight: 750;
+    white-space: nowrap;
+  }
+
+  .auditoria-filter-box {
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px solid #E2E8F0;
+    border-radius: 13px;
+    background: #F8FAFC;
+  }
+
+  .auditoria-filter-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .auditoria-filter-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 750;
+  }
+
+  .auditoria-clear-filter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #2563EB;
+    font-size: 10px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .auditoria-filter-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 2fr) repeat(2, minmax(170px, 1fr));
+    gap: 10px;
+  }
+
+  .auditoria-search {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: #94A3B8;
+  }
+
+  .auditoria-search input {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #0F172A;
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  .auditoria-select {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 11px;
+    box-sizing: border-box;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: #475569;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 650;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .auditoria-filter-count {
+    margin-top: 10px;
+    color: #64748B;
+    font-size: 10px;
+  }
+
+  .auditoria-filter-count strong {
+    color: #0F172A;
+  }
+
+  .auditoria-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid #E2E8F0;
+    border-radius: 13px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .auditoria-table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+  }
+
+  .auditoria-table thead tr {
+    background: #F8FAFC;
+  }
+
+  .auditoria-table th {
+    padding: 13px 15px;
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+
+  .auditoria-table td {
+    padding: 16px 15px;
+    vertical-align: middle;
+    color: #475569;
+    font-size: 11px;
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .auditoria-table-row {
+    background: #FFFFFF;
+    transition: background .15s ease;
+  }
+
+  .auditoria-table-row:hover {
+    background: #FAFCFF;
+  }
+
+  .auditoria-identification {
+    width: 195px;
+    min-width: 195px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .auditoria-identification-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #EFF6FF;
+    color: #2563EB;
+  }
+
+  .auditoria-setor {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    color: #0F172A;
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.35;
+  }
+
+  .auditoria-setor svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .auditoria-setor span {
+    overflow-wrap: anywhere;
+  }
+
+  .auditoria-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+    color: #64748B;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+
+  .auditoria-type-badge {
+    margin-top: 6px;
+  }
+
+  .auditoria-person {
+    width: 135px;
+    min-width: 135px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    color: #475569;
+  }
+
+  .auditoria-person svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #94A3B8;
+  }
+
+  .auditoria-person span {
+    overflow-wrap: anywhere;
+  }
+
+  .auditoria-conformidade-cell {
+    width: 145px;
+    min-width: 145px;
+  }
+
+  .auditoria-conformidade-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+  }
+
+  .auditoria-conformidade-top strong {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .auditoria-mini-track {
+    height: 6px;
+    margin-top: 7px;
+  }
+
+  .auditoria-mini-track > div,
+  .auditoria-mobile-track > div,
+  .auditoria-result-track > div {
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  .auditoria-action-text {
+    width: 200px;
+    max-width: 200px;
+    color: #475569;
+    font-size: 10px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .auditoria-deadline {
+    min-width: 108px;
+  }
+
+  .auditoria-deadline > div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .auditoria-deadline-overdue > div {
+    color: #DC2626;
+    font-weight: 750;
+  }
+
+  .auditoria-deadline small {
+    display: block;
+    margin-top: 4px;
+    color: #DC2626;
+    font-size: 8px;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .auditoria-actions {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    min-width: 76px;
+  }
+
+  .auditoria-icon-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+
+  .auditoria-icon-edit {
+    background: #EFF6FF;
+    color: #2563EB;
+  }
+
+  .auditoria-icon-delete {
+    background: #FEF2F2;
+    color: #DC2626;
+  }
+
+  .auditoria-empty {
+    width: 100%;
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 16px;
+    box-sizing: border-box;
+    border: 1px dashed #CBD5E1;
+    border-radius: 13px;
+    text-align: center;
+  }
+
+  .auditoria-empty-icon,
+  .auditoria-loading-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border-radius: 13px;
+    background: #EFF6FF;
+    color: #2563EB;
+  }
+
+  .auditoria-loading-icon {
+    background: #F8FAFC;
+    color: #64748B;
+  }
+
+  .auditoria-empty strong {
+    color: #0F172A;
+    font-size: 13px;
+  }
+
+  .auditoria-empty span {
+    max-width: 360px;
+    margin-top: 5px;
+    color: #94A3B8;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .auditoria-mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .auditoria-mobile-card {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    background: #FFFFFF;
+  }
+
+  .auditoria-mobile-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .auditoria-mobile-card-setor {
+    color: #0F172A;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .auditoria-mobile-card-date,
+  .auditoria-mobile-auditor {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #64748B;
+    font-size: 10px;
+  }
+
+  .auditoria-mobile-card-date {
+    margin-top: 5px;
+  }
+
+  .auditoria-mobile-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 13px;
+  }
+
+  .auditoria-mobile-score {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 17px;
+  }
+
+  .auditoria-mobile-score > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .auditoria-mobile-score span {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 750;
+    text-transform: uppercase;
+  }
+
+  .auditoria-mobile-score strong {
+    font-size: 24px;
+    font-weight: 900;
+  }
+
+  .auditoria-mobile-track {
+    height: 7px;
+    margin-top: 9px;
+  }
+
+  .auditoria-mobile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  .auditoria-mobile-info {
+    min-width: 0;
+    padding: 11px;
+    border-radius: 10px;
+    background: #F8FAFC;
+  }
+
+  .auditoria-mobile-info span {
+    display: block;
+    color: #94A3B8;
+    font-size: 9px;
+  }
+
+  .auditoria-mobile-info strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .auditoria-mobile-action {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .auditoria-mobile-action span {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .auditoria-mobile-action p {
+    margin: 5px 0 0;
+    color: #475569;
+    font-size: 10px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .auditoria-mobile-overdue {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 11px;
+    padding: 9px 10px;
+    border: 1px solid #FECACA;
+    border-radius: 9px;
+    background: #FEF2F2;
+    color: #B91C1C;
+    font-size: 10px;
+    font-weight: 750;
+  }
+
+  .auditoria-mobile-card-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .auditoria-action-btn {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: none;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .auditoria-edit-btn {
+    background: #EFF6FF;
+    color: #2563EB;
+  }
+
+  .auditoria-delete-btn {
+    background: #FEF2F2;
+    color: #DC2626;
+  }
+
   .auditoria-drawer-overlay {
     position: fixed;
     inset: 0;
-
     display: flex;
     justify-content: flex-end;
-
-    background:
-      rgba(15, 23, 42, .48);
-
-    backdrop-filter:
-      blur(3px);
-
+    background: rgba(15, 23, 42, .5);
+    backdrop-filter: blur(3px);
     z-index: 2000;
   }
 
   .auditoria-drawer {
-    width: 600px;
+    width: 620px;
     max-width: 100%;
-
     height: 100vh;
     height: 100dvh;
-
     display: flex;
     flex-direction: column;
-
     box-sizing: border-box;
-
-    background:
-      #ffffff;
-
-    box-shadow:
-      -16px 0 45px
-      rgba(15, 23, 42, .16);
-
-    overflow:
-      hidden;
+    background: #FFFFFF;
+    box-shadow: -16px 0 45px rgba(15, 23, 42, .16);
+    overflow: hidden;
   }
 
   .auditoria-drawer-header {
-    padding:
-      24px 26px;
-
+    padding: 22px 24px;
     display: flex;
-
-    align-items:
-      flex-start;
-
-    justify-content:
-      space-between;
-
-    gap: 20px;
-
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
     flex-shrink: 0;
-
-    border-bottom:
-      1px solid #e2e8f0;
+    border-bottom: 1px solid #E2E8F0;
   }
 
   .auditoria-drawer-header-main {
     min-width: 0;
-
     display: flex;
-
     gap: 12px;
   }
 
   .auditoria-drawer-icon {
-    width: 44px;
-
-    height: 44px;
-
+    width: 42px;
+    height: 42px;
     display: flex;
-
-    align-items:
-      center;
-
-    justify-content:
-      center;
-
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-
-    border-radius:
-      12px;
-
-    background:
-      #eff6ff;
-
-    color:
-      #2563eb;
+    border-radius: 11px;
+    background: #EFF6FF;
+    color: #2563EB;
   }
 
   .auditoria-drawer-title {
     min-width: 0;
   }
 
+  .auditoria-drawer-kicker {
+    color: #64748B;
+  }
+
   .auditoria-drawer-title h2 {
-    margin: 0;
-
-    color:
-      #0f172a;
-
-    font-size:
-      20px;
-
-    font-weight:
-      800;
-
-    line-height:
-      1.25;
+    margin: 4px 0 0;
+    color: #0F172A;
+    font-size: 19px;
+    font-weight: 850;
+    line-height: 1.25;
   }
 
   .auditoria-drawer-title p {
-    margin:
-      5px 0 0;
+    margin: 5px 0 0;
+    color: #64748B;
+    font-size: 10px;
+    line-height: 1.5;
+  }
 
-    color:
-      #64748b;
-
-    font-size:
-      12px;
-
-    line-height:
-      1.5;
-
-    overflow-wrap:
-      anywhere;
+  .auditoria-drawer-close {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    border: 1px solid #E2E8F0;
+    border-radius: 9px;
+    background: #FFFFFF;
+    color: #64748B;
+    cursor: pointer;
   }
 
   .auditoria-drawer-content {
     flex: 1;
-
     min-height: 0;
+    padding: 20px 24px 28px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    padding:
-      24px 26px;
+  .auditoria-form-section {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 16px;
+    padding: 18px;
+    box-sizing: border-box;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    background: #FFFFFF;
+  }
 
-    box-sizing:
-      border-box;
+  .auditoria-form-section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
 
-    overflow-y:
-      auto;
+  .auditoria-form-section-head > span {
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #EFF6FF;
+    color: #2563EB;
+    font-size: 9px;
+    font-weight: 850;
+  }
 
-    overflow-x:
-      hidden;
+  .auditoria-form-section-head > div {
+    min-width: 0;
+  }
 
-    -webkit-overflow-scrolling:
-      touch;
+  .auditoria-form-section-head h3 {
+    margin: 0;
+    color: #0F172A;
+    font-size: 13px;
+    font-weight: 820;
+  }
+
+  .auditoria-form-section-head p {
+    margin: 3px 0 0;
+    color: #94A3B8;
+    font-size: 9px;
+    line-height: 1.45;
+  }
+
+  .auditoria-form-section-content {
+    min-width: 0;
   }
 
   .auditoria-grid-2 {
-    width: 100%;
-
-    min-width: 0;
-
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
 
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+  .auditoria-field {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 13px;
+  }
 
+  .auditoria-field label {
+    color: #334155;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .auditoria-field input,
+  .auditoria-field select,
+  .auditoria-field textarea {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: #0F172A;
+    font-family: inherit;
+    font-size: 11px;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  .auditoria-field input,
+  .auditoria-field select {
+    height: 43px;
+    padding: 0 12px;
+  }
+
+  .auditoria-field textarea {
+    min-height: 96px;
+    padding: 11px 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .auditoria-field input:focus,
+  .auditoria-field select:focus,
+  .auditoria-field textarea:focus {
+    border-color: #93C5FD;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+  }
+
+  .auditoria-result-box {
+    padding: 15px;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #F8FAFC;
+  }
+
+  .auditoria-result-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
     gap: 14px;
   }
 
-  .auditoria-form-secao {
-    width: 100%;
-
-    min-width: 0;
-
-    margin-bottom:
-      28px;
+  .auditoria-result-label {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .4px;
   }
 
-  .auditoria-form-secao-header {
-    margin-bottom:
-      16px;
+  .auditoria-result-number {
+    margin-top: 3px;
+    color: #0F172A;
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 900;
   }
 
-  .auditoria-form-secao-header h3 {
-    margin: 0;
-
-    color:
-      #0f172a;
-
-    font-size:
-      14px;
-
-    font-weight:
-      800;
+  .auditoria-result-track {
+    height: 8px;
+    margin-top: 12px;
   }
 
-  .auditoria-form-secao-header p {
-    margin:
-      4px 0 0;
-
-    color:
-      #94a3b8;
-
-    font-size:
-      11px;
-
-    line-height:
-      1.5;
-
-    overflow-wrap:
-      anywhere;
+  .auditoria-result-rule {
+    margin-top: 8px;
+    color: #94A3B8;
+    font-size: 8px;
+    line-height: 1.4;
   }
 
-  .auditoria-grupo-campo {
-    width: 100%;
-
-    min-width: 0;
-
+  .auditoria-form-warning {
     display: flex;
-
-    flex-direction:
-      column;
-
-    gap: 8px;
-
-    margin-bottom:
-      16px;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 13px;
+    padding: 11px;
+    border: 1px solid #FED7AA;
+    border-radius: 10px;
+    background: #FFF7ED;
+    color: #C2410C;
   }
 
-  .auditoria-resultado {
-    width: 100%;
+  .auditoria-form-warning svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
 
+  .auditoria-form-warning > div {
     min-width: 0;
-
-    padding: 18px;
-
-    box-sizing:
-      border-box;
-
-    background:
-      #f8fafc;
-
-    border:
-      1px solid #e2e8f0;
-
-    border-radius:
-      13px;
-  }
-
-  .auditoria-resultado-topo {
     display: flex;
-
-    justify-content:
-      space-between;
-
-    align-items:
-      flex-end;
-
-    gap: 16px;
-
-    margin-bottom:
-      12px;
+    flex-direction: column;
+    gap: 3px;
   }
 
-  .auditoria-resultado-label {
-    color:
-      #64748b;
-
-    font-size:
-      10px;
-
-    font-weight:
-      800;
-
-    text-transform:
-      uppercase;
-
-    letter-spacing:
-      .5px;
+  .auditoria-form-warning strong {
+    font-size: 10px;
   }
 
-  .auditoria-resultado-numero {
-    margin-top:
-      4px;
-
-    color:
-      #0f172a;
-
-    font-size:
-      32px;
-
-    font-weight:
-      850;
+  .auditoria-form-warning span {
+    color: #9A3412;
+    font-size: 9px;
+    line-height: 1.45;
   }
 
-  .auditoria-progress {
-    width: 100%;
+  .auditoria-action-summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #DBEAFE;
+    border-radius: 10px;
+    background: #EFF6FF;
+    color: #2563EB;
+  }
 
-    height: 9px;
+  .auditoria-action-summary svg {
+    flex-shrink: 0;
+  }
 
-    overflow:
-      hidden;
+  .auditoria-action-summary > div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
 
-    background:
-      #e2e8f0;
+  .auditoria-action-summary strong {
+    color: #1E3A8A;
+    font-size: 10px;
+  }
 
-    border-radius:
-      999px;
+  .auditoria-action-summary span {
+    color: #475569;
+    font-size: 9px;
   }
 
   .auditoria-drawer-footer {
-    padding:
-      17px 26px;
-
+    padding: 15px 24px;
     display: flex;
-
-    justify-content:
-      flex-end;
-
-    gap: 10px;
-
+    justify-content: flex-end;
+    gap: 9px;
     flex-shrink: 0;
-
-    box-sizing:
-      border-box;
-
-    border-top:
-      1px solid #e2e8f0;
-
-    background:
-      #ffffff;
-
-    padding-bottom:
-      max(
-        17px,
-        env(
-          safe-area-inset-bottom
-        )
-      );
+    box-sizing: border-box;
+    border-top: 1px solid #E2E8F0;
+    background: #FFFFFF;
+    padding-bottom: max(15px, env(safe-area-inset-bottom));
   }
 
-  @media (max-width: 650px) {
+  @media (max-width: 1180px) {
+    .auditoria-metrics-medium .auditoria-metric-card:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .auditoria-filter-grid {
+      grid-template-columns: minmax(0, 1fr) repeat(2, minmax(150px, 190px));
+    }
+  }
+
+  @media (max-width: 980px) {
+    .auditoria-page {
+      padding: 24px 20px 32px;
+    }
+
+    .auditoria-hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .auditoria-hero-side {
+      max-width: none;
+    }
+
+    .auditoria-flow {
+      flex-wrap: wrap;
+    }
+
+    .auditoria-flow-arrow {
+      display: none;
+    }
+
+    .auditoria-filter-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .auditoria-search {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .auditoria-page {
+      padding: 18px 14px 28px;
+    }
+
+    .auditoria-hero {
+      gap: 20px;
+      padding: 22px 18px;
+      border-radius: 16px;
+    }
+
+    .auditoria-hero h2 {
+      font-size: 20px;
+    }
+
+    .auditoria-flow {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .auditoria-flow-step {
+      padding: 9px;
+      border: 1px solid rgba(148, 163, 184, .14);
+      border-radius: 10px;
+      background: rgba(15, 23, 42, .2);
+    }
+
+    .auditoria-flow-step small {
+      white-space: normal;
+    }
+
+    .auditoria-metrics,
+    .auditoria-metrics-medium {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .auditoria-metrics .auditoria-metric-card:last-child,
+    .auditoria-metrics-medium .auditoria-metric-card:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .auditoria-metric-card {
+      min-height: 118px;
+      padding: 15px;
+    }
+
+    .auditoria-metric-main > strong {
+      font-size: 21px;
+    }
+
+    .auditoria-panel,
+    .auditoria-history {
+      padding: 16px;
+      border-radius: 14px;
+    }
+
+    .auditoria-distribution,
+    .auditoria-priority-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .auditoria-history-head {
+      flex-direction: column;
+    }
+
+    .auditoria-filter-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .auditoria-search {
+      grid-column: auto;
+    }
+
+    .auditoria-filter-head {
+      align-items: flex-start;
+    }
+
+    .auditoria-mobile-card {
+      padding: 14px;
+    }
+
     .auditoria-drawer {
       width: 100%;
-
       max-width: none;
     }
 
     .auditoria-drawer-header {
-      padding:
-        18px 16px;
-
-      gap: 12px;
-    }
-
-    .auditoria-drawer-icon {
-      width: 40px;
-
-      height: 40px;
-
-      border-radius:
-        11px;
-    }
-
-    .auditoria-drawer-title h2 {
-      font-size:
-        18px;
-    }
-
-    .auditoria-drawer-title p {
-      font-size:
-        11px;
+      padding: 18px 16px;
     }
 
     .auditoria-drawer-content {
-      padding:
-        20px 16px 26px;
+      padding: 16px 14px 22px;
+    }
+
+    .auditoria-form-section {
+      padding: 15px;
     }
 
     .auditoria-grid-2 {
-      grid-template-columns:
-        minmax(0, 1fr);
-
+      grid-template-columns: minmax(0, 1fr);
       gap: 0;
     }
 
     .auditoria-drawer-footer {
-      padding:
-        14px 16px;
-
-      padding-bottom:
-        max(
-          14px,
-          env(
-            safe-area-inset-bottom
-          )
-        );
+      padding: 13px 14px;
+      padding-bottom: max(13px, env(safe-area-inset-bottom));
     }
 
     .auditoria-drawer-footer > * {
-      flex:
-        1 1 0;
+      flex: 1 1 0;
     }
   }
 
   @media (max-width: 430px) {
-    .auditoria-drawer-header {
-      padding:
-        16px 14px;
+    .auditoria-metrics,
+    .auditoria-metrics-medium {
+      grid-template-columns: minmax(0, 1fr);
     }
 
-    .auditoria-drawer-content {
-      padding:
-        18px 14px 24px;
+    .auditoria-metrics .auditoria-metric-card:last-child,
+    .auditoria-metrics-medium .auditoria-metric-card:last-child {
+      grid-column: auto;
     }
 
-    .auditoria-resultado {
-      padding:
-        15px;
+    .auditoria-flow {
+      grid-template-columns: minmax(0, 1fr);
     }
 
-    .auditoria-resultado-topo {
-      flex-direction:
-        column;
+    .auditoria-mobile-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
 
-      align-items:
-        flex-start;
-
-      gap: 10px;
+    .auditoria-mobile-card-actions {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .auditoria-drawer-footer {
-      flex-direction:
-        column;
-
-      align-items:
-        stretch;
-
-      padding:
-        12px 14px;
-
-      padding-bottom:
-        max(
-          12px,
-          env(
-            safe-area-inset-bottom
-          )
-        );
+      flex-direction: column;
+      align-items: stretch;
     }
 
     .auditoria-drawer-footer > * {

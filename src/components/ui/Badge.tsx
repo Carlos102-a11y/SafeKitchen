@@ -58,17 +58,31 @@ export default function Badge({
   return (
     <span
       style={{
+        maxWidth: "100%",
+
+        minHeight: 26,
+
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "6px 11px",
-        borderRadius: "999px",
+
+        padding: "5px 10px",
+
+        boxSizing: "border-box",
+
+        borderRadius: 999,
+
         background: variante.background,
+
         color: variante.color,
-        fontSize: "12px",
-        fontWeight: 700,
-        lineHeight: 1,
-        whiteSpace: "nowrap",
+
+        fontSize: 11,
+        fontWeight: 750,
+        lineHeight: 1.3,
+
+        textAlign: "center",
+
+        overflowWrap: "anywhere",
       }}
     >
       {children ?? text}

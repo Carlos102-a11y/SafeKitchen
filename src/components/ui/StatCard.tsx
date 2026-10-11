@@ -24,15 +24,19 @@ export default function StatCard({
       style={{
         position: "relative",
 
+        width: "100%",
+        minWidth: 0,
         minHeight: 132,
 
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
 
-        gap: 24,
+        gap: 16,
 
-        padding: "22px 22px 22px 24px",
+        padding: "21px 20px 21px 23px",
+
+        boxSizing: "border-box",
 
         background: colors.surface,
 
@@ -44,10 +48,31 @@ export default function StatCard({
         overflow: "hidden",
       }}
     >
+      {/* DESTAQUE LATERAL */}
+
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+
+          top: 18,
+          bottom: 18,
+          left: 0,
+
+          width: 4,
+
+          borderRadius: "0 6px 6px 0",
+
+          background: color,
+        }}
+      />
+
       {/* CONTEÚDO */}
+
       <div
         style={{
-          flex: 1,
+          flex: "1 1 auto",
+
           minWidth: 0,
 
           display: "flex",
@@ -64,11 +89,10 @@ export default function StatCard({
             color: colors.textLight,
 
             fontSize: 13,
-            fontWeight: 600,
-
+            fontWeight: 650,
             lineHeight: 1.4,
 
-            maxWidth: 170,
+            overflowWrap: "anywhere",
           }}
         >
           {title}
@@ -76,14 +100,24 @@ export default function StatCard({
 
         <strong
           style={{
+            display: "block",
+
+            minWidth: 0,
+
             margin: 0,
 
             color: colors.title,
 
-            fontSize: 32,
+            fontSize:
+              "clamp(25px, 2.2vw, 32px)",
+
             fontWeight: 800,
 
-            lineHeight: 1,
+            lineHeight: 1.05,
+
+            letterSpacing: "-0.5px",
+
+            overflowWrap: "anywhere",
           }}
         >
           {value}
@@ -91,12 +125,14 @@ export default function StatCard({
       </div>
 
       {/* ÍCONE */}
+
       <div
         style={{
-          width: 52,
-          height: 52,
+          width: 50,
+          height: 50,
 
-          minWidth: 52,
+          minWidth: 50,
+
           flexShrink: 0,
 
           display: "flex",
@@ -109,7 +145,8 @@ export default function StatCard({
 
           color: "#FFFFFF",
 
-          boxShadow: `0 8px 18px ${color}30`,
+          boxShadow:
+            `0 8px 18px ${color}30`,
         }}
       >
         {icon}
