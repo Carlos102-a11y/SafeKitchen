@@ -746,7 +746,7 @@ export default function Dashboard() {
             color: erroBanco
               ? "#B91C1C"
               : "#1D4ED8",
-            fontSize: 11,
+            fontSize: "calc(11px * var(--sk-text-scale, 1))",
             fontWeight: 650,
             lineHeight: 1.5,
           }}
@@ -934,7 +934,7 @@ export default function Dashboard() {
                   <strong
                     style={{
                       color: "#0F172A",
-                      fontSize: mobile ? 24 : 28,
+                      fontSize: mobile ? "calc(24px * var(--sk-text-scale, 1))" : "calc(28px * var(--sk-text-scale, 1))",
                       fontWeight: 850,
                       lineHeight: 1,
                     }}
@@ -946,7 +946,7 @@ export default function Dashboard() {
                     style={{
                       marginTop: 5,
                       color: "#94A3B8",
-                      fontSize: 9,
+                      fontSize: "calc(9px * var(--sk-text-scale, 1))",
                       fontWeight: 750,
                       letterSpacing: ".6px",
                       textTransform: "uppercase",
@@ -1190,7 +1190,7 @@ export default function Dashboard() {
                 style={{
                   marginTop: 12,
                   color: "#0F172A",
-                  fontSize: 13,
+                  fontSize: "calc(13px * var(--sk-text-scale, 1))",
                 }}
               >
                 Nenhum alerta prioritário
@@ -1201,7 +1201,7 @@ export default function Dashboard() {
                   marginTop: 4,
                   maxWidth: 290,
                   color: "#94A3B8",
-                  fontSize: 10,
+                  fontSize: "calc(10px * var(--sk-text-scale, 1))",
                   lineHeight: 1.6,
                 }}
               >
@@ -1329,7 +1329,7 @@ export default function Dashboard() {
                       <strong
                         style={{
                           color: "#0F172A",
-                          fontSize: 12,
+                          fontSize: "calc(12px * var(--sk-text-scale, 1))",
                           overflowWrap: "anywhere",
                         }}
                       >
@@ -1340,7 +1340,7 @@ export default function Dashboard() {
                         style={{
                           marginTop: 3,
                           color: "#94A3B8",
-                          fontSize: 10,
+                          fontSize: "calc(10px * var(--sk-text-scale, 1))",
                         }}
                       >
                         {risco.categoria}
@@ -1351,7 +1351,7 @@ export default function Dashboard() {
                       style={{
                         minWidth: 0,
                         color: "#475569",
-                        fontSize: 12,
+                        fontSize: "calc(12px * var(--sk-text-scale, 1))",
                         lineHeight: 1.5,
                         overflowWrap: "anywhere",
                       }}
@@ -1623,7 +1623,7 @@ function SectionTitle({
       <span
         style={{
           color: "#2563EB",
-          fontSize: 9,
+          fontSize: "calc(9px * var(--sk-text-scale, 1))",
           fontWeight: 850,
           letterSpacing: ".85px",
           textTransform: "uppercase",
@@ -1636,7 +1636,7 @@ function SectionTitle({
         style={{
           margin: "6px 0 0",
           color: "#0F172A",
-          fontSize: mobile ? 17 : 19,
+          fontSize: mobile ? "calc(17px * var(--sk-text-scale, 1))" : "calc(19px * var(--sk-text-scale, 1))",
           fontWeight: 850,
           letterSpacing: "-.35px",
           lineHeight: 1.25,
@@ -1651,7 +1651,7 @@ function SectionTitle({
           margin: "5px 0 0",
           maxWidth: 700,
           color: "#64748B",
-          fontSize: 10,
+          fontSize: "calc(10px * var(--sk-text-scale, 1))",
           lineHeight: 1.55,
           overflowWrap: "anywhere",
         }}
@@ -1702,7 +1702,7 @@ function Painel({
           style={{
             margin: 0,
             color: "#0F172A",
-            fontSize: mobile ? 14 : 15,
+            fontSize: mobile ? "calc(14px * var(--sk-text-scale, 1))" : "calc(15px * var(--sk-text-scale, 1))",
             fontWeight: 820,
             lineHeight: 1.3,
             letterSpacing: "-.2px",
@@ -1717,7 +1717,7 @@ function Painel({
             style={{
               margin: "5px 0 0",
               color: "#94A3B8",
-              fontSize: 10,
+              fontSize: "calc(10px * var(--sk-text-scale, 1))",
               lineHeight: 1.5,
               overflowWrap: "anywhere",
             }}
@@ -1804,7 +1804,7 @@ function MiniCard({
           <span
             style={{
               color: "#64748B",
-              fontSize: 9,
+              fontSize: "calc(9px * var(--sk-text-scale, 1))",
               fontWeight: 850,
               letterSpacing: ".55px",
               textTransform: "uppercase",
@@ -1817,7 +1817,7 @@ function MiniCard({
             style={{
               flexShrink: 0,
               color: "#0F172A",
-              fontSize: 19,
+              fontSize: "calc(19px * var(--sk-text-scale, 1))",
               fontWeight: 850,
             }}
           >
@@ -1829,7 +1829,7 @@ function MiniCard({
           style={{
             marginTop: 3,
             color: "#94A3B8",
-            fontSize: 9,
+            fontSize: "calc(9px * var(--sk-text-scale, 1))",
             lineHeight: 1.4,
             whiteSpace: mobile
               ? "normal"
@@ -1875,7 +1875,7 @@ function Legenda({
           alignItems: "center",
           gap: 8,
           color: "#475569",
-          fontSize: 10,
+          fontSize: "calc(10px * var(--sk-text-scale, 1))",
           fontWeight: 650,
         }}
       >
@@ -1906,7 +1906,7 @@ function Legenda({
           borderRadius: 7,
           background: "#FFFFFF",
           color: "#0F172A",
-          fontSize: 11,
+          fontSize: "calc(11px * var(--sk-text-scale, 1))",
           textAlign: "center",
         }}
       >
@@ -1944,7 +1944,7 @@ function ResumoLinha({
           alignItems: "center",
           gap: 9,
           color: "#475569",
-          fontSize: 11,
+          fontSize: "calc(11px * var(--sk-text-scale, 1))",
           lineHeight: 1.4,
         }}
       >
@@ -1976,7 +1976,7 @@ function ResumoLinha({
           borderRadius: 8,
           background: "#F8FAFC",
           color: "#0F172A",
-          fontSize: 11,
+          fontSize: "calc(11px * var(--sk-text-scale, 1))",
           textAlign: "center",
         }}
       >
@@ -2009,7 +2009,7 @@ function IndicadorProgresso({
           gap: 12,
           marginBottom: 8,
           color: "#475569",
-          fontSize: 11,
+          fontSize: "calc(11px * var(--sk-text-scale, 1))",
         }}
       >
         <span>{titulo}</span>
@@ -2018,7 +2018,7 @@ function IndicadorProgresso({
           style={{
             flexShrink: 0,
             color: cor,
-            fontSize: 12,
+            fontSize: "calc(12px * var(--sk-text-scale, 1))",
           }}
         >
           {valor}%
@@ -2067,7 +2067,7 @@ function DadoPequeno({
       <div
         style={{
           color: "#64748B",
-          fontSize: 9,
+          fontSize: "calc(9px * var(--sk-text-scale, 1))",
           fontWeight: 700,
           lineHeight: 1.4,
           overflowWrap: "anywhere",
@@ -2081,7 +2081,7 @@ function DadoPequeno({
           display: "block",
           marginTop: 6,
           color: "#0F172A",
-          fontSize: 21,
+          fontSize: "calc(21px * var(--sk-text-scale, 1))",
           fontWeight: 850,
         }}
       >
@@ -2130,7 +2130,7 @@ function DadoDestaque({
           display: "block",
           marginTop: 10,
           color: "#0F172A",
-          fontSize: 21,
+          fontSize: "calc(21px * var(--sk-text-scale, 1))",
           fontWeight: 850,
         }}
       >
@@ -2141,7 +2141,7 @@ function DadoDestaque({
         style={{
           marginTop: 3,
           color: "#64748B",
-          fontSize: 9,
+          fontSize: "calc(9px * var(--sk-text-scale, 1))",
           lineHeight: 1.4,
           overflowWrap: "anywhere",
         }}
@@ -2208,7 +2208,7 @@ function Alerta({
             color: critico
               ? "#991B1B"
               : "#92400E",
-            fontSize: 10,
+            fontSize: "calc(10px * var(--sk-text-scale, 1))",
             overflowWrap: "anywhere",
           }}
         >
@@ -2219,7 +2219,7 @@ function Alerta({
           style={{
             marginTop: 3,
             color: "#64748B",
-            fontSize: 9,
+            fontSize: "calc(9px * var(--sk-text-scale, 1))",
             lineHeight: 1.55,
             overflowWrap: "anywhere",
           }}
@@ -2260,7 +2260,7 @@ function Atalho({
         color: "#334155",
         cursor: "pointer",
         fontWeight: 700,
-        fontSize: 10,
+        fontSize: "calc(10px * var(--sk-text-scale, 1))",
       }}
     >
       <span
@@ -2343,7 +2343,7 @@ function EstadoVazio({
         style={{
           marginTop: 10,
           maxWidth: 300,
-          fontSize: 10,
+          fontSize: "calc(10px * var(--sk-text-scale, 1))",
           lineHeight: 1.55,
         }}
       >
@@ -2554,7 +2554,7 @@ const botaoLink = {
   color:
     "#2563EB",
 
-  fontSize: 11,
+  fontSize: "calc(11px * var(--sk-text-scale, 1))",
 
   fontWeight: 700,
 
