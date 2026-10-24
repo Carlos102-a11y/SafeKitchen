@@ -26,7 +26,10 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 import PageHeader from "../components/ui/PageHeader";
 import StatCard from "../components/ui/StatCard";
@@ -36,6 +39,10 @@ import Badge from "../components/ui/Badge";
 import type { PgrItem } from "../models/Pgr";
 
 import { supabase } from "../lib/supabase";
+
+import { listarFuncionarios } from "../services/funcionariosService";
+
+import type { Funcionario } from "../models/Funcionario";
 
 type TipoOcorrencia =
   | "Acidente"
@@ -65,6 +72,7 @@ interface AcidenteItem {
   hora: string;
 
   funcionario: string;
+  funcionarioId: number | null;
   setor: string;
 
   tipo: TipoOcorrencia;
@@ -88,6 +96,7 @@ interface AcidenteRow {
   hora: string;
 
   funcionario: string;
+  funcionario_id: number | null;
   setor: string;
 
   tipo: TipoOcorrencia;
@@ -140,6 +149,7 @@ const CAMPOS_ACIDENTES = `
   data,
   hora,
   funcionario,
+  funcionario_id,
   setor,
   tipo,
   gravidade,
@@ -175,6 +185,7 @@ function criarRegistroInicial(): AcidenteItem {
     hora: "",
 
     funcionario: "",
+    funcionarioId: null,
     setor: "",
 
     tipo: "Acidente",
@@ -212,6 +223,10 @@ function converterAcidente(
 
     funcionario:
       linha.funcionario,
+
+    funcionarioId:
+      linha.funcionario_id ??
+      null,
 
     setor:
       linha.setor,
@@ -310,6 +325,9 @@ function criarPayloadAcidente(
     funcionario:
       registro.funcionario.trim(),
 
+    funcionario_id:
+      registro.funcionarioId,
+
     setor:
       registro.setor.trim(),
 
@@ -383,6 +401,11 @@ function useViewportWidth() {
 export default function Acidentes() {
   const navigate =
     useNavigate();
+
+    const [
+      searchParams,
+      setSearchParams,
+    ] = useSearchParams();
 
   const largura =
     useViewportWidth();
@@ -484,6 +507,74 @@ export default function Acidentes() {
     useState<AcidenteItem>(
       criarRegistroInicial()
     );
+
+    const [
+      funcionarios,
+      setFuncionarios,
+    ] = useState<Funcionario[]>([]);
+  
+    useEffect(() => {
+      let componenteAtivo = true;
+  
+      async function carregarFuncionarios() {
+        const resultado =
+          await listarFuncionarios();
+  
+        if (
+          componenteAtivo &&
+          resultado.data
+        ) {
+          setFuncionarios(
+            resultado.data
+          );
+        }
+      }
+  
+      void carregarFuncionarios();
+  
+      return () => {
+        componenteAtivo = false;
+      };
+    }, []);
+
+    useEffect(() => {
+      const alvo =
+        searchParams.get(
+          "ocorrencia"
+        );
+  
+      if (
+        !alvo ||
+        carregando
+      ) {
+        return;
+      }
+  
+      const registro =
+        acidentes.find(
+          (item) =>
+            item.id ===
+            Number(alvo)
+        );
+  
+      if (registro) {
+        editarRegistro(
+          registro
+        );
+      }
+  
+      setSearchParams(
+        {},
+        {
+          replace: true,
+        }
+      );
+    }, [
+      searchParams,
+      setSearchParams,
+      carregando,
+      acidentes,
+    ]);
 
   /*
    * CARREGAR DADOS DO SUPABASE
@@ -1175,7 +1266,7 @@ export default function Acidentes() {
           );
 
           setErroBanco(
-            "Não foi possível atualizar a ocorrência."
+          "Não foi possível atualizar a ocorrência."
           );
 
           return;
@@ -1227,7 +1318,7 @@ export default function Acidentes() {
           );
 
           setErroBanco(
-            "Não foi possível registrar a ocorrência."
+         "Não foi possível registrar a ocorrência."
           );
 
           return;
@@ -1389,6 +1480,48 @@ export default function Acidentes() {
           id
       ) ??
       null
+    );
+  }
+
+  function selecionarFuncionario(
+    valor: string
+  ) {
+    if (!valor) {
+      setFormulario(
+        (atual) => ({
+          ...atual,
+
+          funcionarioId: null,
+        })
+      );
+
+      return;
+    }
+
+    const id = Number(valor);
+
+    const cadastrado =
+      funcionarios.find(
+        (item) => item.id === id
+      );
+
+    if (!cadastrado) {
+      return;
+    }
+
+    setFormulario(
+      (atual) => ({
+        ...atual,
+
+        funcionarioId: id,
+
+        funcionario:
+          cadastrado.nome,
+
+        setor:
+          cadastrado.setor ||
+          atual.setor,
+      })
     );
   }
 
@@ -3337,7 +3470,7 @@ export default function Acidentes() {
                                 7,
 
                               minWidth:
-                                122,
+                                165,
                             }}
                           >
                             {risco && (
@@ -3361,6 +3494,34 @@ export default function Acidentes() {
                                 }}
                               >
                                 <ExternalLink
+                                  size={
+                                    16
+                                  }
+                                />
+                              </button>
+                            )}
+
+{registro.afastamento && (
+                              <button
+                                type="button"
+                                title="Ver afastamentos"
+                                aria-label="Ver afastamentos"
+                                onClick={() =>
+                                  navigate(
+                                    `/afastamentos?acidente=${registro.id}`
+                                  )
+                                }
+                                style={{
+                                  ...botaoAcao,
+
+                                  background:
+                                    "#F5F3FF",
+
+                                  color:
+                                    "#7C3AED",
+                                }}
+                              >
+                                <Clock3
                                   size={
                                     16
                                   }
@@ -3495,6 +3656,30 @@ export default function Acidentes() {
             {/* FORMULÁRIO */}
 
             <div className="acidentes-drawer-content">
+                          {erroBanco && (
+                <div
+                  className="acidentes-alerta-gravidade"
+                  role="alert"
+                >
+                  <TriangleAlert
+                    size={
+                      18
+                    }
+                  />
+
+                  <div>
+                    <strong>
+                      Não foi possível concluir
+                    </strong>
+
+                    <span>
+                      {
+                        erroBanco
+                      }
+                    </span>
+                  </div>
+                </div>
+              )}
               <div className="acidentes-drawer-contexto">
                 <div className="acidentes-drawer-contexto-icon">
                   <ShieldCheck
@@ -3635,6 +3820,45 @@ export default function Acidentes() {
                 titulo="Pessoa e local"
                 descricao="Identifique o colaborador e o setor onde ocorreu o evento."
               >
+<div className="acidentes-grupo-campo">
+                  <label className="acidentes-label">
+                    Funcionário cadastrado
+                  </label>
+
+                  <select
+                    value={
+                      formulario.funcionarioId ??
+                      ""
+                    }
+                    onChange={(e) =>
+                      selecionarFuncionario(
+                        e.target.value
+                      )
+                    }
+                    style={
+                      estiloSelect
+                    }
+                  >
+                    <option value="">
+                      Não vincular ao cadastro
+                    </option>
+
+                    {funcionarios.map(
+                      (item) => (
+                        <option
+                          key={item.id}
+                          value={item.id}
+                        >
+                          {item.nome}
+                          {item.situacao ===
+                          "desligado"
+                            ? " (desligado)"
+                            : ""}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </div>
                 <Campo
                   label="Funcionário"
                   placeholder="Nome do funcionário"
@@ -3649,6 +3873,8 @@ export default function Acidentes() {
 
                       funcionario:
                         valor,
+
+                      funcionarioId: null,
                     })
                   }
                 />

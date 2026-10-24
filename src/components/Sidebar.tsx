@@ -18,6 +18,9 @@ import {
   LogOut,
   LifeBuoy,
   UserRound,
+  Users,
+   CalendarClock,
+    FileText,
 } from "lucide-react";
 
 import type { LucideIcon } from "lucide-react";
@@ -57,6 +60,14 @@ const grupos: MenuGrupo[] = [
       { nome: "PGR", rota: "/pgr", icon: ShieldCheck },
       { nome: "Gestão de Riscos", rota: "/riscos", icon: TriangleAlert },
       { nome: "Acidentes", rota: "/acidentes", icon: Ambulance },
+    ],
+  },
+  {
+    titulo: "SAÚDE OCUPACIONAL",
+    itens: [
+      { nome: "Funcionários", rota: "/funcionarios", icon: Users },
+      { nome: "Afastamentos", rota: "/afastamentos", icon: CalendarClock }, 
+      { nome: "LTCAT", rota: "/ltcat", icon: FileText },
     ],
   },
   {

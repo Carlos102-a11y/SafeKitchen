@@ -18,6 +18,9 @@ import DDS from "../pages/DDS";
 import Auditorias from "../pages/Auditorias";
 import Suporte from "../pages/Suporte";
 import Perfil from "../pages/Perfil";
+import Funcionarios from "../pages/Funcionarios";
+import Afastamentos from "../pages/Afastamentos";
+import Ltcat from "../pages/Ltcat";
 
 import Login from "../pages/Login";
 import Cadastro from "../pages/Cadastro";
@@ -59,6 +62,21 @@ export default function AppRoutes() {
           <Route
             path="/acidentes"
             element={<Acidentes />}
+          />
+
+         <Route
+            path="/funcionarios"
+            element={<Funcionarios />}
+          />
+
+         <Route
+            path="/afastamentos"
+            element={<Afastamentos />}
+          />
+
+         <Route
+            path="/ltcat"
+            element={<Ltcat />}
           />
 
           <Route
