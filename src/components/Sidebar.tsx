@@ -68,6 +68,7 @@ const grupos: MenuGrupo[] = [
       { nome: "Funcionários", rota: "/funcionarios", icon: Users },
       { nome: "Afastamentos", rota: "/afastamentos", icon: CalendarClock }, 
       { nome: "LTCAT", rota: "/ltcat", icon: FileText },
+      { nome: "PPP", rota: "/ppp", icon: ClipboardList },
     ],
   },
   {

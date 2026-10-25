@@ -21,6 +21,7 @@ import Perfil from "../pages/Perfil";
 import Funcionarios from "../pages/Funcionarios";
 import Afastamentos from "../pages/Afastamentos";
 import Ltcat from "../pages/Ltcat";
+import Ppp from "../pages/Ppp";
 
 import Login from "../pages/Login";
 import Cadastro from "../pages/Cadastro";
@@ -77,6 +78,11 @@ export default function AppRoutes() {
          <Route
             path="/ltcat"
             element={<Ltcat />}
+          />
+
+         <Route
+            path="/ppp"
+            element={<Ppp />}
           />
 
           <Route
